@@ -1,0 +1,12 @@
+{
+  "name": "gridscore",
+  "short_name": "gridscore",
+  "description": "Grand Prix predictions. Call every session, climb the leaderboard.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#121317",
+  "theme_color": "#121317",
+  "icons": []
+}
