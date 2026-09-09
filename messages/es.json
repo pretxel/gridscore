@@ -10,7 +10,9 @@
     "tryAgain": "Reintentar",
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
-    "siteMenu": "Menú del sitio"
+    "siteMenu": "Menú del sitio",
+    "switchToLight": "Cambiar a tema claro",
+    "switchToDark": "Cambiar a tema oscuro"
   },
   "siteMeta": {
     "title": "gridscore — Predicciones de Grandes Premios y clasificación en vivo",

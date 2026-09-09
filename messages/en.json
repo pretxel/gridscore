@@ -10,7 +10,9 @@
     "tryAgain": "Try again",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "siteMenu": "Site menu"
+    "siteMenu": "Site menu",
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
   },
   "siteMeta": {
     "title": "gridscore — Grand Prix predictions & live leaderboard",

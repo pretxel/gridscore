@@ -4,7 +4,9 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const next = url.searchParams.get("next") ?? "/";
+  // Land on onboarding by default: it bounces straight to the home page once a
+  // display name exists, and forces the name on a first sign-in.
+  const next = url.searchParams.get("next") ?? "/onboarding";
 
   if (code) {
     const supabase = await createServerSupabaseClient();
