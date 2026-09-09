@@ -17,7 +17,7 @@
       "inputs": ["$TURBO_DEFAULT$", "tsconfig.json"]
     },
     "test": {
-      "inputs": ["$TURBO_DEFAULT$", "vitest.config.ts"]
+      "inputs": ["$TURBO_DEFAULT$", "vitest.config.mts"]
     },
     "build": {
       "dependsOn": ["lint", "typecheck", "test"],

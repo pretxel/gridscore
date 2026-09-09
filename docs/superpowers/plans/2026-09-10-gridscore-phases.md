@@ -64,13 +64,13 @@
 - Docs: `docs/data-model.md`
 
 **Acceptance criteria.**
-- [ ] `supabase db reset` applies the migration and seeds without error.
-- [ ] `pnpm test:db` passes: (a) insert prediction after `locks_at` fails under RLS as `authenticated` and under service role via the trigger; (b) bad pick shapes and podium duplicates are rejected; (c) inserting a GP creates 5 markets, 6 when `has_sprint`, and changing `qualifying_at` moves only the `pole` `locks_at` while a resolved market keeps its own; (d) `compute_market_scores` yields the spec table values for exact/partial/miss with multipliers 1, 1.25, 1.5, 2 and is idempotent; (e) `join_league` refuses the 11th member on a `free` league and accepts on `pro`.
-- [ ] `v_leaderboard_overall` excludes admins with contiguous ranks; `leaderboard_for_league` applies the `joined_at` cutoff (asserted in `leagues.sql`).
-- [ ] `lib/database.types.ts` regenerated, `pnpm typecheck` green, `tests/markets.test.ts` green.
-- [ ] `docs/data-model.md` lists every table, policy, function with line anchors into the migration.
+- [x] `supabase db reset` applies the migration and seeds without error.
+- [x] `pnpm test:db` passes: (a) insert prediction after `locks_at` fails under RLS as `authenticated` and under service role via the trigger; (b) bad pick shapes and podium duplicates are rejected; (c) inserting a GP creates 5 markets, 6 when `has_sprint`, and changing `qualifying_at` moves only the `pole` `locks_at` while a resolved market keeps its own; (d) `compute_market_scores` yields the spec table values for exact/partial/miss with multipliers 1, 1.25, 1.5, 2 and is idempotent; (e) `join_league` refuses the 11th member on a `free` league and accepts on `pro`.
+- [x] `v_leaderboard_overall` excludes admins with contiguous ranks; `leaderboard_for_league` applies the `joined_at` cutoff (asserted in `leagues.sql`).
+- [x] `lib/database.types.ts` regenerated, `pnpm typecheck` green, `tests/markets.test.ts` green.
+- [x] `docs/data-model.md` lists every table, policy, function with line anchors into the migration.
 
-**Exit gate.** All boxes; commits `feat(db): ...` per section, `test(db): ...`, `docs(data-model)`.
+**Exit gate.** Done 2026-09-10. Deviations: the schema is two migrations (`20260910000000_profiles.sql` from phase 0 + `20260910100000_core.sql`), not one; `docs/data-model.md` anchors to the migration's numbered sections rather than line numbers. `pnpm test:db` runs the five SQL suites against the local stack (`--reset` re-applies migrations + seeds first). Seeds run on `supabase db reset`: `seed/season-2026.sql` (season + rules) and `seed/dev-fixture.sql` (two teams, six drivers, one resolved sprint weekend, one open legend weekend).
 
 ---
 
