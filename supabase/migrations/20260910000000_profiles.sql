@@ -85,7 +85,7 @@ declare
 begin
   if new.is_admin is distinct from old.is_admin
      or new.plan is distinct from old.plan then
-    jwt_role := (current_setting('request.jwt.claims', true)::jsonb ->> 'role');
+    jwt_role := (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'role');
     if jwt_role is null or jwt_role = 'service_role' then
       return new;
     end if;
