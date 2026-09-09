@@ -38,14 +38,14 @@
 - Supabase: `supabase/config.toml` (project_id `gridscore`, ports as Winscore, no SMTP block), `supabase/seed/admin.sql`
 
 **Acceptance criteria.**
-- [ ] `pnpm install && pnpm lint && pnpm typecheck && pnpm test && pnpm build` green.
-- [ ] `supabase start` boots; `/en` and `/es` render the landing with nav, theme toggle and language switcher; bare `/` redirects by `Accept-Language`.
-- [ ] Magic-link sign-in works against local Supabase (Inbucket), creates `profiles` row, forces onboarding display name, `/en/admin` returns the forbidden page for non-admins and renders the admin shell after `seed/admin.sql`.
-- [ ] `tests/no-brand-literals.test.ts` fails when a forbidden literal is added to `messages/en.json` (verified by a deliberate temporary edit during review).
-- [ ] Husky hooks installed and firing (`pnpm test` on commit, `biome check` + build on push).
-- [ ] README has the Winscore sections: intro, Documentation, Local development, Scripts, First-time setup, Day-to-day operations, Deploy, How scoring works (placeholder table), Where things live.
+- [x] `pnpm install && pnpm lint && pnpm typecheck && pnpm test && pnpm build` green.
+- [x] `supabase start` boots; `/en` and `/es` render the landing with nav, theme toggle and language switcher; bare `/` redirects by `Accept-Language`.
+- [x] Magic-link sign-in works against local Supabase (Inbucket), creates `profiles` row, forces onboarding display name, `/en/admin` returns the forbidden page for non-admins and renders the admin shell after `seed/admin.sql`.
+- [x] `tests/no-brand-literals.test.ts` fails when a forbidden literal is added to `messages/en.json` (verified by a deliberate temporary edit during review).
+- [x] Husky hooks installed and firing (`pnpm test` on commit, `biome check` + build on push).
+- [x] README has the Winscore sections: intro, Documentation, Local development, Scripts, First-time setup, Day-to-day operations, Deploy, How scoring works (placeholder table), Where things live.
 
-**Exit gate.** All boxes checked, ~6–10 commits (`chore(scaffold)`, `feat(auth)`, `feat(i18n)`, `docs(readme)`, `test(guards)`).
+**Exit gate.** Done 2026-09-10 in 5 commits (`chore(scaffold)`, `feat(ui)`, `feat(auth)`, `docs`, `fix(auth)`). Notes: the `profiles` table shipped here as its own migration (`20260910000000_profiles.sql`) so the sign-in criteria could be verified; phase 1 adds the domain schema in a second migration. Local Supabase runs on ports 5433x. Verified in a real browser: PKCE magic link, onboarding submit, 403 for non-admins, admin shell after the seed, locale switch keeping the route, sign-out.
 
 ---
 
