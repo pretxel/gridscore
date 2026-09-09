@@ -1,0 +1,28 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "NEXT_PUBLIC_SITE_URL",
+    "CRON_SECRET",
+    "JOLPICA_BASE_URL"
+  ],
+  "tasks": {
+    "lint": {
+      "inputs": ["$TURBO_DEFAULT$", "biome.json"]
+    },
+    "typecheck": {
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig.json"]
+    },
+    "test": {
+      "inputs": ["$TURBO_DEFAULT$", "vitest.config.ts"]
+    },
+    "build": {
+      "dependsOn": ["lint", "typecheck", "test"],
+      "inputs": ["$TURBO_DEFAULT$"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    }
+  }
+}

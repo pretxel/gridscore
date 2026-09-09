@@ -1,0 +1,120 @@
+{
+  "common": {
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "loading": "Cargando…",
+    "save": "Guardar",
+    "submit": "Enviar",
+    "back": "Atrás",
+    "home": "Inicio",
+    "tryAgain": "Reintentar",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "siteMenu": "Menú del sitio"
+  },
+  "siteMeta": {
+    "title": "gridscore — Predicciones de Grandes Premios y clasificación en vivo",
+    "description": "Predice pole, podio, vuelta rápida y más antes de cada sesión. Los puntos llegan en cuanto hay resultados; sube en la clasificación de la temporada y en tus ligas privadas."
+  },
+  "nav": {
+    "calendar": "Calendario",
+    "leaderboard": "Clasificación",
+    "myPicks": "Mis predicciones",
+    "leagues": "Ligas",
+    "admin": "Admin"
+  },
+  "profileMenu": {
+    "openMenu": "Abrir menú de cuenta",
+    "account": "Cuenta",
+    "nameLabel": "Nombre visible",
+    "save": "Guardar",
+    "saved": "Nombre actualizado",
+    "invalid": "El nombre debe tener entre 2 y 32 caracteres.",
+    "error": "No se pudo actualizar el nombre"
+  },
+  "footer": {
+    "tagline": "Predicciones de Grandes Premios · Clasificación de temporada",
+    "howItWorks": "Cómo funciona"
+  },
+  "languageSwitcher": {
+    "label": "Idioma"
+  },
+  "home": {
+    "eyebrow": "Temporada 2026",
+    "headline": "Predice cada sesión. Puntúa cada fin de semana.",
+    "lede": "Pole, podio, vuelta rápida, primer abandono, coche de seguridad. Cada predicción se cierra cuando empieza su sesión y los puntos llegan en cuanto hay resultados.",
+    "ctaSignIn": "Empezar a predecir",
+    "ctaCalendar": "Ver el calendario",
+    "comingSoon": "El calendario llega con la próxima versión."
+  },
+  "signIn": {
+    "title": "Iniciar sesión",
+    "description": "Inicia sesión en gridscore con un enlace mágico por email para enviar tus predicciones y entrar en la clasificación.",
+    "welcomeEyebrow": "Bienvenido al muro de boxes",
+    "headlineLine1": "Una temporada.",
+    "headlineLine2": "Todas las sesiones.",
+    "lede": "Usamos tu email solo para identificar tus predicciones. Sin spam, sin resúmenes: lo justo para poner tu nombre en la clasificación.",
+    "bullet1Title": "Predicciones por sesión",
+    "bullet1Copy": "La pole se cierra con la clasificación; el resto, al apagarse los semáforos. Edita libremente hasta entonces.",
+    "bullet2Title": "Puntuación al instante",
+    "bullet2Copy": "La tabla se mueve en cuanto se confirma un resultado.",
+    "bullet3Title": "Ligas privadas",
+    "bullet3Copy": "Invita a tus amigos con un código y compite en tu propia tabla.",
+    "cardEyebrow": "gridscore · Iniciar sesión",
+    "cardHeadline": "Cierra tus predicciones.",
+    "cardLede": "Usa tu email. Crearemos la cuenta al vuelo si es tu primera vez.",
+    "newHere": "¿Primera vez? Solo introduce tu email: tu cuenta se crea al instante.",
+    "howItWorks": "Cómo funciona",
+    "emailLabel": "Email",
+    "emailPlaceholder": "tu@ejemplo.com",
+    "send": "Enviar enlace mágico",
+    "sending": "Enviando",
+    "checkInbox": "Revisa tu bandeja de entrada.",
+    "checkInboxBody": "Te enviamos un enlace de acceso a {email}. Se usa una vez y caduca pronto.",
+    "invalidEmail": "Introduce una dirección de email válida"
+  },
+  "onboarding": {
+    "title": "Elige un nombre",
+    "eyebrow": "Último paso",
+    "headline": "Elige un nombre visible",
+    "lede": "Es el nombre que verán los demás jugadores en la clasificación. Entre 2 y 32 caracteres.",
+    "label": "Nombre visible",
+    "placeholder": "p. ej. Ayrton S.",
+    "submit": "Guardar y continuar",
+    "invalid": "El nombre debe tener entre 2 y 32 caracteres."
+  },
+  "admin": {
+    "nav": {
+      "sectionLabel": "Admin",
+      "dashboard": "Panel",
+      "grandsPrix": "Grandes Premios",
+      "drivers": "Pilotos",
+      "scoring": "Puntuación",
+      "leagues": "Ligas",
+      "operations": "Operaciones"
+    },
+    "dashboard": {
+      "eyebrow": "Sala de control",
+      "title": "Admin",
+      "description": "Estado operativo y acceso rápido a cada área de administración.",
+      "comingSoon": "Las áreas de administración llegan fase a fase: Grandes Premios, resultados, reglas de puntuación, pilotos, ligas y operaciones."
+    },
+    "forbiddenTitle": "403 — Solo admins",
+    "forbiddenBody": "Esta página está restringida. Si deberías tener acceso, pide al propietario del sitio que te marque como admin.",
+    "goHome": "Ir al inicio"
+  },
+  "error": {
+    "eyebrow": "Bandera roja",
+    "headline": "Algo salió mal",
+    "fallback": "Ocurrió un error inesperado.",
+    "ref": "ref: {digest}",
+    "tryAgain": "Reintentar",
+    "home": "Inicio"
+  },
+  "notFound": {
+    "eyebrow": "Fuera de pista · 404",
+    "code": "404",
+    "body": "Esa página no está en el calendario. Vuelve al paddock.",
+    "backHome": "Volver al inicio"
+  }
+}

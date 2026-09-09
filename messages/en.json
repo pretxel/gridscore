@@ -1,0 +1,120 @@
+{
+  "common": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "loading": "Loading…",
+    "save": "Save",
+    "submit": "Submit",
+    "back": "Back",
+    "home": "Home",
+    "tryAgain": "Try again",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "siteMenu": "Site menu"
+  },
+  "siteMeta": {
+    "title": "gridscore — Grand Prix predictions & live leaderboard",
+    "description": "Call pole, podium, fastest lap and more before every session. Points land the moment results are in; climb the season leaderboard and your private leagues."
+  },
+  "nav": {
+    "calendar": "Calendar",
+    "leaderboard": "Leaderboard",
+    "myPicks": "My picks",
+    "leagues": "Leagues",
+    "admin": "Admin"
+  },
+  "profileMenu": {
+    "openMenu": "Open account menu",
+    "account": "Account",
+    "nameLabel": "Display name",
+    "save": "Save",
+    "saved": "Display name updated",
+    "invalid": "Name must be 2–32 characters.",
+    "error": "Couldn't update your name"
+  },
+  "footer": {
+    "tagline": "Grand Prix predictions · Season leaderboard",
+    "howItWorks": "How it works"
+  },
+  "languageSwitcher": {
+    "label": "Language"
+  },
+  "home": {
+    "eyebrow": "Season 2026",
+    "headline": "Call every session. Score every weekend.",
+    "lede": "Pole, podium, fastest lap, first retirement, safety car. Each call locks when its session starts, and points land the moment results are in.",
+    "ctaSignIn": "Start predicting",
+    "ctaCalendar": "See the calendar",
+    "comingSoon": "The calendar arrives with the next release."
+  },
+  "signIn": {
+    "title": "Sign in",
+    "description": "Sign in to gridscore with a magic-link email to submit your calls and join the leaderboard.",
+    "welcomeEyebrow": "Welcome to the pit wall",
+    "headlineLine1": "One season.",
+    "headlineLine2": "Every session.",
+    "lede": "We use your email only to identify your picks. No spam, no digests — just enough to put your name on the leaderboard.",
+    "bullet1Title": "Per-session calls",
+    "bullet1Copy": "Pole locks at qualifying, the rest at lights out. Edit freely until then.",
+    "bullet2Title": "Instant scoring",
+    "bullet2Copy": "Standings move the moment a result is confirmed.",
+    "bullet3Title": "Private leagues",
+    "bullet3Copy": "Invite friends with a code and race on your own table.",
+    "cardEyebrow": "gridscore · Sign in",
+    "cardHeadline": "Lock in your calls.",
+    "cardLede": "Use your email. We'll create the account on the fly if it's your first time.",
+    "newHere": "New here? Just enter your email — your account is created instantly.",
+    "howItWorks": "How it works",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "send": "Send magic link",
+    "sending": "Sending",
+    "checkInbox": "Check your inbox.",
+    "checkInboxBody": "We sent a sign-in link to {email}. It works once and expires soon.",
+    "invalidEmail": "Enter a valid email address"
+  },
+  "onboarding": {
+    "title": "Choose a display name",
+    "eyebrow": "Last step",
+    "headline": "Pick a display name",
+    "lede": "This is the name other players see on the leaderboard. 2–32 characters.",
+    "label": "Display name",
+    "placeholder": "e.g. Ayrton S.",
+    "submit": "Save and continue",
+    "invalid": "Display name must be 2–32 characters."
+  },
+  "admin": {
+    "nav": {
+      "sectionLabel": "Admin",
+      "dashboard": "Dashboard",
+      "grandsPrix": "Grands Prix",
+      "drivers": "Drivers",
+      "scoring": "Scoring",
+      "leagues": "Leagues",
+      "operations": "Operations"
+    },
+    "dashboard": {
+      "eyebrow": "Control room",
+      "title": "Admin",
+      "description": "Operational status and quick access to every admin area.",
+      "comingSoon": "Admin surfaces arrive phase by phase: Grands Prix, results, scoring rules, drivers, leagues and operations."
+    },
+    "forbiddenTitle": "403 — Admin only",
+    "forbiddenBody": "This page is restricted. If you should have access, ask the site owner to mark you as admin.",
+    "goHome": "Go home"
+  },
+  "error": {
+    "eyebrow": "Red flag",
+    "headline": "Something went wrong",
+    "fallback": "An unexpected error occurred.",
+    "ref": "ref: {digest}",
+    "tryAgain": "Try again",
+    "home": "Home"
+  },
+  "notFound": {
+    "eyebrow": "Off track · 404",
+    "code": "404",
+    "body": "That page isn't on the calendar. Head back to the paddock.",
+    "backHome": "Back home"
+  }
+}

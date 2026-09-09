@@ -1,0 +1,2 @@
+npx biome check
+pnpm build
