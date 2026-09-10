@@ -109,14 +109,14 @@
 - Tests: `tests/market-utils.test.ts`, `tests/submit-pick.test.ts` (action: validation per type, admin rejection, lock error mapping with mocked client), `tests/grands-prix.test.ts` (`nextGrandPrix` selection)
 
 **Acceptance criteria.**
-- [ ] Signed-in user can submit and edit every market on an open GP; each form shows its own countdown; a market past `locks_at` renders read-only with the saved pick.
-- [ ] Manual check: set a market `locks_at` to the past via SQL while the page is open, submit → toast shows the localized "locked" message (RLS refusal), no row written.
-- [ ] Podium form cannot submit duplicate drivers; `first_retirement` offers "None"; `safety_car` is yes/no.
-- [ ] Admin accounts see forms disabled and the action rejects server-side.
-- [ ] `/my-picks` lists picks grouped by GP with lock state and result when resolved.
-- [ ] All strings in `en` and `es`; parity test green.
+- [x] Signed-in user can submit and edit every market on an open GP; each form shows its own countdown; a market past `locks_at` renders read-only with the saved pick.
+- [x] Manual check: set a market `locks_at` to the past via SQL while the page is open, submit → toast shows the localized "locked" message (RLS refusal), no row written.
+- [x] Podium form cannot submit duplicate drivers; `first_retirement` offers "None"; `safety_car` is yes/no.
+- [x] Admin accounts see forms disabled and the action rejects server-side.
+- [x] `/my-picks` lists picks grouped by GP with lock state and result when resolved.
+- [x] All strings in `en` and `es`; parity test green.
 
-**Exit gate.** Boxes checked; commits `feat(gp): ...`, `feat(picks): ...`, `test(picks)`.
+**Exit gate.** Done 2026-09-10. Verified in a real browser against the imported 2026 calendar: landing shows the next weekend with a countdown to its first lock; the calendar highlights it and counts open calls per weekend; the Grand Prix page renders five/six market cards with per-market countdowns, driver selects grouped by team (reserves last), an ordered podium with duplicate guard, a "None" option for the first retirement and a yes/no toggle for the safety car; pole, podium and safety-car calls saved and appeared in the database. Moving the pole lock into the past by SQL while the page stayed open made the next save fail server-side (the pick stayed unchanged). Resolving the podium with the user's call produced a 55-point perfect podium on `/my-picks`. A resolved weekend shows results to anonymous visitors. Deviations: `lib/driver-format.ts` holds the serializable driver shape (client-safe); `grandPrixPhase` treats a weekend as completed four hours after lights out even without a synced result; countdown templates are passed with `t.raw` because next-intl formats `{time}` eagerly.
 
 ---
 
