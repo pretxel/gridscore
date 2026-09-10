@@ -14,7 +14,8 @@ season leaderboard plus private leagues rank everyone as results come in.
 
 - `docs/architecture.md` — system overview, RSC + server-action data flow, scoring trigger + recompute path, per-market lock at the RLS layer, data sync.
 - `docs/data-model.md` — every table, constraint, index, RLS policy and function.
-- `docs/operator-guide.md` — seeding a fresh environment, adding admins, entering results by hand, monitoring queries. _(lands with phase 6)_
+- `docs/operator-guide.md` — standing up an environment, the weekly rhythm of a season, plans, monitoring queries, and what to do when something breaks.
+- `docs/test-plan.md` — the manual smoke walk to run against a deployment before a release.
 - `docs/contributing.md` — local dev setup, code conventions, commit style, regenerating Supabase types.
 
 ---
@@ -102,7 +103,14 @@ The season calendar, drivers and teams arrive through the calendar sync cron
 3. **Update Supabase Auth → URL Configuration:** site URL = production URL; additional
    redirect URLs = `https://YOUR-DOMAIN/auth/callback` and your preview-scoped
    `https://<project>-*-<team>.vercel.app/auth/callback`.
-4. **Deploy** and smoke-test sign-in, a pick submit, admin result entry and the leaderboard.
+4. **Deploy**, then sign in once with the email that will own the site and promote it with
+   `supabase/seed/admin.sql`.
+5. **Import the season** from Admin → Operations → Calendar sync → Run now.
+6. **Walk [`docs/test-plan.md`](docs/test-plan.md)** against the deployed URL. It covers
+   sign-in, the lock, result entry, the live leaderboard, leagues, plans and the crons.
+
+The full runbook, including the weekly rhythm of a race season, is in
+[`docs/operator-guide.md`](docs/operator-guide.md).
 
 ---
 

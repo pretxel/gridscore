@@ -51,10 +51,9 @@ session cookie. It does not authorize: layouts and RLS do.
 |---|---|---|
 | `app/[locale]/(public)` | none | landing, calendar, Grand Prix detail, leaderboard |
 | `app/[locale]/(auth)` | none | sign-in, sign-out |
-| `app/[locale]/(app)` | signed in + display name | my picks, leagues, stats |
+| `app/[locale]/(app)` | signed in + display name | my picks, leagues, `/stats` (Pro gates the content, not the route) |
 | `app/[locale]/(admin)/admin` | signed in + `is_admin` | control room: calendar, results, scoring rules, roster, leagues, operations |
 | `app/[locale]/leagues/join/[code]` | handles its own gate | invite landing; redirects to sign-in / onboarding with `?next=` back to itself |
-| `app/[locale]/(admin)` | `profiles.is_admin` | control room |
 | `app/[locale]/onboarding` | signed in | display name |
 | `app/auth/callback` | none | magic-link code exchange |
 | `app/api/cron/*` | `CRON_SECRET` bearer | scheduled jobs |
@@ -139,6 +138,23 @@ admin panel. Every run is wrapped in `recordRun()` and lands in
 `operation_runs`; `operation_settings` pauses a job's cron without touching
 the admin "Run now" path.
 
+## Plans and gating
+
+`profiles.plan` and `leagues.plan` are `free | pro`, writable only by the
+service role (a guard trigger rejects a user JWT). `PLAN_FEATURES` in
+`lib/plans.ts` is the single table naming what a plan unlocks; every other
+module calls `hasFeature()`, `isPro()` or `leagueMemberCap()`, and a test fails
+the build if any file compares a plan against a literal.
+
+`lib/viewer.ts` resolves the reader once per request (React `cache`) so the
+nav, the page and any sponsor slot share one profile query.
+
+Statistics live behind three season-scoped SQL functions
+(`user_market_stats`, `user_weekend_points`, `season_average_points`) gated by
+`can_read_user_stats`: a user reads their own rows, an admin reads anyone's.
+The plan gate is not in the database — who may read whose rows is the
+database's call, what a plan unlocks is the product's.
+
 ## Caching
 
 Public pages are dynamic (they read the session cookie). Admin writes call
@@ -154,9 +170,18 @@ components/admin          admin shell + form primitives
 lib/supabase              clients
 lib/db.ts                 narrowed row aliases
 lib/markets.ts            market vocabulary, pick schemas, lock sessions
+lib/market-utils.ts       lock reasons, weekend phase, display order
+lib/scoring.ts            TypeScript mirror of the SQL scorer
 lib/race-sync             provider interface, Jolpica, calendar/results jobs
 lib/operations            cron ledger + kill switch
 lib/cron/authorize.ts     bearer-secret gate for cron routes
+lib/admin                 admin queries, form parsing, the action wrapper
+lib/plans.ts              what each plan unlocks (the only plan gate)
+lib/viewer.ts             the reader's plan and admin flag, once per request
+lib/stats.ts              season statistics derived from the SQL functions
+lib/sponsor.ts            sponsor inventory and the slot gate
+lib/format.ts             points, multipliers and session times per locale
+lib/i18n-scan.ts          scanner behind the untranslated-text test
 messages/                 en.json, es.json
 supabase/migrations       schema
 supabase/tests            SQL invariants (pnpm test:db)

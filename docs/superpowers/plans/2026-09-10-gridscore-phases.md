@@ -238,6 +238,27 @@ Deviations and additions: the plan gate became `hasFeature()` over a `PLAN_FEATU
 - [ ] Production deploy: sign-in, calendar import via cron, pick submit, lock at a real session time, admin result entry, leaderboard update, league join — all verified on the deployed URL.
 - [ ] `docs/test-plan.md` walked once; every failure fixed or logged as an issue.
 
+**Status 2026-09-10 — documentation done, deploy blocked.**
+
+Everything that does not need a live database is finished and pushed:
+`docs/operator-guide.md` (standing an environment up, the weekly rhythm, plans,
+monitoring queries, failure modes) and `docs/test-plan.md` (a 9-section manual
+smoke walk) are written, and the README, architecture and contributing docs
+were brought up to date with the admin panel, the plan gating and the i18n
+rules. Two real bugs surfaced while writing them: `app/robots.ts` disallowed
+unprefixed paths (`/admin` instead of `/en/admin`, so nothing was actually
+hidden) and had no entry for `/stats`; `.env.example` pointed at the wrong
+local API port. Both are fixed and covered by `tests/robots.test.ts`.
+
+The two acceptance criteria stay unchecked because both need a deployed URL.
+The Vercel project exists, is linked to the GitHub repo and auto-deploys on
+push, and `CRON_SECRET` is set for production and preview — but every build
+fails at `Missing required environment variable: NEXT_PUBLIC_SUPABASE_URL`,
+because there is no Supabase project yet. Creating one is refused: the free
+plan allows two active projects and the organisation already has two
+(retro-ball, winscore-app). The account owner has to pause or upgrade one; a
+session cron re-checks and provisions automatically as soon as a slot frees.
+
 ---
 
 ## Phase 10 — Live race center (added 2026-09-10)

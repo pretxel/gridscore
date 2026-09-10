@@ -32,6 +32,7 @@ The dev server fails fast at module load if any of `NEXT_PUBLIC_SUPABASE_URL`,
 | `pnpm test:watch`   | Vitest watch mode.                                         |
 | `pnpm test:db`      | SQL invariant tests against the local Supabase stack.      |
 | `pnpm db:types`     | Regenerate `lib/database.types.ts` from the local database.|
+| `pnpm gen:scoring-parity` | Render the shared scoring cases into the SQL parity suite. |
 
 Run `pnpm typecheck && pnpm lint && pnpm test` before opening a PR. Husky runs
 `pnpm test` before every commit and `biome check` + `pnpm build` before every push.
@@ -81,6 +82,32 @@ Run `pnpm typecheck && pnpm lint && pnpm test` before opening a PR. Husky runs
   fails otherwise.
 - Pages read the locale from `params`, validate it with `isLocale`, and call
   `setRequestLocale(locale)` before any translation.
+- `tests/untranslated-text.test.ts` fails on any JSX text node carrying prose.
+  If something genuinely cannot be translated, add it to
+  `tests/i18n-allowlist.json` with a `why`; the list is capped at ten entries.
+- Format numbers and instants through `lib/format.ts`, never with a bare
+  `toLocaleString`. Data that is interpolated into translated sentences (a
+  season name, say) has to be locale-neutral.
+
+### Plans
+
+- `PLAN_FEATURES` in `lib/plans.ts` is the only place that decides what a plan
+  unlocks. Call `hasFeature()`, `isPro()` or `leagueMemberCap()`; a test fails
+  the build if any other file compares a plan against `"free"` or `"pro"`.
+
+### Tests
+
+- Biome's `noExportsInTest` forbids exports from a `*.test.ts` file, and it only
+  surfaces in `biome check` — which the pre-push hook runs. A helper a test needs
+  to export goes in `lib/` instead (`lib/brand-guard.ts`, `lib/i18n-scan.ts`).
+- Keep arithmetic in pure modules so it can be unit-tested, and let the
+  server-only module do the querying (`lib/stats.ts` beside `lib/user-stats.ts`,
+  `lib/leaderboard-segment.ts` beside `lib/leaderboard.ts`).
+
+## Before a release
+
+Walk [`test-plan.md`](./test-plan.md) against the deployment. The operator
+runbook is [`operator-guide.md`](./operator-guide.md).
 
 ## Migrations
 
