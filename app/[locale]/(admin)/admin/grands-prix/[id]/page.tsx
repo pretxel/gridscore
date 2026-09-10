@@ -10,6 +10,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { toDatetimeLocal } from "@/lib/admin/parse";
 import { getGrandPrixDetail } from "@/lib/admin/queries";
 import { listSeasonDrivers } from "@/lib/drivers";
+import { formatMultiplier } from "@/lib/format";
 import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { recomputeGrandPrix } from "../actions";
@@ -66,7 +67,7 @@ export default async function AdminGrandPrixPage({
           eyebrow={t("grandsPrix.round", { round: gp.round })}
           title={gp.name}
           description={t("grandPrix.description", {
-            multiplier: gp.multiplier,
+            multiplier: formatMultiplier(locale, Number(gp.multiplier)),
             points: detail.scoredPoints,
             rows: detail.scoredRows,
           })}

@@ -4,7 +4,7 @@ import { LeaderboardLive } from "@/components/leaderboard-live";
 import { LeaderboardSegmentSwitcher } from "@/components/leaderboard-segment-switcher";
 import type { LeaderboardTableRow } from "@/components/leaderboard-table";
 import { listSeasonGrandsPrix } from "@/lib/grands-prix";
-import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates, localePath } from "@/lib/i18n";
 import { getGrandPrixBoard, getOverallBoard } from "@/lib/leaderboard";
 import { findOwnRow, parseGrandPrixParam } from "@/lib/leaderboard-segment";
 import { grandPrixPhase } from "@/lib/market-utils";
@@ -17,12 +17,13 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale: rawLocale } = await params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   const t = await getTranslations({ locale, namespace: "leaderboard" });
   return {
     title: t("title"),
     description: t("description"),
-    alternates: { canonical: "/leaderboard" },
+    alternates: localeAlternates(locale, "/leaderboard"),
   };
 }
 

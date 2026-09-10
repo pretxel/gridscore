@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { GrandPrixCard, type GrandPrixCardLabels } from "@/components/grand-prix-card";
+import { formatMultiplier } from "@/lib/format";
 import { getMarketsForGrandsPrix, listSeasonGrandsPrix } from "@/lib/grands-prix";
-import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates, localePath } from "@/lib/i18n";
 import { grandPrixPhase, marketsNeedingPick, nextGrandPrix } from "@/lib/market-utils";
 import { getMyPickStates } from "@/lib/predictions";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -12,12 +13,13 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale: rawLocale } = await params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   const t = await getTranslations({ locale, namespace: "gp" });
   return {
     title: t("title"),
     description: t("description"),
-    alternates: { canonical: "/gp" },
+    alternates: localeAlternates(locale, "/gp"),
   };
 }
 
@@ -73,7 +75,7 @@ export default async function CalendarPage({ params }: { params: Promise<{ local
     return {
       round: t("roundLabel", { round: gp.round }),
       sprint: t("sprintBadge"),
-      multiplier: t("multiplierBadge", { value: formatMultiplier(gp.multiplier) }),
+      multiplier: t("multiplierBadge", { value: formatMultiplier(locale, Number(gp.multiplier)) }),
       multiplierReason: t(`multiplierReason.${gp.multiplier_reason}`),
       phase: t(`phase.${phase}`),
       calls,
@@ -136,9 +138,4 @@ function Empty({ title, body }: { title: string; body: string }) {
       </div>
     </main>
   );
-}
-
-export function formatMultiplier(value: number | string): string {
-  const n = Number(value);
-  return Number.isInteger(n) ? n.toString() : n.toFixed(2).replace(/0$/, "");
 }

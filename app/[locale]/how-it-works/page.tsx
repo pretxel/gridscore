@@ -2,23 +2,24 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ScoringExplainer } from "@/components/scoring-explainer";
 import type { MultiplierReason } from "@/lib/db";
+import { formatMultiplier } from "@/lib/format";
 import { listSeasonGrandsPrix } from "@/lib/grands-prix";
-import { DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates } from "@/lib/i18n";
 import { getScoringRules } from "@/lib/scoring-rules";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { formatMultiplier } from "../(public)/gp/page";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale: rawLocale } = await params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   const t = await getTranslations({ locale, namespace: "howItWorks" });
   return {
     title: t("title"),
     description: t("description"),
-    alternates: { canonical: "/how-it-works" },
+    alternates: localeAlternates(locale, "/how-it-works"),
   };
 }
 
@@ -107,7 +108,7 @@ export default async function HowItWorksPage({ params }: { params: Promise<{ loc
                 </span>
               </span>
               <span className="font-mono text-lg font-semibold tabular-nums">
-                {tg("multiplierBadge", { value: formatMultiplier(row.value) })}
+                {tg("multiplierBadge", { value: formatMultiplier(locale, row.value) })}
               </span>
             </li>
           ))}

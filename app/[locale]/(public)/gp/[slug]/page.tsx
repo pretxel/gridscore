@@ -9,14 +9,14 @@ import { SessionSchedule } from "@/components/session-schedule";
 import { isCurrentUserAdmin } from "@/lib/admin/current-user";
 import type { HitType } from "@/lib/db";
 import { listSeasonDrivers } from "@/lib/drivers";
+import { formatMultiplier } from "@/lib/format";
 import { getGrandPrixBySlug, getMarketsForGrandPrix } from "@/lib/grands-prix";
-import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates, localePath } from "@/lib/i18n";
 import { grandPrixPhase, nextLockingMarket } from "@/lib/market-utils";
 import type { MarketPick } from "@/lib/markets";
 import { getMyPickStates } from "@/lib/predictions";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
-import { formatMultiplier } from "../page";
 import { MarketForm } from "./market-form";
 
 export async function generateMetadata({
@@ -24,14 +24,15 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const { locale, slug } = await params;
+  const { locale: rawLocale, slug } = await params;
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   const t = await getTranslations({ locale, namespace: "gp" });
   const found = await getGrandPrixBySlug(slug);
   if (!found) return { title: t("title") };
   return {
     title: found.grandPrix.name,
     description: `${found.grandPrix.circuit_name} · ${t("roundLabel", { round: found.grandPrix.round })}`,
-    alternates: { canonical: `/gp/${slug}` },
+    alternates: localeAlternates(locale, `/gp/${slug}`),
   };
 }
 
@@ -133,7 +134,9 @@ export default async function GrandPrixPage({
             )}
           >
             <ZapIcon className="size-4" aria-hidden />
-            {t("multiplierBadge", { value: formatMultiplier(grandPrix.multiplier) })}
+            {t("multiplierBadge", {
+              value: formatMultiplier(locale, Number(grandPrix.multiplier)),
+            })}
             <span className="font-sans text-xs font-normal tracking-normal opacity-80">
               {t(`multiplierReason.${grandPrix.multiplier_reason}`)}
             </span>
