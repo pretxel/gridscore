@@ -107,7 +107,7 @@ lib/race-sync/
 lib/operations/   recordRun ledger, kill switch, schedule
 app/api/cron/
   sync-calendar   daily 06:00 UTC
-  sync-results    hourly; self-skips when nothing provider-resolvable locked
+  sync-results    daily (hourly on Vercel Pro); self-skips when nothing provider-resolvable locked
                   in the last 7 days; ?force=1 backfills
 ```
 
