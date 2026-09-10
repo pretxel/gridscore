@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
+import { safeNextPath } from "@/lib/safe-path";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { setDisplayName } from "./actions";
 
@@ -15,8 +16,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 // Lives outside the (app) group on purpose: the (app) layout redirects here
 // when the display name is missing, so nesting it there would loop.
-export default async function OnboardingPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function OnboardingPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ next?: string }>;
+}) {
   const { locale: raw } = await params;
+  const { next } = await searchParams;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   setRequestLocale(locale);
 
@@ -32,7 +40,7 @@ export default async function OnboardingPage({ params }: { params: Promise<{ loc
     .eq("id", user.id)
     .maybeSingle();
 
-  if (profile?.display_name) redirect(localePath(locale, "/"));
+  if (profile?.display_name) redirect(safeNextPath(next) ?? localePath(locale, "/"));
 
   const t = await getTranslations("onboarding");
 
@@ -63,6 +71,7 @@ export default async function OnboardingPage({ params }: { params: Promise<{ loc
           className="mt-6 space-y-5 rounded-2xl border border-border bg-card p-6 shadow-sm"
         >
           <input type="hidden" name="locale" value={locale} />
+          {safeNextPath(next) ? <input type="hidden" name="next" value={next} /> : null}
           <div className="space-y-1.5">
             <Label
               htmlFor="display_name"

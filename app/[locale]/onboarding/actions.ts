@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { displayNameSchema } from "@/lib/display-name";
 import { DEFAULT_LOCALE, isLocale, localePath } from "@/lib/i18n";
+import { safeNextPath } from "@/lib/safe-path";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function setDisplayName(formData: FormData) {
@@ -35,5 +36,6 @@ export async function setDisplayName(formData: FormData) {
   }
 
   revalidatePath("/", "layout");
-  redirect(localePath(locale, "/"));
+  const rawNext = formData.get("next");
+  redirect(safeNextPath(typeof rawNext === "string" ? rawNext : null) ?? localePath(locale, "/"));
 }
