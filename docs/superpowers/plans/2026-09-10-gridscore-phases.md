@@ -130,13 +130,13 @@
 - Tests: `tests/scoring.test.ts` (every rule; podium: 3 exact = 30+25, 2 exact + 1 in podium = 24, 1 exact = 10, 3 in wrong order = 12, none = 0; multipliers 1.25 on 4 → 5, 1.5 on 55 → 83 (82.5 half up), 2 on 8 → 16; `first_retirement` none/none exact; void ignored), `tests/scoring-parity.test.ts` (runs the same 20 cases through `compute_market_scores` in `supabase/tests/scoring_parity.sql` generated from the TS cases so SQL and TS cannot drift), `tests/leaderboard-segment.test.ts`
 
 **Acceptance criteria.**
-- [ ] `tests/scoring.test.ts` covers all hit types and multipliers; SQL parity file passes in `pnpm test:db`.
-- [ ] Setting a market result (SQL or sync) updates the overall board on the open leaderboard page within ~1 s without reload (realtime).
-- [ ] Leaderboard shows rank, player, points, podium-exact count, exact count, with "you" highlight; per-GP segment works via `?gp=<slug>`.
-- [ ] `/how-it-works` renders the points table from `scoring_rules` and the multiplier legend from the season's GPs; no hardcoded numbers in the page.
-- [ ] Admins never appear on any board.
+- [x] `tests/scoring.test.ts` covers all hit types and multipliers; SQL parity file passes in `pnpm test:db`.
+- [x] Setting a market result (SQL or sync) updates the overall board on the open leaderboard page within ~1 s without reload (realtime).
+- [x] Leaderboard shows rank, player, points, podium-exact count, exact count, with "you" highlight; per-GP segment works via `?gp=<slug>`.
+- [x] `/how-it-works` renders the points table from `scoring_rules` and the multiplier legend from the season's GPs; no hardcoded numbers in the page.
+- [x] Admins never appear on any board.
 
-**Exit gate.** Boxes checked; commits `feat(scoring)`, `feat(leaderboard)`, `test(scoring-parity)`.
+**Exit gate.** Done 2026-09-10. `tests/scoring-cases.ts` is the single source for 26 cases; `pnpm gen:scoring-parity` renders them into `supabase/tests/scoring_parity.sql` and a Vitest suite fails when the committed SQL is stale, so TS and SQL cannot drift. Verified in a real browser: the season board rendered for an anonymous visitor; signed in, resolving a market by SQL updated the table row from 61 to 69 within a second while the server-rendered header still read 61 (no reload); the per-weekend segment lists rounds 1–13; `/how-it-works` prints 8 / 10 / 4 / +25 / 6 / 6 / 3 / 6 from `scoring_rules` and the multiplier legend from the calendar. Deviation: `scores` gained a public read policy (migration `20260910110000`) so Realtime reaches every viewer; the first attempt with the authenticated-only policy delivered no events to the browser.
 
 ---
 

@@ -7,14 +7,13 @@ season leaderboard plus private leagues rank everyone as results come in.
 
 - **Stack:** Next.js 16 (App Router), TypeScript, Tailwind 4, shadcn/ui, Supabase (Postgres + Auth + RLS), next-intl (en/es).
 - **Spec:** `docs/superpowers/specs/2026-09-10-gridscore-design.md`; phased plan in `docs/superpowers/plans/2026-09-10-gridscore-phases.md`.
-- **Lineage:** derived from [Winscore](https://github.com/pretxel/winscore-app), the football score-prediction pool.
 
 ---
 
 ## Documentation
 
-- `docs/architecture.md` — system overview, RSC + server-action data flow, scoring trigger + recompute path, per-market lock at the RLS layer, data sync. _(lands with phase 2)_
-- `docs/data-model.md` — every table, constraint, index, RLS policy and function. _(lands with phase 1)_
+- `docs/architecture.md` — system overview, RSC + server-action data flow, scoring trigger + recompute path, per-market lock at the RLS layer, data sync.
+- `docs/data-model.md` — every table, constraint, index, RLS policy and function.
 - `docs/operator-guide.md` — seeding a fresh environment, adding admins, entering results by hand, monitoring queries. _(lands with phase 6)_
 - `docs/contributing.md` — local dev setup, code conventions, commit style, regenerating Supabase types.
 
@@ -31,7 +30,7 @@ pnpm dev
 
 Open <http://localhost:3000>. The dev server fails fast at module load if any of
 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, or `SUPABASE_SERVICE_ROLE_KEY`
-is missing. Local magic-link emails land in Inbucket at <http://127.0.0.1:54324>.
+is missing. Local magic-link emails land in Mailpit at <http://127.0.0.1:54334>.
 
 ### Scripts
 
@@ -67,15 +66,19 @@ Git hooks (Husky): `pnpm test` before every commit, `biome check` + `pnpm build`
    email, and run it in the Supabase SQL editor (service role).
 7. The "Admin" link now appears in the nav.
 
-Seeding the season calendar, drivers and teams is a cron/admin action described in
-`docs/operator-guide.md` once phase 2 lands.
+The season calendar, drivers and teams arrive through the calendar sync cron
+(`/api/cron/sync-calendar`, daily) once `CRON_SECRET` is set; trigger it by hand with
+`curl -H "Authorization: Bearer $CRON_SECRET" https://YOUR-DOMAIN/api/cron/sync-calendar?force=1`.
 
 ---
 
 ## Day-to-day operations
 
-_Arrives with phases 2 and 6: calendar and results sync, manual result entry, multiplier
-edits, scoring-rule edits, and the operations control room._
+- **Calendar sync** runs daily and **results sync** hourly (`vercel.json`); both are
+  bearer-gated by `CRON_SECRET`, write a row to `operation_runs`, and can be paused per job
+  through `operation_settings`.
+- **Manual result entry, multiplier edits, scoring-rule edits and the operations control
+  room** arrive with the admin panel (phase 6).
 
 ---
 
@@ -141,11 +144,14 @@ app/
   [locale]/page.tsx              landing
   [locale]/(auth)/sign-in/       magic-link sign-in
   [locale]/(auth)/sign-out/      POST sign-out
+  [locale]/(public)/gp/          calendar and Grand Prix pages (pick forms)
+  [locale]/(public)/leaderboard/ season and per-weekend standings, live
+  [locale]/how-it-works/         scoring rules and multipliers, read from the DB
   [locale]/(app)/                authed routes (my picks, leagues, stats)
   [locale]/(admin)/admin/        admin control room
   [locale]/onboarding/           forces a display name on first sign-in
   auth/callback/                 magic-link code exchange
-  api/cron/                      sync jobs (phase 2)
+  api/cron/                      calendar and results sync jobs
 components/
   ui/                            shadcn primitives
   admin/                         admin shell + form primitives
@@ -154,14 +160,19 @@ lib/
   supabase/{server,browser,admin}.ts   Supabase clients
   database.types.ts              generated; regenerate with `pnpm db:types`
   db.ts                          narrowed row aliases
+  markets.ts, market-utils.ts    market vocabulary, pick schemas, lock helpers
+  scoring.ts                     TypeScript replica of the SQL scoring function
+  race-sync/                     provider interface, Jolpica client, sync jobs
   i18n.ts, env.ts                locale list, env loader
 messages/
   en.json, es.json               UI copy (key parity enforced by tests)
 supabase/
   migrations/                    schema, RLS, triggers, scoring, leaderboards
-  seed/admin.sql                 promote the owner to admin
+  seed/                          season defaults, dev fixture, admin promotion
+  tests/                         SQL invariant suites (`pnpm test:db`)
 tests/
   *.test.ts                      Vitest suites
+  scoring-cases.ts               shared scoring cases (TS + generated SQL parity)
 ```
 
 ## License

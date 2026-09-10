@@ -16,8 +16,8 @@ pnpm dev
 
 The dev server fails fast at module load if any of `NEXT_PUBLIC_SUPABASE_URL`,
 `NEXT_PUBLIC_SUPABASE_ANON_KEY`, or `SUPABASE_SERVICE_ROLE_KEY` is missing
-(`lib/env.ts`). Magic-link emails from the local stack land in Inbucket at
-<http://127.0.0.1:54324>.
+(`lib/env.ts`). Magic-link emails from the local stack land in Mailpit at
+<http://127.0.0.1:54334>.
 
 ### Useful scripts
 
