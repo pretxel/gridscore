@@ -5,6 +5,7 @@ schema. Runtime sources of truth:
 
 - [`supabase/migrations/20260910000000_profiles.sql`](../supabase/migrations/20260910000000_profiles.sql) — accounts.
 - [`supabase/migrations/20260910100000_core.sql`](../supabase/migrations/20260910100000_core.sql) — everything else, in numbered sections (§1–§11) that this document follows.
+- [`supabase/migrations/20260910110000_scores_public_read.sql`](../supabase/migrations/20260910110000_scores_public_read.sql) — scores readable by anonymous visitors.
 
 TypeScript sees the schema through the generated `lib/database.types.ts`
 (`pnpm db:types`) and the narrowed aliases in `lib/db.ts`. Pick/result shapes
@@ -143,8 +144,11 @@ row. RLS: public read, admin write. Seeded by `supabase/seed/season-2026.sql`.
 ### `scores` (§7)
 
 `(user_id, market_id)` PK, `points ≥ 0`, `hit_type` in
-`exact | podium_exact_all | podium_partial | miss`. No write policies; only
-`compute_market_scores()` writes. Published on `supabase_realtime`.
+`exact | podium_exact_all | podium_partial | miss`. Readable by everyone
+(`scores_select_public`, migration `20260910110000`): points are public once
+results land, and Realtime can then deliver score changes to any leaderboard
+viewer. No write policies; only `compute_market_scores()` writes. Published on
+`supabase_realtime`.
 
 **Scoring** — `score_market_pick(type, pick, result, season_id, multiplier)`:
 

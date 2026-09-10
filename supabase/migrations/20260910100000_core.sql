@@ -7,7 +7,7 @@
 -- 2026-09-10-gridscore-design.md §3. Column-level detail lives in
 -- docs/data-model.md.
 --
--- Conventions (inherited from Winscore):
+-- Conventions:
 --   * every season-scoped view / policy / RPC resolves through
 --     active_season_id(), which reads the per-request `x-season` header and
 --     falls back to the single active season;

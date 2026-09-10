@@ -4,8 +4,8 @@
 -- profiles (one row per auth user), the signup trigger that creates it, the
 -- updated_at helper, the is_admin() resolver used by every later policy, and
 -- the guard that keeps `is_admin` / `plan` writable only by the service role.
--- Copied from Winscore's init migration with the `plan` column added for the
--- monetization hooks. Domain tables land in the next migration.
+-- `plan` exists from day one for the monetization hooks. Domain tables land
+-- in the next migration.
 -- ===========================================================================
 
 create extension if not exists "pgcrypto";
