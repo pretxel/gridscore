@@ -6,7 +6,7 @@ import { after } from "next/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { MarketLockCountdown } from "@/components/market-lock-countdown";
 import { SessionSchedule } from "@/components/session-schedule";
-import { isCurrentUserAdmin } from "@/lib/admin/current-user";
+import { SponsorSlot } from "@/components/sponsor-slot";
 import type { HitType } from "@/lib/db";
 import { listSeasonDrivers } from "@/lib/drivers";
 import { formatMultiplier } from "@/lib/format";
@@ -17,6 +17,7 @@ import type { MarketPick } from "@/lib/markets";
 import { getMyPickStates } from "@/lib/predictions";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
+import { getViewer } from "@/lib/viewer";
 import { MarketForm } from "./market-form";
 
 export async function generateMetadata({
@@ -53,13 +54,14 @@ export default async function GrandPrixPage({
   if (!found) notFound();
   const { season, grandPrix } = found;
 
-  const [markets, drivers, { data: auth }] = await Promise.all([
+  const [markets, drivers, { data: auth }, viewer] = await Promise.all([
     getMarketsForGrandPrix(grandPrix.id, supabase),
     listSeasonDrivers(season.id, supabase),
     supabase.auth.getUser(),
+    getViewer(),
   ]);
   const user = auth.user;
-  const isAdmin = user ? await isCurrentUserAdmin(supabase) : false;
+  const isAdmin = viewer.isAdmin;
   const picks = user
     ? await getMyPickStates(
         markets.map((m) => m.id),
@@ -160,6 +162,8 @@ export default async function GrandPrixPage({
         <section>
           <h2 className="font-heading text-xl font-semibold tracking-tight">{t("markets")}</h2>
           <p className="mt-1 mb-4 text-sm text-muted-foreground">{t("marketsLede")}</p>
+
+          <SponsorSlot placement="gp-detail" plan={viewer.plan} className="mb-4" />
           <div className="grid gap-4 md:grid-cols-2">
             {markets.map((m) => {
               const state = picks.get(m.id);

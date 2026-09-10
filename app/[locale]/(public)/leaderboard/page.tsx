@@ -3,12 +3,14 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LeaderboardLive } from "@/components/leaderboard-live";
 import { LeaderboardSegmentSwitcher } from "@/components/leaderboard-segment-switcher";
 import type { LeaderboardTableRow } from "@/components/leaderboard-table";
+import { SponsorSlot } from "@/components/sponsor-slot";
 import { listSeasonGrandsPrix } from "@/lib/grands-prix";
 import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates, localePath } from "@/lib/i18n";
 import { getGrandPrixBoard, getOverallBoard } from "@/lib/leaderboard";
 import { findOwnRow, parseGrandPrixParam } from "@/lib/leaderboard-segment";
 import { grandPrixPhase } from "@/lib/market-utils";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getViewer } from "@/lib/viewer";
 
 const TOP_N = 50;
 
@@ -42,9 +44,10 @@ export default async function LeaderboardPage({
   const tg = await getTranslations("gp");
 
   const supabase = await createServerSupabaseClient();
-  const [calendar, { data: auth }] = await Promise.all([
+  const [calendar, { data: auth }, viewer] = await Promise.all([
     listSeasonGrandsPrix(supabase),
     supabase.auth.getUser(),
+    getViewer(),
   ]);
   const user = auth.user;
   const now = Date.now();
@@ -127,6 +130,8 @@ export default async function LeaderboardPage({
           select: t("selectGrandPrix"),
         }}
       />
+
+      <SponsorSlot placement="leaderboard" plan={viewer.plan} className="mb-4" />
 
       {board.error ? (
         <div
