@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckIcon, ChevronDownIcon } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import * as React from "react";
 import { isLocale, LOCALE_LABELS, type Locale, SUPPORTED_LOCALES } from "@/lib/i18n";
@@ -13,6 +13,7 @@ function useChangeLocale() {
   const current = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [, startTransition] = React.useTransition();
 
   return React.useCallback(
@@ -22,15 +23,19 @@ function useChangeLocale() {
         return;
       }
       document.cookie = `NEXT_LOCALE=${next}; Max-Age=${COOKIE_MAX_AGE}; Path=/; SameSite=Lax`;
+      // Swap only the locale segment: the rest of the path and the query
+      // string carry the page's state (`?gp=monaco`, an admin outcome), and
+      // losing them would drop the reader somewhere else.
       const stripped = pathname.replace(/^\/[a-z]{2}(?=\/|$)/, "") || "/";
-      const target = `/${next}${stripped === "/" ? "" : stripped}`;
+      const query = searchParams.toString();
+      const target = `/${next}${stripped === "/" ? "" : stripped}${query ? `?${query}` : ""}`;
       startTransition(() => {
         router.replace(target);
         router.refresh();
         onAfter?.();
       });
     },
-    [current, pathname, router],
+    [current, pathname, router, searchParams],
   );
 }
 
