@@ -80,8 +80,12 @@ The season calendar, drivers and teams arrive through the calendar sync cron
   by `CRON_SECRET`, write a row to `operation_runs`, and can be paused per job through
   `operation_settings`. Trigger either by hand with
   `curl -H "Authorization: Bearer $CRON_SECRET" https://YOUR-DOMAIN/api/cron/sync-results?force=1`.
-- **Manual result entry, multiplier edits, scoring-rule edits and the operations control
-  room** arrive with the admin panel (phase 6).
+- **The admin panel** (`/admin`, `is_admin` only) covers the rest: session times and the
+  sprint flag per weekend, results entered by hand or confirmed from the sync's suggestion,
+  void and reopen, multipliers (a hand-set one is locked against the next sync), scoring
+  rules, the driver and team roster, league plans, and Run now plus the per-job kill switch.
+- **Rescoring is always explicit.** Editing a multiplier or a scoring rule changes future
+  results only; press "Rescore" on a Grand Prix to apply it to points already awarded.
 
 ---
 
@@ -153,7 +157,7 @@ app/
   [locale]/(app)/                authed routes (my picks, leagues, stats)
   [locale]/(app)/leagues/        league list, create/join forms, league page
   [locale]/leagues/join/[code]/  invite landing (outside the gate so ?next= survives sign-in)
-  [locale]/(admin)/admin/        admin control room
+  [locale]/(admin)/admin/        admin control room (grands-prix, drivers, scoring, leagues, operations)
   [locale]/onboarding/           forces a display name on first sign-in
   auth/callback/                 magic-link code exchange
   api/cron/                      calendar and results sync jobs
@@ -168,6 +172,7 @@ lib/
   markets.ts, market-utils.ts    market vocabulary, pick schemas, lock helpers
   leagues.ts, league-form.ts     league queries; name/code rules and error mapping
   plans.ts                       free/pro features, league member cap (mirrors SQL)
+  admin/                         admin queries, form parsing, action wrapper
   scoring.ts                     TypeScript replica of the SQL scoring function
   race-sync/                     provider interface, Jolpica client, sync jobs
   i18n.ts, env.ts                locale list, env loader

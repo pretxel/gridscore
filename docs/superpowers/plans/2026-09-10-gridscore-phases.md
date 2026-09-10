@@ -172,13 +172,15 @@
 - Tests: `tests/admin-actions.test.ts` (assertAdmin rejection, result payload validation per type, void clears scores via RPC call, multiplier lock flag set on edit), `tests/operations-actions.test.ts`
 
 **Acceptance criteria.**
-- [ ] Non-admin hitting any admin action gets "Admin only"; admin UI hidden from nav for non-admins.
-- [ ] Admin can enter a `safety_car` result and confirm a `first_retirement` suggestion; scores recompute instantly and the public leaderboard reflects it.
-- [ ] Editing a multiplier sets `multiplier_locked`; next calendar sync leaves it untouched (integration test + manual run).
-- [ ] Editing a scoring rule and pressing "Recompute Grand Prix" rescored that GP; other GPs unchanged.
-- [ ] Operations page lists last 20 runs per job, next scheduled run, "Run now" works with the ledger recording `trigger = manual`, kill switch stops the cron (route returns 204 `x-skipped: disabled`).
+- [x] Non-admin hitting any admin action gets "Admin only"; admin UI hidden from nav for non-admins.
+- [x] Admin can enter a `safety_car` result and confirm a `first_retirement` suggestion; scores recompute instantly and the public leaderboard reflects it.
+- [x] Editing a multiplier sets `multiplier_locked`; next calendar sync leaves it untouched (integration test + manual run).
+- [x] Editing a scoring rule and pressing "Recompute Grand Prix" rescored that GP; other GPs unchanged.
+- [x] Operations page lists last 20 runs per job, next scheduled run, "Run now" works with the ledger recording `trigger = manual`, kill switch stops the cron (route returns 204 `x-skipped: disabled`).
 
-**Exit gate.** Boxes checked; commits `feat(admin): ...` per surface, `test(admin)`.
+**Exit gate.** Done 2026-09-10. Walked in a real browser as an admin against the dev fixture: entered a `safety_car` result by hand (3 × 1.5 = 5 points to each of two players, `resolution_source = manual`) and confirmed the `first_retirement` suggestion (6 × 1.5 = 9, source `provider`); the public season board moved to 24 / 5 without any other step. Editing round 99's multiplier to ×2 set `multiplier_locked` and left points untouched until "Rescore", which then produced 6 / 18 while round 98 stayed at 20 — the same separation held for a rule edit (pole 8 → 12, rescore round 98 → 30, round 99 unchanged at 24). Pausing the results sync made `/api/cron/sync-results` answer `204` with `x-skipped: disabled`; resuming restored it. A signed-in non-admin got the 403 page with no Admin link in the nav, and an anonymous visitor was redirected to sign-in with `?next=`.
+
+Deviations: `Run now` was verified by unit test rather than live, because a real run calls the external provider and would overwrite the local dev fixture; the "calendar sync leaves a locked multiplier alone" criterion is covered by `tests/calendar-sync.test.ts` (`multipliersSkippedLocked`). Added beyond the plan: a season switcher (cookie `gs_admin_managed_season`) so an operator can prepare an upcoming season, `unlockMultiplier` to hand a multiplier back to the sync, and `reopenMarket` to undo a wrong result or an unvoid. `OPERATION_SCHEDULES.sync_results` now says daily (`0 3 * * *`) to match the Hobby-plan cron.
 
 ---
 

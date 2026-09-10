@@ -52,6 +52,7 @@ session cookie. It does not authorize: layouts and RLS do.
 | `app/[locale]/(public)` | none | landing, calendar, Grand Prix detail, leaderboard |
 | `app/[locale]/(auth)` | none | sign-in, sign-out |
 | `app/[locale]/(app)` | signed in + display name | my picks, leagues, stats |
+| `app/[locale]/(admin)/admin` | signed in + `is_admin` | control room: calendar, results, scoring rules, roster, leagues, operations |
 | `app/[locale]/leagues/join/[code]` | handles its own gate | invite landing; redirects to sign-in / onboarding with `?next=` back to itself |
 | `app/[locale]/(admin)` | `profiles.is_admin` | control room |
 | `app/[locale]/onboarding` | signed in | display name |
