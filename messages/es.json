@@ -104,15 +104,207 @@
       "leagues": "Ligas",
       "operations": "Operaciones"
     },
+    "forbiddenTitle": "403 — Solo administradores",
+    "forbiddenBody": "Esta página está restringida. Si deberías tener acceso, pide al propietario del sitio que te marque como admin.",
+    "goHome": "Ir al inicio",
     "dashboard": {
       "eyebrow": "Sala de control",
       "title": "Admin",
       "description": "Estado operativo y acceso rápido a cada área de administración.",
-      "comingSoon": "Las áreas de administración llegan fase a fase: Grandes Premios, resultados, reglas de puntuación, pilotos, ligas y operaciones."
+      "seasonLine": "Gestionando {season} ({status}).",
+      "noSeasonTitle": "Aún no hay temporada",
+      "noSeasonBody": "Carga una temporada y luego lanza la sincronización de calendario desde Operaciones.",
+      "nextWeekend": "Próximo fin de semana",
+      "seasonOver": "Temporada completa",
+      "openCalendar": "Abrir el calendario",
+      "needsAttention": "Requiere atención",
+      "awaitingResults": "{count, plural, =0 {Ningún fin de semana pendiente de resultados} one {# fin de semana pendiente de resultados} other {# fines de semana pendientes de resultados}}",
+      "pendingSuggestions": "{count, plural, =0 {Ninguna sugerencia por confirmar} one {# sugerencia por confirmar} other {# sugerencias por confirmar}}",
+      "enterResults": "Introducir resultados de {name}",
+      "jobsTitle": "Trabajos programados",
+      "jobsBody": "Última ejecución de cada sincronización.",
+      "pausedWarning": "Hay un trabajo en pausa: la programación no lo ejecutará hasta que lo reanudes.",
+      "shortcutsTitle": "Ir a"
     },
-    "forbiddenTitle": "403 — Solo admins",
-    "forbiddenBody": "Esta página está restringida. Si deberías tener acceso, pide al propietario del sitio que te marque como admin.",
-    "goHome": "Ir al inicio"
+    "result": {
+      "multiplierSaved": "Multiplicador guardado y bloqueado frente a la próxima sincronización.",
+      "multiplierUnlocked": "Multiplicador desbloqueado; vuelve a gestionarlo la sincronización.",
+      "recomputed": "Gran Premio recalculado.",
+      "seasonSwitched": "Ahora gestionas otra temporada.",
+      "grandPrixSaved": "Sesiones guardadas; horas de cierre actualizadas.",
+      "resultSaved": "Resultado guardado y puntos recalculados.",
+      "suggestionAccepted": "Sugerencia confirmada y puntos recalculados.",
+      "marketVoided": "Mercado anulado; se han retirado sus puntos.",
+      "marketReopened": "Mercado reabierto; se han retirado sus puntos.",
+      "ruleSaved": "Regla guardada. Recalcula un Gran Premio para aplicarla a resultados pasados.",
+      "driverSaved": "Piloto guardado.",
+      "driverActivated": "Piloto marcado como activo.",
+      "driverDeactivated": "Piloto marcado como inactivo.",
+      "teamSaved": "Equipo guardado.",
+      "leagueUpgraded": "Liga mejorada: se elimina el límite de miembros.",
+      "leagueDowngraded": "Liga de vuelta a gratuita: el límite de 10 miembros aplica a nuevas incorporaciones.",
+      "ranNow": "Trabajo terminado. Consulta la ejecución en el registro de abajo.",
+      "operationPaused": "Trabajo en pausa. La programación lo omitirá.",
+      "operationResumed": "Trabajo reanudado."
+    },
+    "error": {
+      "forbidden": "Solo administradores.",
+      "failed": "No se ha podido completar."
+    },
+    "grandsPrix": {
+      "title": "Grandes Premios",
+      "description": "Multiplicadores, sesiones y resultados, fin de semana a fin de semana.",
+      "seasonLabel": "Temporada",
+      "switchSeason": "Cambiar",
+      "notActiveSeason": "Estás gestionando {season}, que no es la temporada activa. Los visitantes siguen viendo la activa.",
+      "noSeason": "Todavía no existe ninguna temporada.",
+      "emptyTitle": "No hay fines de semana importados",
+      "emptyBody": "Lanza la sincronización de calendario para importar la temporada.",
+      "goToOperations": "Ir a Operaciones",
+      "calendarTitle": "Calendario",
+      "calendarBody": "{count, plural, one {# fin de semana} other {# fines de semana}}.",
+      "round": "Ronda {round}",
+      "marketsOpen": "{count} abiertos",
+      "marketsLocked": "{count} cerrados",
+      "marketsResolved": "{count} resueltos",
+      "marketsVoid": "{count} anulados",
+      "pendingSuggestions": "{count} por confirmar",
+      "recompute": "Recalcular",
+      "multiplier": "Multiplicador",
+      "multiplierReason": "Motivo",
+      "saveMultiplier": "Guardar",
+      "locked": "Bloqueado",
+      "unlock": "Desbloquear",
+      "syncOwned": "Lo fija la sincronización",
+      "reason": {
+        "normal": "Normal",
+        "sprint": "Fin de semana con sprint",
+        "legend": "Circuito legendario",
+        "finale": "Final de temporada",
+        "custom": "Personalizado"
+      }
+    },
+    "grandPrix": {
+      "description": "Multiplicador ×{multiplier}. {points} puntos repartidos en {rows} predicciones puntuadas.",
+      "sessionsTitle": "Sesiones",
+      "sessionsBody": "Al guardar se actualiza la hora de cierre de cada mercado aún abierto.",
+      "session": {
+        "fp1_at": "Libres 1",
+        "fp2_at": "Libres 2",
+        "fp3_at": "Libres 3",
+        "sprint_qualifying_at": "Clasificación sprint",
+        "sprint_at": "Sprint",
+        "qualifying_at": "Clasificación",
+        "race_at": "Carrera"
+      },
+      "status": "Estado",
+      "statusValue": {
+        "scheduled": "Programado",
+        "in_progress": "En curso",
+        "completed": "Completado",
+        "cancelled": "Cancelado"
+      },
+      "hasSprint": "Fin de semana con sprint",
+      "timesAreUtc": "Las horas son UTC.",
+      "saveSessions": "Guardar sesiones",
+      "marketsTitle": "Mercados",
+      "marketsBody": "Introducir un resultado resuelve el mercado y lo recalcula al instante."
+    },
+    "markets": {
+      "acceptSuggestion": "Confirmar sugerencia",
+      "reopen": "Reabrir",
+      "void": "Anular",
+      "voidedBody": "Este mercado está anulado: sin puntos y sin resultado.",
+      "outcome": "Resultado",
+      "driver": "Piloto",
+      "choose": "Elige…",
+      "p1": "P1",
+      "p2": "P2",
+      "p3": "P3",
+      "saveResult": "Guardar resultado",
+      "prefilledFromSuggestion": "Rellenado por la sincronización",
+      "source": {
+        "provider": "De la sincronización",
+        "manual": "Introducido a mano"
+      }
+    },
+    "scoring": {
+      "title": "Reglas de puntuación",
+      "description": "Puntos por mercado en {season}.",
+      "rescoreHint": "Editar una regla solo afecta a resultados futuros. Recalcula un Gran Premio desde su página para aplicarla a puntos ya repartidos.",
+      "tableTitle": "Puntos",
+      "tableBody": "Se guarda fila a fila.",
+      "save": "Guardar",
+      "rule": {
+        "exact": "Acierto exacto",
+        "exact_position": "Piloto en la posición exacta",
+        "in_podium": "Piloto en el podio, otra posición",
+        "all_exact_bonus": "Los tres exactos (bonus)"
+      }
+    },
+    "drivers": {
+      "title": "Pilotos y equipos",
+      "description": "Plantilla de {season}. Los nombres vienen del proveedor de datos.",
+      "emptyTitle": "Aún no hay plantilla",
+      "emptyBody": "Lanza la sincronización de calendario para importar equipos y pilotos.",
+      "teamsTitle": "Equipos",
+      "teamsBody": "El nombre corto y el color definen las etiquetas de piloto.",
+      "driversTitle": "Pilotos",
+      "driversBody": "Los pilotos inactivos siguen en resultados pasados pero desaparecen de las nuevas predicciones.",
+      "shortName": "Nombre corto",
+      "color": "Color",
+      "code": "Código",
+      "number": "Número",
+      "team": "Equipo",
+      "noTeam": "Sin equipo",
+      "inactive": "Inactivo",
+      "activate": "Marcar activo",
+      "deactivate": "Marcar inactivo",
+      "save": "Guardar"
+    },
+    "leagues": {
+      "title": "Ligas",
+      "description": "Ligas privadas en {season}.",
+      "emptyTitle": "Aún no hay ligas",
+      "emptyBody": "Las ligas aparecen aquí según las crean los jugadores.",
+      "tableTitle": "Todas las ligas",
+      "tableBody": "{count, plural, one {# liga} other {# ligas}}.",
+      "owner": "Propietario",
+      "noName": "Anónimo",
+      "membersOfCap": "{count} / {cap} miembros",
+      "membersUnlimited": "{count, plural, one {# miembro} other {# miembros}}",
+      "full": "completa",
+      "planFree": "Gratuita",
+      "planPro": "Liga Pro",
+      "upgrade": "Mejorar",
+      "downgrade": "Bajar a gratuita"
+    },
+    "operations": {
+      "title": "Operaciones",
+      "description": "Sincronizaciones programadas, su historial y el interruptor de parada.",
+      "kind": {
+        "sync_calendar": "Sincronización de calendario",
+        "sync_results": "Sincronización de resultados"
+      },
+      "cadence": "Programación: {cron} (UTC).",
+      "runNow": "Ejecutar ahora",
+      "running": "Ejecutando…",
+      "pause": "Pausar",
+      "resume": "Reanudar",
+      "enabled": "Programado",
+      "paused": "En pausa",
+      "nextRun": "próxima ejecución",
+      "noRuns": "Todavía no hay ejecuciones registradas.",
+      "trigger": {
+        "cron": "programada",
+        "manual": "manual"
+      },
+      "status": {
+        "success": "Correcto",
+        "partial": "Parcial",
+        "error": "Error"
+      }
+    }
   },
   "error": {
     "eyebrow": "Bandera roja",

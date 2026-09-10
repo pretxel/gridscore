@@ -104,15 +104,207 @@
       "leagues": "Leagues",
       "operations": "Operations"
     },
+    "forbiddenTitle": "403 — Admin only",
+    "forbiddenBody": "This page is restricted. If you should have access, ask the site owner to mark you as admin.",
+    "goHome": "Go home",
     "dashboard": {
       "eyebrow": "Control room",
       "title": "Admin",
       "description": "Operational status and quick access to every admin area.",
-      "comingSoon": "Admin surfaces arrive phase by phase: Grands Prix, results, scoring rules, drivers, leagues and operations."
+      "seasonLine": "Managing {season} ({status}).",
+      "noSeasonTitle": "No season yet",
+      "noSeasonBody": "Seed a season, then run the calendar sync from Operations.",
+      "nextWeekend": "Next weekend",
+      "seasonOver": "Season complete",
+      "openCalendar": "Open the calendar",
+      "needsAttention": "Needs attention",
+      "awaitingResults": "{count, plural, =0 {No weekend awaiting results} one {# weekend awaiting results} other {# weekends awaiting results}}",
+      "pendingSuggestions": "{count, plural, =0 {No suggestions to confirm} one {# suggestion to confirm} other {# suggestions to confirm}}",
+      "enterResults": "Enter results for {name}",
+      "jobsTitle": "Scheduled jobs",
+      "jobsBody": "Last run of each sync.",
+      "pausedWarning": "A job is paused: the schedule will not run it until you resume it.",
+      "shortcutsTitle": "Go to"
     },
-    "forbiddenTitle": "403 — Admin only",
-    "forbiddenBody": "This page is restricted. If you should have access, ask the site owner to mark you as admin.",
-    "goHome": "Go home"
+    "result": {
+      "multiplierSaved": "Multiplier saved and locked against the next sync.",
+      "multiplierUnlocked": "Multiplier unlocked; the calendar sync owns it again.",
+      "recomputed": "Grand Prix rescored.",
+      "seasonSwitched": "Now managing another season.",
+      "grandPrixSaved": "Sessions saved; lock times refreshed.",
+      "resultSaved": "Result saved and scores recomputed.",
+      "suggestionAccepted": "Suggestion confirmed and scores recomputed.",
+      "marketVoided": "Market voided; its points were removed.",
+      "marketReopened": "Market reopened; its points were removed.",
+      "ruleSaved": "Scoring rule saved. Rescore a Grand Prix to apply it to past results.",
+      "driverSaved": "Driver saved.",
+      "driverActivated": "Driver marked active.",
+      "driverDeactivated": "Driver marked inactive.",
+      "teamSaved": "Team saved.",
+      "leagueUpgraded": "League upgraded: the member cap is lifted.",
+      "leagueDowngraded": "League set back to free: the 10-member cap applies to new joins.",
+      "ranNow": "Job finished. See the run in the ledger below.",
+      "operationPaused": "Job paused. The schedule will skip it.",
+      "operationResumed": "Job resumed."
+    },
+    "error": {
+      "forbidden": "Admin only.",
+      "failed": "That did not go through."
+    },
+    "grandsPrix": {
+      "title": "Grands Prix",
+      "description": "Multipliers, sessions and results, weekend by weekend.",
+      "seasonLabel": "Season",
+      "switchSeason": "Switch",
+      "notActiveSeason": "You are managing {season}, which is not the active season. Visitors still see the active one.",
+      "noSeason": "No season exists yet.",
+      "emptyTitle": "No weekends imported",
+      "emptyBody": "Run the calendar sync to import the season.",
+      "goToOperations": "Go to Operations",
+      "calendarTitle": "Calendar",
+      "calendarBody": "{count, plural, one {# weekend} other {# weekends}}.",
+      "round": "Round {round}",
+      "marketsOpen": "{count} open",
+      "marketsLocked": "{count} locked",
+      "marketsResolved": "{count} resolved",
+      "marketsVoid": "{count} void",
+      "pendingSuggestions": "{count} to confirm",
+      "recompute": "Rescore",
+      "multiplier": "Multiplier",
+      "multiplierReason": "Reason",
+      "saveMultiplier": "Save",
+      "locked": "Locked",
+      "unlock": "Unlock",
+      "syncOwned": "Set by sync",
+      "reason": {
+        "normal": "Normal",
+        "sprint": "Sprint weekend",
+        "legend": "Legend circuit",
+        "finale": "Season finale",
+        "custom": "Custom"
+      }
+    },
+    "grandPrix": {
+      "description": "Multiplier ×{multiplier}. {points} points awarded across {rows} scored calls.",
+      "sessionsTitle": "Sessions",
+      "sessionsBody": "Saving refreshes the lock time of every market still open.",
+      "session": {
+        "fp1_at": "Practice 1",
+        "fp2_at": "Practice 2",
+        "fp3_at": "Practice 3",
+        "sprint_qualifying_at": "Sprint qualifying",
+        "sprint_at": "Sprint",
+        "qualifying_at": "Qualifying",
+        "race_at": "Race"
+      },
+      "status": "Status",
+      "statusValue": {
+        "scheduled": "Scheduled",
+        "in_progress": "In progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "hasSprint": "Sprint weekend",
+      "timesAreUtc": "Times are UTC.",
+      "saveSessions": "Save sessions",
+      "marketsTitle": "Markets",
+      "marketsBody": "Entering a result resolves the market and rescores it immediately."
+    },
+    "markets": {
+      "acceptSuggestion": "Confirm suggestion",
+      "reopen": "Reopen",
+      "void": "Void",
+      "voidedBody": "This market is void: no points, no result.",
+      "outcome": "Outcome",
+      "driver": "Driver",
+      "choose": "Choose…",
+      "p1": "P1",
+      "p2": "P2",
+      "p3": "P3",
+      "saveResult": "Save result",
+      "prefilledFromSuggestion": "Pre-filled from the sync",
+      "source": {
+        "provider": "From the sync",
+        "manual": "Entered by hand"
+      }
+    },
+    "scoring": {
+      "title": "Scoring rules",
+      "description": "Points per market for {season}.",
+      "rescoreHint": "Editing a rule changes future results only. Rescore a Grand Prix from its page to apply it to points already awarded.",
+      "tableTitle": "Points",
+      "tableBody": "Saved per row.",
+      "save": "Save",
+      "rule": {
+        "exact": "Exact call",
+        "exact_position": "Driver in the exact position",
+        "in_podium": "Driver on the podium, wrong spot",
+        "all_exact_bonus": "All three exact (bonus)"
+      }
+    },
+    "drivers": {
+      "title": "Drivers and teams",
+      "description": "Roster for {season}. Names come from the data provider.",
+      "emptyTitle": "No roster yet",
+      "emptyBody": "Run the calendar sync to import teams and drivers.",
+      "teamsTitle": "Teams",
+      "teamsBody": "Short name and colour drive the driver badges.",
+      "driversTitle": "Drivers",
+      "driversBody": "Inactive drivers stay on historic results but drop out of new picks.",
+      "shortName": "Short name",
+      "color": "Colour",
+      "code": "Code",
+      "number": "Number",
+      "team": "Team",
+      "noTeam": "No team",
+      "inactive": "Inactive",
+      "activate": "Mark active",
+      "deactivate": "Mark inactive",
+      "save": "Save"
+    },
+    "leagues": {
+      "title": "Leagues",
+      "description": "Private leagues in {season}.",
+      "emptyTitle": "No leagues yet",
+      "emptyBody": "Leagues appear here as players create them.",
+      "tableTitle": "All leagues",
+      "tableBody": "{count, plural, one {# league} other {# leagues}}.",
+      "owner": "Owner",
+      "noName": "Anonymous",
+      "membersOfCap": "{count} / {cap} members",
+      "membersUnlimited": "{count, plural, one {# member} other {# members}}",
+      "full": "full",
+      "planFree": "Free",
+      "planPro": "League Pro",
+      "upgrade": "Upgrade",
+      "downgrade": "Downgrade"
+    },
+    "operations": {
+      "title": "Operations",
+      "description": "Scheduled syncs, their history and the kill switch.",
+      "kind": {
+        "sync_calendar": "Calendar sync",
+        "sync_results": "Results sync"
+      },
+      "cadence": "Schedule: {cron} (UTC).",
+      "runNow": "Run now",
+      "running": "Running…",
+      "pause": "Pause",
+      "resume": "Resume",
+      "enabled": "Scheduled",
+      "paused": "Paused",
+      "nextRun": "next run",
+      "noRuns": "No runs recorded yet.",
+      "trigger": {
+        "cron": "scheduled",
+        "manual": "manual"
+      },
+      "status": {
+        "success": "Success",
+        "partial": "Partial",
+        "error": "Error"
+      }
+    }
   },
   "error": {
     "eyebrow": "Red flag",
