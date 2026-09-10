@@ -5,8 +5,11 @@
 -- only inserted when missing, so admin edits survive a re-run).
 -- ===========================================================================
 
+-- `name` is rendered inside translated sentences ("Points per market in
+-- {season}"), so it stays a bare year: any wording here would be English in
+-- the Spanish UI and vice versa.
 insert into public.seasons (year, slug, name, status, providers)
-values (2026, '2026', '2026 season', 'active', '{"jolpica": {"season": "2026"}}'::jsonb)
+values (2026, '2026', '2026', 'active', '{"jolpica": {"season": "2026"}}'::jsonb)
 on conflict (year) do nothing;
 
 insert into public.scoring_rules (season_id, market_type, rule_key, points)

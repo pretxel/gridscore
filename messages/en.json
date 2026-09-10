@@ -331,7 +331,7 @@
     "empty": "The calendar has not been imported yet. Check back soon.",
     "roundLabel": "Round {round}",
     "sprintBadge": "Sprint",
-    "multiplierBadge": "x{value}",
+    "multiplierBadge": "×{value}",
     "multiplierReason": {
       "normal": "Standard weekend",
       "sprint": "Sprint weekend",
