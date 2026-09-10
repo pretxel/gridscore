@@ -24,6 +24,9 @@ export default async function LocaleNotFound() {
         <Link href={localePath(locale, "/")} className={buttonVariants()}>
           {t("backHome")}
         </Link>
+        <Link href={localePath(locale, "/gp")} className={buttonVariants({ variant: "outline" })}>
+          {t("browseCalendar")}
+        </Link>
       </div>
     </main>
   );
