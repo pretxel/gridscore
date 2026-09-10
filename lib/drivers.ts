@@ -1,10 +1,15 @@
 import "server-only";
 import type { DriverOption } from "@/lib/driver-format";
+import type { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import type { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export type { DriverOption } from "@/lib/driver-format";
 
-type Client = Awaited<ReturnType<typeof createServerSupabaseClient>>;
+// The admin panel reads the roster under the service role; every public
+// caller uses the request-scoped client. Both expose the same query surface.
+type Client =
+  | Awaited<ReturnType<typeof createServerSupabaseClient>>
+  | ReturnType<typeof createAdminSupabaseClient>;
 
 // Every driver of the season (inactive ones included so historic picks and
 // results still resolve to a name), sorted by team then family name.
