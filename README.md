@@ -135,6 +135,36 @@ write late.
 
 ---
 
+## Monetization hooks (no payments)
+
+Nothing here charges anyone. The plan columns and the gates exist so a payment
+provider can be added later without touching product code.
+
+- **Where a plan lives.** `profiles.plan` and `leagues.plan`, both `free | pro`
+  and both writable only by the service role (a guard trigger rejects a user
+  JWT). Today an operator flips them: league plans from the admin panel, a
+  profile plan with one SQL update.
+- **What Pro unlocks** is listed once, in `PLAN_FEATURES` in `lib/plans.ts`:
+  `premiumStats`, `sponsorFree` and an unlimited league member cap (free stops
+  at 10). Every other file asks `hasFeature()`, `isPro()` or
+  `leagueMemberCap()`; a test fails the build if any file compares a plan
+  against `"pro"` directly.
+- **Premium stats.** `/stats` shows accuracy per market, streaks, best weekend
+  and the gap to the field average. Free readers get the same page with the
+  numbers blurred and an upgrade note. The SQL functions behind it are scoped
+  to the active season and refuse to return another user's rows.
+- **Sponsor slots.** `<SponsorSlot placement="header" | "gp-detail" |
+  "leaderboard" />` renders a bordered placeholder for free readers and
+  nothing at all for Pro. Inventory is a static map in `lib/sponsor.ts`; only
+  absolute `https` links are rendered.
+
+**Adding a payment provider** means one new thing: a webhook route that
+verifies the event and writes `plan = 'pro'` on the profile or league it names,
+using the service-role client. No gate has to move, because every gate already
+reads the column.
+
+---
+
 ## Trademark note
 
 The product never uses the championship's name, the governing body's name or official

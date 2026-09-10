@@ -215,12 +215,14 @@ Deviations and additions: `lib/format.ts` now owns points, multipliers and sessi
 - Tests: `tests/stats.test.ts` (pure aggregation helpers), `tests/plans.test.ts` extended, `tests/sponsor-slot.test.ts` (renders placeholder only for free)
 
 **Acceptance criteria.**
-- [ ] `/stats` shows the locked preview for `free` and full stats for `pro` (flipped via SQL); numbers match a hand-computed fixture.
-- [ ] Sponsor slots render for free viewers in header, GP detail and leaderboard, and are absent for pro.
-- [ ] `PLAN_FEATURES` is the single place listing gated features; no other file compares `plan === "pro"` directly (grep in a test).
-- [ ] README "Monetization" section documents the hooks and how a payment provider would flip `plan`.
+- [x] `/stats` shows the locked preview for `free` and full stats for `pro` (flipped via SQL); numbers match a hand-computed fixture.
+- [x] Sponsor slots render for free viewers in header, GP detail and leaderboard, and are absent for pro.
+- [x] `PLAN_FEATURES` is the single place listing gated features; no other file compares `plan === "pro"` directly (grep in a test).
+- [x] README "Monetization" section documents the hooks and how a payment provider would flip `plan`.
 
-**Exit gate.** Boxes checked; commits `feat(plans)`, `feat(stats)`, `feat(sponsor)`.
+**Exit gate.** Done 2026-09-10. Verified in a real browser against the dev fixture with one reader flipped between plans by SQL. On `free`, `/stats` showed the blurred preview, the upgrade note and the reader's real total (22 = 10 + 12), and sponsor slots rendered in the header, on the leaderboard and on a Grand Prix page. On `pro`, the page showed 50% accuracy (2 hits of 4 calls), 22 points over 2 weekends, a streak of 2, a delta of 0 against a field average of 22, pole at 2/2 and safety car at 0/2, best weekend "Dev Grand Prix Two · 12", and "not enough calls yet" for the strongest market because pole sits below the three-call minimum — every number matching the seeded rows. No sponsor slot rendered anywhere for `pro`.
+
+Deviations and additions: the plan gate became `hasFeature()` over a `PLAN_FEATURES` table rather than scattered `isPro` checks, and `tests/plans.test.ts` now fails the build if any file outside `lib/plans.ts` compares a plan against a literal — six call sites were rewritten to obey it. `lib/viewer.ts` resolves the reader once per request (plan, admin flag, display name) and the nav, the pages and the slots share it, replacing the nav's own profile query. The sponsor gate lives in `lib/sponsor.ts` as `shouldRenderSponsor` so it is unit-testable without rendering a server component. Migration `20260910120000_user_stats.sql` adds three season-scoped read functions plus `can_read_user_stats`, covered by `supabase/tests/stats.sql`; the plan gate stays in the app because who may pay is a product decision, while who may read whose rows is the database's.
 
 ---
 

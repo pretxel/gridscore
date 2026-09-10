@@ -196,6 +196,16 @@ cascades memberships.
 RLS: members (and admins) read their leagues and co-members; owner updates
 and deletes. No insert policies.
 
+### Statistics functions (migration `20260910120000`)
+
+Read-only, season-scoped by `active_season_id()`, and gated by
+`can_read_user_stats(user)` — the caller must be that user or an admin.
+`user_market_stats(user)` returns scored/hits/points per market type,
+`user_weekend_points(user)` one row per Grand Prix ordered by round, and
+`season_average_points()` the field's mean total from the leaderboard view.
+The plan gate is not here: the database decides who may read whose rows, the
+app (`lib/plans.ts`) decides what a plan unlocks.
+
 ### `operation_runs`, `operation_settings` (§10)
 
 Cron ledger and per-job kill switch for `sync_calendar` and `sync_results`.
