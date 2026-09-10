@@ -56,6 +56,9 @@ begin
   -- 5. Plan is service-role only; on pro the cap lifts.
   perform pg_temp.login(own);
   perform pg_temp.check(pg_temp.raises(format($q$update public.leagues set plan = 'pro' where id = %L$q$, lg)), 'owner cannot self-upgrade plan');
+  perform pg_temp.check(pg_temp.raises(format($q$update public.profiles set plan = 'pro' where id = %L$q$, own)), 'user cannot self-upgrade profile plan');
+  update public.profiles set timezone = 'Europe/Madrid' where id = own;
+  perform pg_temp.check((select timezone from public.profiles where id = own) = 'Europe/Madrid', 'user still edits other profile columns');
   perform pg_temp.logout();
   update public.leagues set plan = 'pro' where id = lg;
   perform pg_temp.login(late_id);
