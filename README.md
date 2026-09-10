@@ -74,9 +74,12 @@ The season calendar, drivers and teams arrive through the calendar sync cron
 
 ## Day-to-day operations
 
-- **Calendar sync** runs daily and **results sync** hourly (`vercel.json`); both are
-  bearer-gated by `CRON_SECRET`, write a row to `operation_runs`, and can be paused per job
-  through `operation_settings`.
+- **Calendar sync** and **results sync** run daily (`vercel.json`; the Vercel Hobby plan
+  allows one run per day per cron, so results sync at 03:00 UTC picks up the previous
+  weekend — on a Pro plan set it to `0 * * * *` for hourly scoring). Both are bearer-gated
+  by `CRON_SECRET`, write a row to `operation_runs`, and can be paused per job through
+  `operation_settings`. Trigger either by hand with
+  `curl -H "Authorization: Bearer $CRON_SECRET" https://YOUR-DOMAIN/api/cron/sync-results?force=1`.
 - **Manual result entry, multiplier edits, scoring-rule edits and the operations control
   room** arrive with the admin panel (phase 6).
 
