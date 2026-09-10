@@ -9,7 +9,7 @@ import { LocalTime } from "@/components/local-time";
 import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
 import { findOwnRow } from "@/lib/leaderboard-segment";
 import { getLeague, getLeagueBoard } from "@/lib/leagues";
-import { leagueMemberCap } from "@/lib/plans";
+import { isPro, leagueMemberCap } from "@/lib/plans";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { LeagueControls, RemoveMemberButton } from "./league-controls";
 
@@ -87,7 +87,7 @@ export default async function LeaguePage({
         <div className="min-w-0">
           <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
             {t("eyebrow")} · {isOwner ? t("roleOwner") : t("roleMember")}
-            {league.plan === "pro" ? ` · ${t("planPro")}` : ""}
+            {isPro(league.plan) ? ` · ${t("planPro")}` : ""}
           </p>
           <h1
             className="mt-1 truncate font-heading text-4xl font-semibold tracking-tight sm:text-5xl"

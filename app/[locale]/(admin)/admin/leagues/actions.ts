@@ -3,6 +3,7 @@
 import { localeFromForm, planSchema, trimmed, uuidSchema } from "@/lib/admin/parse";
 import { runAdminAction } from "@/lib/admin/run-action";
 import { localePath } from "@/lib/i18n";
+import { isPro } from "@/lib/plans";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 
 // `leagues.plan` is service-role only (trg_leagues_guard_plan), so this is the
@@ -20,7 +21,7 @@ export async function setLeaguePlan(form: FormData): Promise<never> {
       const admin = createAdminSupabaseClient();
       const { error } = await admin.from("leagues").update({ plan }).eq("id", id);
       if (error) throw new Error(error.message);
-      return plan === "pro" ? "leagueUpgraded" : "leagueDowngraded";
+      return isPro(plan) ? "leagueUpgraded" : "leagueDowngraded";
     },
   );
 }

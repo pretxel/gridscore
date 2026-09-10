@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
 import { listMyLeagues } from "@/lib/leagues";
-import { leagueMemberCap } from "@/lib/plans";
+import { isPro, leagueMemberCap } from "@/lib/plans";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { LeagueForms } from "./league-forms";
 
@@ -74,7 +74,7 @@ export default async function LeaguesPage({ params }: { params: Promise<{ locale
                     {cap === null
                       ? t("membersUnlimited", { count: league.member_count })
                       : t("membersOfCap", { count: league.member_count, cap })}
-                    {league.plan === "pro" ? ` · ${t("planPro")}` : ""}
+                    {isPro(league.plan) ? ` · ${t("planPro")}` : ""}
                   </p>
                   <p className="mt-1 font-mono text-xs tracking-[0.14em] text-muted-foreground">
                     {league.join_code}

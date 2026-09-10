@@ -8,7 +8,7 @@ import { LocalTime } from "@/components/local-time";
 import { getManagedSeason } from "@/lib/admin/managed-season";
 import { listLeagues } from "@/lib/admin/queries";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n";
-import { leagueMemberCap } from "@/lib/plans";
+import { isPro, leagueMemberCap } from "@/lib/plans";
 import { setLeaguePlan } from "./actions";
 
 export default async function AdminLeaguesPage({
@@ -81,13 +81,13 @@ export default async function AdminLeaguesPage({
                       <input
                         type="hidden"
                         name="plan"
-                        value={league.plan === "pro" ? "free" : "pro"}
+                        value={isPro(league.plan) ? "free" : "pro"}
                       />
                       <span className="rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
-                        {league.plan === "pro" ? t("leagues.planPro") : t("leagues.planFree")}
+                        {isPro(league.plan) ? t("leagues.planPro") : t("leagues.planFree")}
                       </span>
                       <SubmitButton size="sm" variant="outline">
-                        {league.plan === "pro" ? t("leagues.downgrade") : t("leagues.upgrade")}
+                        {isPro(league.plan) ? t("leagues.downgrade") : t("leagues.upgrade")}
                       </SubmitButton>
                     </form>
                   </li>
