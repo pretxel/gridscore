@@ -29,7 +29,8 @@
     "leaderboard": "Leaderboard",
     "myPicks": "My picks",
     "leagues": "Leagues",
-    "admin": "Admin"
+    "admin": "Admin",
+    "stats": "Stats"
   },
   "profileMenu": {
     "openMenu": "Open account menu",
@@ -583,5 +584,54 @@
     "invalidTitle": "Invite not found",
     "invalidBody": "That link or code does not match any league. Check it with whoever sent it.",
     "backToLeagues": "Go to my leagues"
+  },
+  "sponsor": {
+    "label": "Sponsor",
+    "available": "Ad space",
+    "placeholder": "This space is available. Go Pro to hide it."
+  },
+  "upgrade": {
+    "eyebrow": "gridscore Pro",
+    "reason": {
+      "premiumStats": "Season statistics are part of Pro.",
+      "sponsorFree": "Pro hides every ad slot.",
+      "leagues": "Pro leagues have no member limit."
+    },
+    "benefitStats": "Accuracy per market, streaks and where you sit against the field.",
+    "benefitSponsorFree": "No ad slots anywhere in the app.",
+    "benefitLeagues": "Leagues without the 10-member limit.",
+    "howTo": "There is no checkout yet. Ask the site owner and they will switch your account over."
+  },
+  "stats": {
+    "title": "Statistics",
+    "description": "Accuracy per market, streaks and how you compare with the field.",
+    "eyebrow": "Your season",
+    "headline": "Statistics",
+    "lede": "Every scored call of the season, broken down.",
+    "empty": "Nothing scored yet. Your numbers appear once results land.",
+    "lockedBadge": "Pro",
+    "lockedTotal": "You have {points} points this season. The breakdown is part of Pro.",
+    "metric": {
+      "accuracy": "Accuracy",
+      "points": "Points",
+      "streak": "Streak",
+      "vsField": "vs field"
+    },
+    "hint": {
+      "accuracy": "{hits} of {scored} calls",
+      "points": "{count, plural, =0 {No weekends scored} one {# weekend scored} other {# weekends scored}}",
+      "streak": "Best: {best}",
+      "vsField": "Average: {average}"
+    },
+    "byMarketTitle": "By market",
+    "colMarket": "Market",
+    "colScored": "Scored",
+    "colHits": "Hits",
+    "colAccuracy": "Accuracy",
+    "colPoints": "Points",
+    "highlightsTitle": "Highlights",
+    "bestWeekend": "Best weekend",
+    "strongestMarket": "Strongest market",
+    "notEnoughData": "Not enough calls yet"
   }
 }

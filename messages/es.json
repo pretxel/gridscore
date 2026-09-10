@@ -29,7 +29,8 @@
     "leaderboard": "Clasificación",
     "myPicks": "Mis predicciones",
     "leagues": "Ligas",
-    "admin": "Admin"
+    "admin": "Admin",
+    "stats": "Estadísticas"
   },
   "profileMenu": {
     "openMenu": "Abrir menú de cuenta",
@@ -583,5 +584,54 @@
     "invalidTitle": "Invitación no encontrada",
     "invalidBody": "Ese enlace o código no corresponde a ninguna liga. Compruébalo con quien te lo envió.",
     "backToLeagues": "Ir a mis ligas"
+  },
+  "sponsor": {
+    "label": "Patrocinador",
+    "available": "Espacio",
+    "placeholder": "Este espacio está disponible. Hazte Pro para ocultarlo."
+  },
+  "upgrade": {
+    "eyebrow": "gridscore Pro",
+    "reason": {
+      "premiumStats": "Las estadísticas de temporada forman parte de Pro.",
+      "sponsorFree": "Pro oculta todos los espacios publicitarios.",
+      "leagues": "Las ligas Pro no tienen límite de miembros."
+    },
+    "benefitStats": "Acierto por mercado, rachas y tu posición frente al resto.",
+    "benefitSponsorFree": "Sin espacios publicitarios en toda la aplicación.",
+    "benefitLeagues": "Ligas sin el límite de 10 miembros.",
+    "howTo": "Todavía no hay pasarela de pago. Pídeselo al propietario del sitio y cambiará tu cuenta."
+  },
+  "stats": {
+    "title": "Estadísticas",
+    "description": "Acierto por mercado, rachas y tu comparación con el resto.",
+    "eyebrow": "Tu temporada",
+    "headline": "Estadísticas",
+    "lede": "Todas tus predicciones puntuadas de la temporada, desglosadas.",
+    "empty": "Aún no hay nada puntuado. Tus números aparecen cuando lleguen resultados.",
+    "lockedBadge": "Pro",
+    "lockedTotal": "Llevas {points} puntos esta temporada. El desglose forma parte de Pro.",
+    "metric": {
+      "accuracy": "Acierto",
+      "points": "Puntos",
+      "streak": "Racha",
+      "vsField": "vs resto"
+    },
+    "hint": {
+      "accuracy": "{hits} de {scored} predicciones",
+      "points": "{count, plural, =0 {Ningún fin de semana puntuado} one {# fin de semana puntuado} other {# fines de semana puntuados}}",
+      "streak": "Mejor: {best}",
+      "vsField": "Media: {average}"
+    },
+    "byMarketTitle": "Por mercado",
+    "colMarket": "Mercado",
+    "colScored": "Puntuadas",
+    "colHits": "Aciertos",
+    "colAccuracy": "Acierto",
+    "colPoints": "Puntos",
+    "highlightsTitle": "Destacados",
+    "bestWeekend": "Mejor fin de semana",
+    "strongestMarket": "Mercado más fuerte",
+    "notEnoughData": "Aún faltan predicciones"
   }
 }
