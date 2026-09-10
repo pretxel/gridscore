@@ -49,7 +49,7 @@ begin
     has_sprint, multiplier, multiplier_reason,
     fp1_at, sprint_qualifying_at, sprint_at, qualifying_at, race_at, status
   ) values (
-    v_season, 1, 'dev-circuit-one', 'Dev Grand Prix One', 'dev_one', 'Dev Circuit One', 'Nowhere', 'Devtown',
+    v_season, 98, 'dev-circuit-one', 'Dev Grand Prix One', 'dev_one', 'Dev Circuit One', 'Nowhere', 'Devtown',
     true, 1.25, 'sprint',
     now() - interval '9 days', now() - interval '8 days 20 hours', now() - interval '8 days',
     now() - interval '7 days 20 hours', now() - interval '7 days', 'completed'
@@ -61,7 +61,7 @@ begin
     has_sprint, multiplier, multiplier_reason,
     fp1_at, fp2_at, fp3_at, qualifying_at, race_at
   ) values (
-    v_season, 2, 'dev-circuit-two', 'Dev Grand Prix Two', 'dev_two', 'Dev Circuit Two', 'Somewhere', 'Devville',
+    v_season, 99, 'dev-circuit-two', 'Dev Grand Prix Two', 'dev_two', 'Dev Circuit Two', 'Somewhere', 'Devville',
     false, 1.50, 'legend',
     now() + interval '5 days', now() + interval '5 days 4 hours', now() + interval '6 days',
     now() + interval '6 days 4 hours', now() + interval '7 days'

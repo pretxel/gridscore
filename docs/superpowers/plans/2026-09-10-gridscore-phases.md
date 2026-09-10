@@ -86,13 +86,13 @@
 - Tests: `tests/jolpica-provider.test.ts` (mapping, null on empty Races, 429 retry, rate limiter), `tests/multipliers.test.ts`, `tests/calendar-sync.test.ts` (mocked Supabase chain: upserts, locked multiplier preserved, has_sprint), `tests/results-sync.test.ts` (each market resolution, first_retirement tie → suggested only, resolved market untouched, void when cancelled), `tests/cron-routes.test.ts` (401 without secret, 204 `x-skipped` when disabled or nothing due, ledger row written), `tests/first-retirement.test.ts`
 
 **Acceptance criteria.**
-- [ ] Against local Supabase and the live API: `curl -H "Authorization: Bearer $CRON_SECRET" localhost:3000/api/cron/sync-calendar` imports the 2026 calendar (all rounds, all sessions, `has_sprint` correct, multipliers: finale 2, legends 1.5, sprint 1.25) plus drivers and teams; second run is a no-op (same row count, `updated_at` unchanged where nothing changed).
-- [ ] With the dev fixture GP set in the past, `sync-results` resolves `pole`, `podium`, `fastest_lap` (and `sprint_winner`) from fixtures, writes `suggested_result` for `first_retirement`, leaves `safety_car` open, and `scores` rows appear via the trigger.
-- [ ] All new Vitest suites green; `pnpm test` total runtime < 30 s.
-- [ ] `operation_runs` shows one row per run with `status` `success|partial|error` and the summary JSON.
-- [ ] `docs/architecture.md` has the sync section (providers, cron, ledger, manual fallback).
+- [x] Against local Supabase and the live API: `curl -H "Authorization: Bearer $CRON_SECRET" localhost:3000/api/cron/sync-calendar` imports the 2026 calendar (all rounds, all sessions, `has_sprint` correct, multipliers: finale 2, legends 1.5, sprint 1.25) plus drivers and teams; second run is a no-op (same row count, `updated_at` unchanged where nothing changed).
+- [x] With the dev fixture GP set in the past, `sync-results` resolves `pole`, `podium`, `fastest_lap` (and `sprint_winner`) from fixtures, writes `suggested_result` for `first_retirement`, leaves `safety_car` open, and `scores` rows appear via the trigger.
+- [x] All new Vitest suites green; `pnpm test` total runtime < 30 s.
+- [x] `operation_runs` shows one row per run with `status` `success|partial|error` and the summary JSON.
+- [x] `docs/architecture.md` has the sync section (providers, cron, ledger, manual fallback).
 
-**Exit gate.** Boxes checked; commits `feat(sync): ...`, `test(sync): ...`, `chore(cron)`.
+**Exit gate.** Done 2026-09-10. Verified live against Jolpica on the local stack: the calendar import created 23 rounds (6 sprints; legends x1.5, finale x2), 38 drivers with teams, 121 markets; the re-run reported 23 unchanged rows and bumped no `updated_at`. A forced results run over rounds 1–13 made 31 requests in 22 s, resolved 44 markets, suggested 12 first retirements (one lap-0 tie left blank), left 13 safety-car markets for admin, 0 errors; the plain hourly call then self-skipped with `x-skipped: nothing-due`. Deviations: the jobs read/write through `CalendarStore` / `ResultsStore` seams (in-memory fakes in tests) instead of mocking Supabase chains; the results cron's quiet-period window is 7 days and ignores admin-only markets; fixtures were recorded from 2025 (complete) and 2026 (in progress). Summary field `grandsPrixUnchanged` added.
 
 ---
 

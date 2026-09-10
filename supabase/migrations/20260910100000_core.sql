@@ -126,7 +126,7 @@ create policy "drivers_admin_write" on public.drivers for all to authenticated
 create table public.grands_prix (
   id uuid primary key default gen_random_uuid(),
   season_id uuid not null references public.seasons(id) on delete restrict,
-  round int not null check (round between 1 and 40),
+  round int not null check (round between 1 and 99),
   slug text not null check (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
   name text not null check (char_length(name) between 1 and 80),
   circuit_key text not null check (char_length(circuit_key) between 1 and 60),
