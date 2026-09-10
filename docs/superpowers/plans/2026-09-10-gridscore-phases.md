@@ -151,13 +151,13 @@
 - Tests: `tests/leagues-actions.test.ts` (error key mapping incl. `league is full` → `errorLeagueFull`), `tests/plans.test.ts`
 
 **Acceptance criteria.**
-- [ ] Create league → redirected to its page with code `GP-XXXXX`; join by code and by `/leagues/join/GP-XXXXX` link; preview shows league name before joining.
-- [ ] Owner can rename, remove members, delete; member can leave; owner cannot leave.
-- [ ] League board ranks members only, applies `joined_at` cutoff (verified with a member joined after a resolved GP).
-- [ ] 11th join on a free league shows the localized "league is full" error with an upgrade hint; `pro` league accepts.
-- [ ] `leagues.plan` and `profiles.plan` are only writable by service role (guard trigger test in `pnpm test:db`).
+- [x] Create league → redirected to its page with code `GP-XXXXX`; join by code and by `/leagues/join/GP-XXXXX` link; preview shows league name before joining.
+- [x] Owner can rename, remove members, delete; member can leave; owner cannot leave.
+- [x] League board ranks members only, applies `joined_at` cutoff (verified with a member joined after a resolved GP).
+- [x] 11th join on a free league shows the localized "league is full" error with an upgrade hint; `pro` league accepts.
+- [x] `leagues.plan` and `profiles.plan` are only writable by service role (guard trigger test in `pnpm test:db`).
 
-**Exit gate.** Boxes checked; commits `feat(leagues)`, `test(leagues)`.
+**Exit gate.** Done 2026-09-10. Walked in a real browser with two isolated sessions: create → `/leagues/<id>` with code `GP-XZ9QC`; a second user opened `/en/leagues/join/gp-xz9qc` signed out, went through sign-in and onboarding carrying `?next=`, saw the preview ("Paddock Club 2026 · 1 / 10 members") and joined; rename, remove member, leave and delete all went through in-app dialogs, and the roster refreshed without a reload. Cutoff: both users held a scored pole call on round 98; with the owner's `joined_at` backdated the league board listed only the owner (10 pts) while the late joiner was told to make a call. Cap: with 10 rows the rejoin returned the localized "This league is full … League Pro removes the cap" message; after `plan = 'pro'` (service role) the 11th join succeeded. `supabase/tests/leagues.sql` now also asserts a user cannot flip their own `profiles.plan`. Deviations: the league board reuses `LeaderboardLive` with a `league` source instead of a separate `league-board.tsx`; the join page lives outside `(app)` so the invite link survives sign-in; `safeNextPath` guards `?next=`.
 
 ---
 
@@ -234,10 +234,31 @@
 
 ---
 
+## Phase 10 — Live race center (added 2026-09-10)
+
+**Scope.** A `/live` page that follows a session in progress with data, not video: running order, gaps and intervals, last/best lap, tyre and pit stops when available, race-control messages (flags, safety car, penalties), session clock and weather, plus the viewer's own open calls next to the live order. Video stays with the rights holders: the page links out to the official broadcaster list per country and never embeds, proxies or lists third-party streams (this replaces the request to copy an unlicensed "watch live" aggregator, which would be infringing and would also break the brand rule).
+
+**Data.** `LiveTimingProvider` interface in `lib/live/types.ts` (`getSessionState(sessionKey)`, `subscribe(sessionKey, onUpdate)`) with two implementations: an in-memory replay provider fed by a recorded fixture (drives tests and local dev) and an HTTP provider for an open live-timing API (candidate: OpenF1 — free for historical data, its real-time tier may need a paid key; the provider file joins the brand-guard allowlist like `jolpica.ts`). Server route `app/api/live/[session]/route.ts` normalises the feed and serves it as SSE on Fluid Compute; the browser never talks to the upstream API. Admin kill switch reuses `operation_settings` (`kind = 'live_timing'`).
+
+**Files.**
+- Create: `lib/live/types.ts`, `lib/live/providers/{replay,openf1}.ts`, `lib/live/normalize.ts` (positions, gaps, flags → one `LiveSnapshot`), `lib/live/session-window.ts` (which GP session is live now from `grands_prix` times, ±grace), `app/api/live/[session]/route.ts` (SSE), `app/[locale]/(public)/live/page.tsx`, `components/live/{timing-tower,race-control-feed,session-clock,my-calls-strip,broadcaster-links}.tsx`, `lib/broadcasters.ts` (static country → official broadcaster map), messages `live`
+- Tests: `tests/live-normalize.test.ts` (fixture → snapshot), `tests/session-window.test.ts`, `tests/live-route.test.ts` (SSE framing, kill switch, no upstream call when nothing is live)
+
+**Acceptance criteria.**
+- [ ] With the replay provider and a recorded session, `/live` shows the tower updating in order, race-control messages appearing in sequence and the clock counting; the page states which session it is following.
+- [ ] Outside a session window `/live` shows the next session countdown and the broadcaster links; the route does not call upstream.
+- [ ] The viewer's own open calls for that weekend render beside the tower and refresh when their pick's driver moves.
+- [ ] Kill switch off → route returns 503 with a localized notice; brand-guard test still green (provider file allowlisted, no F1/FIA literals in UI).
+- [ ] No video, iframe or stream URL anywhere in the feature (test scans `app/[locale]/(public)/live` and `components/live` for `<iframe`, `<video`, `.m3u8`).
+
+**Exit gate.** Boxes checked; commits `feat(live)`, `test(live)`.
+
+---
+
 ## Phase order and dependencies
 
 ```
-0 scaffold → 1 schema → 2 sync → 3 predictions → 4 scoring/leaderboard → 5 leagues → 6 admin → 7 i18n → 8 monetization → 9 release
+0 scaffold → 1 schema → 2 sync → 3 predictions → 4 scoring/leaderboard → 5 leagues → 6 admin → 7 i18n → 8 monetization → 9 release → 10 live race center
 ```
 
-Phase 2 and 3 only share the schema; they could run in parallel worktrees if needed. Phases 4–6 depend on 3. Phase 7 touches everything and must come after 6.
+Phase 2 and 3 only share the schema; they could run in parallel worktrees if needed. Phases 4–6 depend on 3. Phase 7 touches everything and must come after 6. Phase 10 only needs the calendar (phase 2) and picks (phase 3); it is scheduled last so release is not blocked on a live-data provider.

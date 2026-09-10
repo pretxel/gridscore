@@ -148,6 +148,8 @@ app/
   [locale]/(public)/leaderboard/ season and per-weekend standings, live
   [locale]/how-it-works/         scoring rules and multipliers, read from the DB
   [locale]/(app)/                authed routes (my picks, leagues, stats)
+  [locale]/(app)/leagues/        league list, create/join forms, league page
+  [locale]/leagues/join/[code]/  invite landing (outside the gate so ?next= survives sign-in)
   [locale]/(admin)/admin/        admin control room
   [locale]/onboarding/           forces a display name on first sign-in
   auth/callback/                 magic-link code exchange
@@ -161,6 +163,8 @@ lib/
   database.types.ts              generated; regenerate with `pnpm db:types`
   db.ts                          narrowed row aliases
   markets.ts, market-utils.ts    market vocabulary, pick schemas, lock helpers
+  leagues.ts, league-form.ts     league queries; name/code rules and error mapping
+  plans.ts                       free/pro features, league member cap (mirrors SQL)
   scoring.ts                     TypeScript replica of the SQL scoring function
   race-sync/                     provider interface, Jolpica client, sync jobs
   i18n.ts, env.ts                locale list, env loader
