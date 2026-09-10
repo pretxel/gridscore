@@ -1,7 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { DEFAULT_LOCALE, isLocale, LOCALE_LABELS, localePath, SUPPORTED_LOCALES } from "@/lib/i18n";
+import {
+  DEFAULT_LOCALE,
+  isLocale,
+  LOCALE_LABELS,
+  localeAlternates,
+  localePath,
+  SUPPORTED_LOCALES,
+} from "@/lib/i18n";
 
 const MESSAGES_DIR = path.resolve(__dirname, "..", "messages");
 
@@ -76,6 +83,29 @@ describe("message bundles", () => {
         return typeof value !== "string" || value.trim().length === 0;
       });
       expect(empty, `${loc} has empty values`).toEqual([]);
+    }
+  });
+});
+
+describe("localeAlternates", () => {
+  it("points the canonical at the current locale and lists every translation", () => {
+    const alternates = localeAlternates("es", "/leaderboard");
+    expect(alternates.canonical).toBe("/es/leaderboard");
+    expect(alternates.languages).toEqual({
+      en: "/en/leaderboard",
+      es: "/es/leaderboard",
+      "x-default": "/en/leaderboard",
+    });
+  });
+
+  it("handles the home route", () => {
+    expect(localeAlternates("en", "/").canonical).toBe("/en");
+  });
+
+  it("covers every supported locale", () => {
+    const { languages } = localeAlternates("en", "/gp");
+    for (const loc of SUPPORTED_LOCALES) {
+      expect(languages[loc], `missing hreflang for ${loc}`).toBeTruthy();
     }
   });
 });

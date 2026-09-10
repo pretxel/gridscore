@@ -1,0 +1,22 @@
+[
+  {
+    "text": "ridscore",
+    "why": "The wordmark in components/logotype.tsx is drawn as an SVG tile holding the 'g' plus this text run. A product name is the same in every locale."
+  },
+  {
+    "text": "Red flag",
+    "why": "app/error.tsx is the boundary for errors thrown outside the [locale] tree, so no next-intl provider is mounted and no locale is resolved. The localized copy lives in app/[locale]/error.tsx."
+  },
+  {
+    "text": "Something went wrong",
+    "why": "Same root error boundary as above."
+  },
+  {
+    "text": "Try again",
+    "why": "Same root error boundary as above."
+  },
+  {
+    "text": "Home",
+    "why": "Same root error boundary as above."
+  }
+]
