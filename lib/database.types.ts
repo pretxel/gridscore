@@ -624,6 +624,7 @@ export type Database = {
     };
     Functions: {
       active_season_id: { Args: never; Returns: string };
+      can_read_user_stats: { Args: { p_user_id: string }; Returns: boolean };
       compute_grand_prix_scores: { Args: { p_gp_id: string }; Returns: number };
       compute_market_scores: {
         Args: { p_market_id: string };
@@ -707,6 +708,26 @@ export type Database = {
       scoring_rule_points: {
         Args: { p_market_type: string; p_rule_key: string; p_season_id: string };
         Returns: number;
+      };
+      season_average_points: { Args: never; Returns: number };
+      user_market_stats: {
+        Args: { p_user_id: string };
+        Returns: {
+          hits: number;
+          market_type: string;
+          points: number;
+          scored: number;
+        }[];
+      };
+      user_weekend_points: {
+        Args: { p_user_id: string };
+        Returns: {
+          grand_prix_id: string;
+          name: string;
+          points: number;
+          round: number;
+          scored: number;
+        }[];
       };
       validate_market_pick: {
         Args: { p_pick: Json; p_season_id: string; p_type: string };
