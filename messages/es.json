@@ -12,7 +12,13 @@
     "closeMenu": "Cerrar menú",
     "siteMenu": "Menú del sitio",
     "switchToLight": "Cambiar a tema claro",
-    "switchToDark": "Cambiar a tema oscuro"
+    "switchToDark": "Cambiar a tema oscuro",
+    "units": {
+      "days": "d",
+      "hours": "h",
+      "mins": "m",
+      "secs": "s"
+    }
   },
   "siteMeta": {
     "title": "gridscore — Predicciones de Grandes Premios y clasificación en vivo",
@@ -42,12 +48,15 @@
     "label": "Idioma"
   },
   "home": {
-    "eyebrow": "Temporada 2026",
+    "eyebrow": "{season}",
     "headline": "Predice cada sesión. Puntúa cada fin de semana.",
     "lede": "Pole, podio, vuelta rápida, primer abandono, coche de seguridad. Cada predicción se cierra cuando empieza su sesión y los puntos llegan en cuanto hay resultados.",
     "ctaSignIn": "Empezar a predecir",
     "ctaCalendar": "Ver el calendario",
-    "comingSoon": "El calendario llega con la próxima versión."
+    "nextUp": "Siguiente",
+    "nextLockLabel": "La próxima predicción se cierra en",
+    "openWeekend": "Haz tus predicciones",
+    "noSeason": "El calendario de la temporada llega pronto."
   },
   "signIn": {
     "title": "Iniciar sesión",
@@ -117,6 +126,132 @@
     "eyebrow": "Fuera de pista · 404",
     "code": "404",
     "body": "Esa página no está en el calendario. Vuelve al paddock.",
-    "backHome": "Volver al inicio"
+    "backHome": "Volver al inicio",
+    "browseCalendar": "Ver el calendario"
+  },
+  "gp": {
+    "title": "Calendario",
+    "description": "Todos los Grandes Premios de la temporada con sus sesiones, multiplicador y tus predicciones abiertas.",
+    "eyebrow": "{season}",
+    "headline": "Calendario",
+    "lede": "Cada fin de semana abre sus propios mercados. Las predicciones se cierran cuando empieza su sesión.",
+    "noSeason": "Aún no hay temporada activa.",
+    "empty": "El calendario aún no se ha importado. Vuelve pronto.",
+    "roundLabel": "Ronda {round}",
+    "sprintBadge": "Sprint",
+    "multiplierBadge": "x{value}",
+    "multiplierReason": {
+      "normal": "Fin de semana estándar",
+      "sprint": "Fin de semana con sprint",
+      "legend": "Circuito de leyenda",
+      "finale": "Final de temporada",
+      "custom": "Multiplicador especial"
+    },
+    "phase": {
+      "upcoming": "Próximo",
+      "weekend": "Este fin de semana",
+      "completed": "Completado",
+      "cancelled": "Cancelado"
+    },
+    "nextUp": "Siguiente",
+    "callsOpen": "{count, plural, =0 {Sin predicciones abiertas} one {# predicción abierta} other {# predicciones abiertas}}",
+    "callsMissing": "{count, plural, one {# predicción por hacer} other {# predicciones por hacer}}",
+    "allCallsMade": "Todas las predicciones hechas",
+    "viewWeekend": "Abrir fin de semana",
+    "sessions": "Sesiones",
+    "session": {
+      "fp1": "Libres 1",
+      "fp2": "Libres 2",
+      "fp3": "Libres 3",
+      "sprintQualifying": "Clasificación sprint",
+      "sprint": "Sprint",
+      "qualifying": "Clasificación",
+      "race": "Carrera"
+    },
+    "markets": "Tus predicciones",
+    "marketsLede": "Cada predicción se cierra cuando empieza su sesión. Edita libremente hasta entonces; cuenta la última guardada.",
+    "signInToPick": "Inicia sesión para predecir",
+    "adminCannotPick": "Los admins gestionan el juego y no compiten.",
+    "yourPoints": "{points} pts",
+    "pointsPending": "Esperando resultado",
+    "backToCalendar": "Volver al calendario",
+    "loadFailedTitle": "No se pudo cargar el calendario",
+    "loadFailedBody": "Inténtalo de nuevo en un momento.",
+    "retry": "Reintentar"
+  },
+  "markets": {
+    "type": {
+      "pole": "Pole position",
+      "podium": "Podio",
+      "fastest_lap": "Vuelta rápida",
+      "first_retirement": "Primer abandono",
+      "safety_car": "Coche de seguridad",
+      "sprint_winner": "Ganador del sprint"
+    },
+    "hint": {
+      "pole": "¿Quién hace la pole en clasificación?",
+      "podium": "P1, P2 y P3 en orden.",
+      "fastest_lap": "¿Quién marca la vuelta rápida de carrera?",
+      "first_retirement": "Primer coche fuera de carrera, o ninguno.",
+      "safety_car": "¿Saldrá el coche de seguridad durante la carrera?",
+      "sprint_winner": "¿Quién gana el sprint?"
+    },
+    "locksAt": {
+      "qualifying": "Se cierra en clasificación",
+      "sprint": "Se cierra en el sprint",
+      "race": "Se cierra al apagarse los semáforos"
+    },
+    "status": {
+      "open": "Abierto",
+      "locked": "Cerrado",
+      "resolved": "Resultado disponible",
+      "void": "Anulado"
+    },
+    "position": {
+      "p1": "P1",
+      "p2": "P2",
+      "p3": "P3"
+    },
+    "none": "Ninguno",
+    "yes": "Sí",
+    "no": "No",
+    "result": "Resultado",
+    "yourCall": "Tu predicción",
+    "noCall": "Sin predicción",
+    "hit": {
+      "exact": "Exacto",
+      "podium_exact_all": "Podio perfecto",
+      "podium_partial": "Parcial",
+      "miss": "Fallo"
+    }
+  },
+  "pickForm": {
+    "selectDriver": "Elige un piloto",
+    "save": "Guardar predicción",
+    "update": "Actualizar predicción",
+    "saved": "Guardada",
+    "saving": "Guardando",
+    "savedToast": "Predicción guardada",
+    "closesIn": "se cierra en {time}",
+    "lockedLabel": "Cerrado",
+    "lastSaveWins": "Puedes editar hasta que se cierre. Cuenta la última guardada.",
+    "errorInvalid": "Esa predicción no es válida.",
+    "errorNotSignedIn": "Inicia sesión para predecir.",
+    "errorAdmin": "Los admins no pueden predecir.",
+    "errorLocked": "Este mercado está cerrado. La sesión ya ha empezado.",
+    "errorMarketNotFound": "Mercado no encontrado.",
+    "errorDuplicateDrivers": "Elige tres pilotos distintos.",
+    "errorGeneric": "No se pudo guardar tu predicción. Inténtalo de nuevo."
+  },
+  "myPicks": {
+    "title": "Mis predicciones",
+    "description": "Todas tus predicciones de la temporada, con resultados y puntos según llegan.",
+    "eyebrow": "{season}",
+    "headline": "Mis predicciones",
+    "lede": "Predicciones por fin de semana, con puntos en cuanto hay resultados.",
+    "empty": "Aún no has predicho nada. Abre el calendario y haz tu primera predicción.",
+    "goToCalendar": "Abrir el calendario",
+    "totalPoints": "{points} pts hasta ahora",
+    "weekendPoints": "{points} pts"
   }
 }

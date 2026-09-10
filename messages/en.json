@@ -12,7 +12,13 @@
     "closeMenu": "Close menu",
     "siteMenu": "Site menu",
     "switchToLight": "Switch to light theme",
-    "switchToDark": "Switch to dark theme"
+    "switchToDark": "Switch to dark theme",
+    "units": {
+      "days": "d",
+      "hours": "h",
+      "mins": "m",
+      "secs": "s"
+    }
   },
   "siteMeta": {
     "title": "gridscore — Grand Prix predictions & live leaderboard",
@@ -42,12 +48,15 @@
     "label": "Language"
   },
   "home": {
-    "eyebrow": "Season 2026",
+    "eyebrow": "{season}",
     "headline": "Call every session. Score every weekend.",
     "lede": "Pole, podium, fastest lap, first retirement, safety car. Each call locks when its session starts, and points land the moment results are in.",
     "ctaSignIn": "Start predicting",
     "ctaCalendar": "See the calendar",
-    "comingSoon": "The calendar arrives with the next release."
+    "nextUp": "Next up",
+    "nextLockLabel": "Next call locks in",
+    "openWeekend": "Make your calls",
+    "noSeason": "The season calendar arrives soon."
   },
   "signIn": {
     "title": "Sign in",
@@ -117,6 +126,132 @@
     "eyebrow": "Off track · 404",
     "code": "404",
     "body": "That page isn't on the calendar. Head back to the paddock.",
-    "backHome": "Back home"
+    "backHome": "Back home",
+    "browseCalendar": "Browse the calendar"
+  },
+  "gp": {
+    "title": "Calendar",
+    "description": "Every Grand Prix of the season with its sessions, multiplier and your open calls.",
+    "eyebrow": "{season}",
+    "headline": "Calendar",
+    "lede": "Each weekend opens its own markets. Calls lock when their session starts.",
+    "noSeason": "No season is active yet.",
+    "empty": "The calendar has not been imported yet. Check back soon.",
+    "roundLabel": "Round {round}",
+    "sprintBadge": "Sprint",
+    "multiplierBadge": "x{value}",
+    "multiplierReason": {
+      "normal": "Standard weekend",
+      "sprint": "Sprint weekend",
+      "legend": "Legend circuit",
+      "finale": "Season finale",
+      "custom": "Special multiplier"
+    },
+    "phase": {
+      "upcoming": "Upcoming",
+      "weekend": "This weekend",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "nextUp": "Next up",
+    "callsOpen": "{count, plural, =0 {No calls open} one {# call open} other {# calls open}}",
+    "callsMissing": "{count, plural, one {# call still to make} other {# calls still to make}}",
+    "allCallsMade": "All calls made",
+    "viewWeekend": "Open weekend",
+    "sessions": "Sessions",
+    "session": {
+      "fp1": "Practice 1",
+      "fp2": "Practice 2",
+      "fp3": "Practice 3",
+      "sprintQualifying": "Sprint qualifying",
+      "sprint": "Sprint",
+      "qualifying": "Qualifying",
+      "race": "Race"
+    },
+    "markets": "Your calls",
+    "marketsLede": "Each call locks when its session starts. Edit freely until then; the last save counts.",
+    "signInToPick": "Sign in to make your calls",
+    "adminCannotPick": "Admins run the show and do not compete.",
+    "yourPoints": "{points} pts",
+    "pointsPending": "Awaiting result",
+    "backToCalendar": "Back to calendar",
+    "loadFailedTitle": "The calendar could not be loaded",
+    "loadFailedBody": "Try again in a moment.",
+    "retry": "Retry"
+  },
+  "markets": {
+    "type": {
+      "pole": "Pole position",
+      "podium": "Podium",
+      "fastest_lap": "Fastest lap",
+      "first_retirement": "First retirement",
+      "safety_car": "Safety car",
+      "sprint_winner": "Sprint winner"
+    },
+    "hint": {
+      "pole": "Who takes P1 in qualifying?",
+      "podium": "P1, P2 and P3 in order.",
+      "fastest_lap": "Who sets the fastest race lap?",
+      "first_retirement": "First car out of the race, or none.",
+      "safety_car": "Will the safety car come out during the race?",
+      "sprint_winner": "Who wins the sprint?"
+    },
+    "locksAt": {
+      "qualifying": "Locks at qualifying",
+      "sprint": "Locks at the sprint",
+      "race": "Locks at lights out"
+    },
+    "status": {
+      "open": "Open",
+      "locked": "Locked",
+      "resolved": "Result in",
+      "void": "Void"
+    },
+    "position": {
+      "p1": "P1",
+      "p2": "P2",
+      "p3": "P3"
+    },
+    "none": "None",
+    "yes": "Yes",
+    "no": "No",
+    "result": "Result",
+    "yourCall": "Your call",
+    "noCall": "No call made",
+    "hit": {
+      "exact": "Exact",
+      "podium_exact_all": "Perfect podium",
+      "podium_partial": "Partial",
+      "miss": "Miss"
+    }
+  },
+  "pickForm": {
+    "selectDriver": "Select a driver",
+    "save": "Save call",
+    "update": "Update call",
+    "saved": "Saved",
+    "saving": "Saving",
+    "savedToast": "Call saved",
+    "closesIn": "closes in {time}",
+    "lockedLabel": "Locked",
+    "lastSaveWins": "You can edit until it locks. The last save counts.",
+    "errorInvalid": "That call is not valid.",
+    "errorNotSignedIn": "Sign in to make a call.",
+    "errorAdmin": "Admins cannot make calls.",
+    "errorLocked": "This market is locked. The session has started.",
+    "errorMarketNotFound": "Market not found.",
+    "errorDuplicateDrivers": "Pick three different drivers.",
+    "errorGeneric": "Could not save your call. Try again."
+  },
+  "myPicks": {
+    "title": "My calls",
+    "description": "Every call you have made this season, with results and points as they land.",
+    "eyebrow": "{season}",
+    "headline": "My calls",
+    "lede": "Calls by weekend, with points once results are in.",
+    "empty": "No calls yet. Open the calendar and make your first one.",
+    "goToCalendar": "Open the calendar",
+    "totalPoints": "{points} pts so far",
+    "weekendPoints": "{points} pts"
   }
 }
