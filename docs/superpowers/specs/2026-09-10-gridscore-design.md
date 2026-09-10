@@ -58,7 +58,7 @@ Triggers: `handle_new_user` on `auth.users` insert; `guard_profiles_is_admin`
 | `id` uuid | |
 | `year` int unique | e.g. 2026 |
 | `slug` text unique | `'2026'` |
-| `name` text | "2026 season" |
+| `name` text | "2026" (bare, so it reads right inside translated sentences) |
 | `status` text | `upcoming \| active \| finished \| manage` (Winscore lifecycle) |
 | `providers` jsonb | `{ "jolpica": { "season": "2026" } }` |
 

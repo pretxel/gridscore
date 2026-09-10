@@ -193,12 +193,14 @@ Deviations: `Run now` was verified by unit test rather than live, because a real
 - Tests: extend `tests/i18n.test.ts` with a scan that fails on JSX text nodes with ≥ 3 consecutive letters outside `t(...)` in `app/` and `components/` (allowlist file `tests/i18n-allowlist.json` for brand words and codes); `tests/no-brand-literals.test.ts` covers `messages/*`.
 
 **Acceptance criteria.**
-- [ ] Untranslated-text scan passes with an allowlist ≤ 10 entries, each justified in the file.
-- [ ] Switching locale on any page keeps the route and state; session times render in the viewer's timezone with locale formatting.
-- [ ] Spanish copy reviewed line by line (motorsport vocabulary: "pole", "vuelta rápida", "coche de seguridad", "abandono").
-- [ ] `<html lang>` and OG locale per route; sitemap lists both locales.
+- [x] Untranslated-text scan passes with an allowlist ≤ 10 entries, each justified in the file.
+- [x] Switching locale on any page keeps the route and state; session times render in the viewer's timezone with locale formatting.
+- [x] Spanish copy reviewed line by line (motorsport vocabulary: "pole", "vuelta rápida", "coche de seguridad", "abandono").
+- [x] `<html lang>` and OG locale per route; sitemap lists both locales.
 
-**Exit gate.** Boxes checked; commits `feat(i18n)`, `test(i18n)`.
+**Exit gate.** Done 2026-09-10. `tests/untranslated-text.test.ts` scans every `.tsx` under `app/` and `components/` and fails on a JSX text node carrying three or more consecutive letters; it passes with a five-entry allowlist, each with its own `why` in `tests/i18n-allowlist.json` (the SVG wordmark plus the four strings of the root error boundary, which sits outside any next-intl provider). Verified in a real browser: switching to Spanish on `/en/leaderboard?gp=dev-circuit-one` landed on `/es/leaderboard?gp=dev-circuit-one` with the weekend still selected, `<html lang>` flipped, and the canonical and hreflang links following; the calendar rendered "jue, 17 sept 2026" and "×1,25" in Spanish against "Thu, Sep 17, 2026" and "×1.25" in English.
+
+Deviations and additions: `lib/format.ts` now owns points, multipliers and session times, replacing a locale-blind `formatMultiplier` that a page exported (and that turned 1.00 into "1.0"); `LocalTime` formats with the active locale instead of the browser's. Public routes gained `localeAlternates()` so each canonical points at its own locale and every translation is declared, and the sitemap picked up `/leaderboard` and `/how-it-works`. The seeded season name became the bare year: it is interpolated into translated sentences, so "2026 season" read as English inside Spanish copy. Spanish review changed four strings: the multiplication sign, a literal rendering of "round half up", the season article, and a gendered welcome.
 
 ---
 

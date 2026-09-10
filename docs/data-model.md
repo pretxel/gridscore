@@ -45,7 +45,7 @@ admins do anything. `trg_profiles_guard_privileged` raises when `is_admin` or
 | column | notes |
 |---|---|
 | `year` int unique, `slug` text unique | e.g. `2026` / `'2026'` |
-| `name` | display name |
+| `name` | display name; keep it locale-neutral (a bare year), it is interpolated into translated copy |
 | `status` | `upcoming \| active \| finished \| manage` |
 | `providers` jsonb | provider config, e.g. `{"jolpica": {"season": "2026"}}` |
 
