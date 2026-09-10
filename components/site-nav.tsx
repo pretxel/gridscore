@@ -3,42 +3,31 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { Logotype } from "@/components/logotype";
 import { MobileNav, NavLinks } from "@/components/site-nav-client";
+import { SponsorSlot } from "@/components/sponsor-slot";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import { UserMenu } from "@/components/user-menu";
 import { DEFAULT_LOCALE, isLocale, localePath } from "@/lib/i18n";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
+import { getViewer } from "@/lib/viewer";
 
 export async function SiteNav() {
-  const supabase = await createServerSupabaseClient();
   const t = await getTranslations("nav");
   const tCommon = await getTranslations("common");
   const rawLocale = await getLocale();
   const locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   const lp = (path: string) => localePath(locale, path);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  let isAdmin = false;
-  let displayName: string | null = null;
-  if (user) {
-    const { data } = await supabase
-      .from("profiles")
-      .select("is_admin, display_name")
-      .eq("id", user.id)
-      .maybeSingle();
-    isAdmin = data?.is_admin ?? false;
-    displayName = data?.display_name ?? null;
-  }
+  // One profile lookup per request, shared with the pages and the sponsor slot.
+  const viewer = await getViewer();
+  const signedIn = viewer.userId != null;
 
   const links = [
     { href: lp("/gp"), label: t("calendar") },
     { href: lp("/leaderboard"), label: t("leaderboard") },
-    ...(user ? [{ href: lp("/my-picks"), label: t("myPicks") }] : []),
-    ...(user ? [{ href: lp("/leagues"), label: t("leagues") }] : []),
-    ...(isAdmin ? [{ href: lp("/admin"), label: t("admin") }] : []),
+    ...(signedIn ? [{ href: lp("/my-picks"), label: t("myPicks") }] : []),
+    ...(signedIn ? [{ href: lp("/leagues"), label: t("leagues") }] : []),
+    ...(signedIn ? [{ href: lp("/stats"), label: t("stats") }] : []),
+    ...(viewer.isAdmin ? [{ href: lp("/admin"), label: t("admin") }] : []),
   ];
 
   return (
@@ -51,12 +40,13 @@ export async function SiteNav() {
         <NavLinks links={links} className="hidden md:flex" />
 
         <div className="flex items-center gap-1.5">
+          <SponsorSlot placement="header" plan={viewer.plan} className="mr-1" />
           <LanguageSwitcher />
           <ThemeToggle />
-          {user ? (
+          {signedIn ? (
             <UserMenu
-              displayName={displayName}
-              email={user.email ?? ""}
+              displayName={viewer.displayName}
+              email={viewer.email ?? ""}
               signOutPath={lp("/sign-out")}
             />
           ) : (
@@ -69,7 +59,7 @@ export async function SiteNav() {
           )}
           <MobileNav
             links={links}
-            signedIn={!!user}
+            signedIn={signedIn}
             signInHref={lp("/sign-in")}
             className="md:hidden"
           />
