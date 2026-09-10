@@ -12,9 +12,25 @@ import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 // single re-fetch.
 const REFETCH_DEBOUNCE_MS = 750;
 
+export type LeaderboardSource =
+  | { kind: "overall" }
+  | { kind: "grand_prix"; gpId: string }
+  | { kind: "league"; leagueId: string };
+
+function sourceKey(source: LeaderboardSource): string {
+  switch (source.kind) {
+    case "overall":
+      return "overall";
+    case "grand_prix":
+      return `gp-${source.gpId}`;
+    case "league":
+      return `league-${source.leagueId}`;
+  }
+}
+
 // Live wrapper around the standings table. Seeded by the SSR rows, it listens
 // to Realtime changes on public.scores and re-fetches the same source the
-// server used (the season view or the per-weekend function). Ranks and
+// server used (the season view, the per-weekend or the per-league function). Ranks and
 // tie-breaks stay a database concern. Any failure keeps the SSR rows.
 export function LeaderboardLive({
   initialRows,
@@ -24,7 +40,7 @@ export function LeaderboardLive({
   limit,
 }: {
   initialRows: LeaderboardTableRow[];
-  source: { kind: "overall" } | { kind: "grand_prix"; gpId: string };
+  source: LeaderboardSource;
   currentUserId?: string | null;
   labels: LeaderboardLabels;
   limit: number;
@@ -34,6 +50,8 @@ export function LeaderboardLive({
   useEffect(() => {
     setRows(initialRows);
   }, [initialRows]);
+
+  const key = sourceKey(source);
 
   useEffect(() => {
     const supabase = createBrowserSupabaseClient();
@@ -47,7 +65,9 @@ export function LeaderboardLive({
               .from("v_leaderboard_overall")
               .select("*")
               .order("rank", { ascending: true })
-          : await supabase.rpc("leaderboard_for_grand_prix", { p_gp_id: source.gpId });
+          : source.kind === "grand_prix"
+            ? await supabase.rpc("leaderboard_for_grand_prix", { p_gp_id: source.gpId })
+            : await supabase.rpc("leaderboard_for_league", { p_league_id: source.leagueId });
       if (cancelled || res.error || !res.data) return;
       setRows((res.data as LeaderboardTableRow[]).slice(0, limit));
     }
@@ -58,7 +78,7 @@ export function LeaderboardLive({
     }
 
     const channel = supabase
-      .channel(`leaderboard-${source.kind === "overall" ? "overall" : source.gpId}`)
+      .channel(`leaderboard-${key}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "scores" }, scheduleRefetch)
       .subscribe();
 
@@ -67,7 +87,7 @@ export function LeaderboardLive({
       if (timer) clearTimeout(timer);
       supabase.removeChannel(channel);
     };
-  }, [source.kind, source.kind === "grand_prix" ? source.gpId : null, limit]);
+  }, [key, limit]);
 
   return <LeaderboardTable rows={rows} currentUserId={currentUserId} labels={labels} />;
 }
