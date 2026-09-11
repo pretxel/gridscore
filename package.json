@@ -16,7 +16,8 @@
     "test:db": "sh scripts/test-db.sh",
     "db:types": "supabase gen types typescript --local > lib/database.types.ts",
     "prepare": "husky",
-    "gen:scoring-parity": "node scripts/gen-scoring-parity.mts"
+    "gen:scoring-parity": "node scripts/gen-scoring-parity.mts",
+    "gen:circuit-layouts": "node scripts/gen-circuit-layouts.mts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

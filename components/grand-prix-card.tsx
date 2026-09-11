@@ -60,7 +60,7 @@ export function GrandPrixCard({
             <CircuitTrace
               seed={grandPrix.circuit_key || grandPrix.slug}
               className={cn(
-                "relative size-9 shrink-0 transition-colors sm:size-10",
+                "relative size-10 shrink-0 transition-colors sm:size-11",
                 highlight ? "text-signal" : "text-muted-foreground/70",
               )}
             />

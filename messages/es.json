@@ -43,7 +43,8 @@
   },
   "footer": {
     "tagline": "Predicciones de Grandes Premios · Clasificación de temporada",
-    "howItWorks": "Cómo funciona"
+    "howItWorks": "Cómo funciona",
+    "mapCredit": "Trazados de circuito de <osm>OpenStreetMap</osm>, <odbl>ODbL</odbl>"
   },
   "languageSwitcher": {
     "label": "Idioma"

@@ -43,7 +43,8 @@
   },
   "footer": {
     "tagline": "Grand Prix predictions · Season leaderboard",
-    "howItWorks": "How it works"
+    "howItWorks": "How it works",
+    "mapCredit": "Circuit outlines from <osm>OpenStreetMap</osm>, <odbl>ODbL</odbl>"
   },
   "languageSwitcher": {
     "label": "Language"

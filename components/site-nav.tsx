@@ -80,7 +80,33 @@ export async function SiteFooter() {
           <Logotype size="xs" className="text-foreground" />
           <span className="font-mono uppercase tracking-[0.2em]">{t("tagline")}</span>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+          {/* ODbL asks that a work made from the data credit OpenStreetMap.
+              The circuit outlines on the calendar are traced from it. */}
+          <span>
+            {t.rich("mapCredit", {
+              osm: (chunks) => (
+                <a
+                  href="https://www.openstreetmap.org/copyright"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  className="hover:text-foreground hover:underline"
+                >
+                  {chunks}
+                </a>
+              ),
+              odbl: (chunks) => (
+                <a
+                  href="https://opendatacommons.org/licenses/odbl/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  className="hover:text-foreground hover:underline"
+                >
+                  {chunks}
+                </a>
+              ),
+            })}
+          </span>
           <Link
             href={localePath(locale, "/how-it-works")}
             className="hover:text-foreground hover:underline"
