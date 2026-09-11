@@ -151,10 +151,15 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://localhost:3000"
+# Read from the environment so the same file drives local development and the
+# linked project: `supabase start` picks up `.env` (localhost), and
+# `supabase config push` is run with the production values exported. See
+# `.env.example` and docs/operator-guide.md.
+site_url = "env(SUPABASE_AUTH_SITE_URL)"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
 additional_redirect_urls = [
-  "http://localhost:3000/auth/callback",
+  "env(SUPABASE_AUTH_CALLBACK_URL)",
+  "env(SUPABASE_AUTH_PREVIEW_CALLBACK_URL)",
 ]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
@@ -225,11 +230,23 @@ enable_confirmations = false
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
-max_frequency = "1s"
+# Local development sends a link per test run; production needs a real floor.
+max_frequency = "env(SUPABASE_AUTH_EMAIL_MAX_FREQUENCY)"
 # Number of characters used in the email OTP.
 otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
+
+# The only email the app sends, styled in supabase/templates/magic-link.html.
+# It applies locally (Mailpit) but NOT on the hosted free tier: pushing it
+# returns "Email template modification is not available for free tier projects
+# using the default email provider". Configure a custom SMTP provider (or move
+# off the free plan), then uncomment this block and run `supabase config push`
+# — a custom SMTP sender is what a real deployment needs anyway, since the
+# built-in one is rate-limited to a handful of emails per hour.
+# [auth.email.template.magic_link]
+# subject = "Your gridscore sign-in link"
+# content_path = "./supabase/templates/magic-link.html"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]

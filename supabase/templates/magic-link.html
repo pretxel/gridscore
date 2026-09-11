@@ -1,0 +1,148 @@
+<!--
+  Magic-link email. Bilingual on purpose: Supabase serves one template per
+  project, and the app ships in English and Spanish, so a reader must find
+  their language without us guessing from the address.
+
+  Written for email clients, not browsers: tables for layout, inline styles
+  only, no web fonts, no external images. Every motorsport motif — the
+  chequered band, the kerb stripe, the grid box — is drawn with background
+  colours on table cells, so nothing has to load, nothing can be blocked by an
+  image-blocking client, and no third party's artwork is reproduced.
+
+  The accent (#E14D28) is the app's `signal` token converted from oklch.
+  Supabase substitutes {{ .ConfirmationURL }}. Do not rename it.
+-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f4f4f5;margin:0;padding:32px 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;background-color:#ffffff;border-radius:14px;border:1px solid #e4e4e7;overflow:hidden;">
+
+        <!-- Chequered band: eight cells, alternating, 10px tall. -->
+        <tr>
+          <td style="padding:0;font-size:0;line-height:0;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td width="12.5%" height="10" style="background-color:#18181b;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#ffffff;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#18181b;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#ffffff;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#18181b;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#ffffff;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#18181b;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#ffffff;font-size:0;line-height:0;">&nbsp;</td>
+              </tr>
+              <tr>
+                <td width="12.5%" height="10" style="background-color:#ffffff;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#18181b;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#ffffff;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#18181b;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#ffffff;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#18181b;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#ffffff;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="12.5%" height="10" style="background-color:#18181b;font-size:0;line-height:0;">&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:26px 32px 0 32px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="background-color:#E14D28;border-radius:8px;width:32px;height:32px;text-align:center;vertical-align:middle;color:#ffffff;font-size:20px;font-weight:700;line-height:32px;">g</td>
+                <td style="padding-left:10px;font-size:20px;font-weight:700;letter-spacing:-0.3px;color:#18181b;">gridscore</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:20px 32px 0 32px;">
+            <p style="margin:0;font-size:11px;letter-spacing:2.2px;text-transform:uppercase;color:#71717a;font-weight:600;">Sign in &middot; Iniciar sesión</p>
+            <h1 style="margin:8px 0 0 0;font-size:26px;line-height:1.22;font-weight:700;color:#18181b;letter-spacing:-0.5px;">Lock in your calls.</h1>
+            <p style="margin:14px 0 0 0;font-size:15px;line-height:1.6;color:#3f3f46;">
+              Tap the button to sign in. No password needed.
+            </p>
+            <p style="margin:6px 0 0 0;font-size:15px;line-height:1.6;color:#71717a;">
+              Pulsa el botón para entrar. No hace falta contraseña.
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:24px 32px 0 32px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr>
+                <td align="center" style="background-color:#E14D28;border-radius:10px;">
+                  <a href="{{ .ConfirmationURL }}" style="display:block;padding:15px 24px;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;letter-spacing:0.2px;">
+                    Sign in &middot; Entrar
+                  </a>
+                </td>
+              </tr>
+            </table>
+            <!-- Kerb stripe under the button. -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:6px;">
+              <tr>
+                <td width="25%" height="5" style="background-color:#E14D28;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="25%" height="5" style="background-color:#f4f4f5;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="25%" height="5" style="background-color:#E14D28;font-size:0;line-height:0;">&nbsp;</td>
+                <td width="25%" height="5" style="background-color:#f4f4f5;font-size:0;line-height:0;">&nbsp;</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- What the reader is signing in to do. Grid-box styling, no logos. -->
+        <tr>
+          <td style="padding:22px 32px 0 32px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e4e4e7;border-radius:10px;background-color:#fafafa;">
+              <tr>
+                <td style="padding:14px 16px;">
+                  <p style="margin:0;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:#a1a1aa;font-weight:600;">Your calls &middot; Tus predicciones</p>
+                  <p style="margin:8px 0 0 0;font-size:13px;line-height:1.7;color:#3f3f46;">
+                    <span style="color:#E14D28;font-weight:700;">P1</span>&nbsp; Pole &middot; Podium &middot; Fastest lap<br />
+                    <span style="color:#E14D28;font-weight:700;">P2</span>&nbsp; First retirement &middot; Safety car
+                  </p>
+                  <p style="margin:8px 0 0 0;font-size:12px;line-height:1.6;color:#71717a;">
+                    Each call locks when its session starts.<br />
+                    Cada predicción se cierra al empezar su sesión.
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:18px 32px 0 32px;">
+            <p style="margin:0;font-size:12px;line-height:1.6;color:#71717a;">
+              If the button does not work, copy this link into your browser.<br />
+              Si el botón no funciona, copia este enlace en tu navegador.
+            </p>
+            <p style="margin:8px 0 0 0;font-size:12px;line-height:1.5;word-break:break-all;">
+              <a href="{{ .ConfirmationURL }}" style="color:#E14D28;text-decoration:underline;">{{ .ConfirmationURL }}</a>
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:20px 32px 28px 32px;">
+            <div style="border-top:1px solid #e4e4e7;padding-top:16px;">
+              <p style="margin:0;font-size:12px;line-height:1.6;color:#71717a;">
+                This link expires in one hour and can be used once. If you did not ask to sign in, ignore this email.
+              </p>
+              <p style="margin:6px 0 0 0;font-size:12px;line-height:1.6;color:#a1a1aa;">
+                Este enlace caduca en una hora y solo sirve una vez. Si no has pedido entrar, ignora este correo.
+              </p>
+            </div>
+          </td>
+        </tr>
+
+      </table>
+
+      <p style="margin:16px 0 0 0;font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#a1a1aa;">
+        Grand Prix predictions &middot; Season leaderboard
+      </p>
+    </td>
+  </tr>
+</table>

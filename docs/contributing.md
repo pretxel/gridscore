@@ -19,6 +19,12 @@ The dev server fails fast at module load if any of `NEXT_PUBLIC_SUPABASE_URL`,
 (`lib/env.ts`). Magic-link emails from the local stack land in Mailpit at
 <http://127.0.0.1:54334>.
 
+Two env files, because two tools read different ones: **Next.js reads
+`.env.local`** and the **Supabase CLI reads `.env`**. Both are gitignored and
+both are templated in `.env.example`. The `.env` one carries the auth URLs that
+`supabase/config.toml` resolves with `env(...)`, so the same config file serves
+local development and the deployed project.
+
 ### Useful scripts
 
 | command             | purpose                                                    |

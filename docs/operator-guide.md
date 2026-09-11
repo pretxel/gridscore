@@ -39,16 +39,33 @@ the connection string from the dashboard).
    | `CRON_SECRET` | any long random string; Vercel sends it on every cron call |
    | `JOLPICA_BASE_URL` | optional override of the race data endpoint |
 
-5. **Point Supabase Auth at the deployment.** Authentication → URL
-   Configuration: site URL is your production origin; additional redirect URLs
-   must include `https://YOUR-DOMAIN/auth/callback` and the preview pattern
-   `https://<project>-*-<team>.vercel.app/auth/callback`. Sign-in fails
-   silently for anyone on a URL that is not listed.
-6. **Deploy**, then **sign in once** with the email that will own the site.
+5. **Point Supabase Auth at the deployment.** A fresh project allows only
+   `http://localhost:3000`, so a magic link sends production readers to
+   localhost until this is set. Push it from the repo rather than clicking
+   through the dashboard — `supabase/config.toml` resolves these with
+   `env(...)`:
+
+   ```bash
+   SUPABASE_AUTH_SITE_URL="https://YOUR-DOMAIN" \
+   SUPABASE_AUTH_CALLBACK_URL="https://YOUR-DOMAIN/auth/callback" \
+   SUPABASE_AUTH_PREVIEW_CALLBACK_URL="https://<project>-<team>.vercel.app/auth/callback" \
+   SUPABASE_AUTH_EMAIL_MAX_FREQUENCY="60s" \
+   supabase config push
+   ```
+
+   Re-run it to verify: a clean push prints "Remote Auth config is up to date".
+
+6. **Set up a custom SMTP sender.** Supabase's built-in email service is
+   rate-limited to a handful of messages per hour and is not meant for
+   production. It also refuses custom templates on the free tier, which is why
+   the branded magic-link email in `supabase/templates/magic-link.html` is
+   wired up in `config.toml` but commented out. Once SMTP is configured,
+   uncomment that block and push the config again.
+7. **Deploy**, then **sign in once** with the email that will own the site.
    That creates the `auth.users` row.
-7. **Promote yourself.** Edit `supabase/seed/admin.sql` with that email and run
+8. **Promote yourself.** Edit `supabase/seed/admin.sql` with that email and run
    it. The "Admin" link then appears in the nav.
-8. **Import the season.** Admin → Operations → Calendar sync → **Run now**.
+9. **Import the season.** Admin → Operations → Calendar sync → **Run now**.
    Teams, drivers and the calendar land, and the database trigger creates the
    markets for every weekend.
 
