@@ -238,26 +238,36 @@ Deviations and additions: the plan gate became `hasFeature()` over a `PLAN_FEATU
 - [ ] Production deploy: sign-in, calendar import via cron, pick submit, lock at a real session time, admin result entry, leaderboard update, league join — all verified on the deployed URL.
 - [ ] `docs/test-plan.md` walked once; every failure fixed or logged as an issue.
 
-**Status 2026-09-10 — documentation done, deploy blocked.**
+**Status 2026-09-11 — deployed; sign-in still needs one manual step.**
 
-Everything that does not need a live database is finished and pushed:
-`docs/operator-guide.md` (standing an environment up, the weekly rhythm, plans,
-monitoring queries, failure modes) and `docs/test-plan.md` (a 9-section manual
-smoke walk) are written, and the README, architecture and contributing docs
-were brought up to date with the admin panel, the plan gating and the i18n
-rules. Two real bugs surfaced while writing them: `app/robots.ts` disallowed
-unprefixed paths (`/admin` instead of `/en/admin`, so nothing was actually
-hidden) and had no entry for `/stats`; `.env.example` pointed at the wrong
-local API port. Both are fixed and covered by `tests/robots.test.ts`.
+Live at <https://gridscore-chi.vercel.app>. The Supabase project
+(`dfllsojtcwryhkvoetfh`, West EU) was created once the account owner paused
+retro-ball, all four migrations applied, and the season plus its eight scoring
+rules were seeded. The three Supabase keys are set in Vercel for production and
+preview alongside `CRON_SECRET`, and the production build passed.
 
-The two acceptance criteria stay unchecked because both need a deployed URL.
-The Vercel project exists, is linked to the GitHub repo and auto-deploys on
-push, and `CRON_SECRET` is set for production and preview — but every build
-fails at `Missing required environment variable: NEXT_PUBLIC_SUPABASE_URL`,
-because there is no Supabase project yet. Creating one is refused: the free
-plan allows two active projects and the organisation already has two
-(retro-ball, winscore-app). The account owner has to pause or upgrade one; a
-session cron re-checks and provisions automatically as soon as a slot frees.
+Verified against the deployed URL: every public route answers 200 and `/`
+redirects to `/en`; `robots.txt` lists the signed-in routes per locale and the
+sitemap carries both locales with hreflang; a cron route without a bearer token
+returns 401. The calendar sync imported 23 Grands Prix, 32 drivers and 11 teams
+with multipliers assigned (Japan legend ×1.5, China and Miami sprint ×1.25),
+and the results sync then locked 70 markets, resolved 44 from real timing data
+and left 12 first-retirement suggestions for an admin. The Spanish
+how-it-works page renders its points table from the seeded rules.
+
+Both acceptance criteria stay open:
+
+1. **Sign-in is not yet possible on the deployment.** A fresh Supabase project
+   defaults `site_url` to `http://localhost:3000` and allows no other redirect,
+   so a magic link sends the reader to localhost. Fixing it is two fields in
+   Authentication → URL Configuration (site URL, and
+   `https://gridscore-chi.vercel.app/auth/callback` plus the preview pattern).
+   It was left to the owner rather than pushed with `supabase config push`,
+   because that command would also overwrite production's auth settings with
+   local-development values — notably `max_frequency = "1s"`, which would strip
+   the magic-link rate limit.
+2. **`docs/test-plan.md` has not been walked**, since most of it starts at
+   sign-in. Everything reachable without a session is covered above.
 
 ---
 
