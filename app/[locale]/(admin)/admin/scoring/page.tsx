@@ -77,7 +77,7 @@ export default async function AdminScoringPage({
                       <form
                         key={ruleKey}
                         action={saveScoringRule}
-                        className="flex flex-wrap items-end gap-2"
+                        className="flex flex-wrap items-end gap-2 [&>*]:min-w-0"
                       >
                         <input type="hidden" name="locale" value={locale} />
                         <input type="hidden" name="season_id" value={managed.season.id} />
@@ -96,7 +96,7 @@ export default async function AdminScoringPage({
                           max="1000"
                           step="1"
                           defaultValue={points.get(`${type}:${ruleKey}`) ?? 0}
-                          className="w-24"
+                          className="h-10 w-20 sm:h-8 sm:w-24"
                         />
                         <SubmitButton size="sm" variant="outline">
                           {t("scoring.save")}

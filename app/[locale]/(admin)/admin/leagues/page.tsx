@@ -75,7 +75,10 @@ export default async function AdminLeaguesPage({
                         <LocalTime iso={league.created_at} format="date" />
                       </p>
                     </div>
-                    <form action={setLeaguePlan} className="flex items-center gap-2">
+                    <form
+                      action={setLeaguePlan}
+                      className="flex w-full items-center gap-2 sm:w-auto"
+                    >
                       <input type="hidden" name="locale" value={locale} />
                       <input type="hidden" name="league_id" value={league.id} />
                       <input
@@ -86,7 +89,11 @@ export default async function AdminLeaguesPage({
                       <span className="rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.16em] text-muted-foreground">
                         {isPro(league.plan) ? t("leagues.planPro") : t("leagues.planFree")}
                       </span>
-                      <SubmitButton size="sm" variant="outline">
+                      <SubmitButton
+                        size="sm"
+                        variant="outline"
+                        className="h-10 flex-1 sm:h-7 sm:flex-none"
+                      >
                         {isPro(league.plan) ? t("leagues.downgrade") : t("leagues.upgrade")}
                       </SubmitButton>
                     </form>

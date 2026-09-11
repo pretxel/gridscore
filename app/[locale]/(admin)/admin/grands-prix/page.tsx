@@ -47,12 +47,17 @@ export default async function AdminGrandsPrixPage({
           title={t("grandsPrix.title")}
           description={t("grandsPrix.description")}
           actions={
-            <form action={setManagedSeason} className="flex items-center gap-2">
+            <form action={setManagedSeason} className="flex w-full items-center gap-2 sm:w-auto">
               <input type="hidden" name="locale" value={locale} />
               <label htmlFor="season_slug" className="sr-only">
                 {t("grandsPrix.seasonLabel")}
               </label>
-              <NativeSelect id="season_slug" name="season_slug" defaultValue={managed.season.slug}>
+              <NativeSelect
+                id="season_slug"
+                name="season_slug"
+                defaultValue={managed.season.slug}
+                className="h-10 flex-1 sm:h-8 sm:flex-none"
+              >
                 {managed.seasons.map((s) => (
                   <option key={s.id} value={s.slug}>
                     {s.name}
@@ -136,8 +141,11 @@ export default async function AdminGrandsPrixPage({
                     </form>
                   </div>
 
-                  <div className="mt-3 flex flex-wrap items-end gap-2 border-t border-border pt-3">
-                    <form action={setMultiplier} className="flex flex-wrap items-end gap-2">
+                  <div className="mt-3 grid gap-2 border-t border-border pt-3 sm:flex sm:flex-wrap sm:items-end">
+                    <form
+                      action={setMultiplier}
+                      className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-end"
+                    >
                       <input type="hidden" name="locale" value={locale} />
                       <input type="hidden" name="grand_prix_id" value={gp.id} />
                       <div className="space-y-1">
@@ -155,7 +163,7 @@ export default async function AdminGrandsPrixPage({
                           min="1"
                           max="99.99"
                           defaultValue={gp.multiplier}
-                          className="w-24"
+                          className="h-10 w-full sm:h-8 sm:w-24"
                         />
                       </div>
                       <div className="space-y-1">
@@ -169,6 +177,7 @@ export default async function AdminGrandsPrixPage({
                           id={`reason-${gp.id}`}
                           name="multiplier_reason"
                           defaultValue={gp.multiplier_reason}
+                          className="h-10 w-full sm:h-8 sm:w-auto"
                         >
                           {MULTIPLIER_REASONS.map((reason) => (
                             <option key={reason} value={reason}>
@@ -177,7 +186,9 @@ export default async function AdminGrandsPrixPage({
                           ))}
                         </NativeSelect>
                       </div>
-                      <SubmitButton size="sm">{t("grandsPrix.saveMultiplier")}</SubmitButton>
+                      <SubmitButton size="sm" className="col-span-2 h-10 sm:h-7">
+                        {t("grandsPrix.saveMultiplier")}
+                      </SubmitButton>
                     </form>
                     {gp.multiplier_locked ? (
                       <form action={unlockMultiplier} className="flex items-center gap-2">

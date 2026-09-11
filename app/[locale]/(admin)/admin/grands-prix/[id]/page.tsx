@@ -109,7 +109,7 @@ export default async function AdminGrandPrixPage({
                     type="datetime-local"
                     required={key === "race_at"}
                     defaultValue={toDatetimeLocal(gp[key])}
-                    className="h-9"
+                    className="h-10 sm:h-9"
                   />
                 </div>
               ))}
@@ -120,7 +120,12 @@ export default async function AdminGrandPrixPage({
                 >
                   {t("grandPrix.status")}
                 </label>
-                <NativeSelect id="status" name="status" defaultValue={gp.status}>
+                <NativeSelect
+                  id="status"
+                  name="status"
+                  defaultValue={gp.status}
+                  className="h-10 sm:h-8"
+                >
                   {STATUSES.map((status) => (
                     <option key={status} value={status}>
                       {t(`grandPrix.statusValue.${status}` as never)}

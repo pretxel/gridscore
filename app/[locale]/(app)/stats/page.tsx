@@ -101,10 +101,16 @@ export default async function StatsPage({ params }: { params: Promise<{ locale: 
                     <th scope="col" className="px-4 py-2.5 text-left font-medium">
                       {t("colMarket")}
                     </th>
-                    <th scope="col" className="px-4 py-2.5 text-right font-medium">
+                    <th
+                      scope="col"
+                      className="hidden px-4 py-2.5 text-right font-medium sm:table-cell"
+                    >
                       {t("colScored")}
                     </th>
-                    <th scope="col" className="px-4 py-2.5 text-right font-medium">
+                    <th
+                      scope="col"
+                      className="hidden px-4 py-2.5 text-right font-medium sm:table-cell"
+                    >
                       {t("colHits")}
                     </th>
                     <th scope="col" className="px-4 py-2.5 text-right font-medium">
@@ -119,8 +125,12 @@ export default async function StatsPage({ params }: { params: Promise<{ locale: 
                   {stats.markets.map((stat) => (
                     <tr key={stat.marketType} className="tabular-nums">
                       <td className="px-4 py-2.5 font-medium">{tm(`type.${stat.marketType}`)}</td>
-                      <td className="px-4 py-2.5 text-right font-mono">{stat.scored}</td>
-                      <td className="px-4 py-2.5 text-right font-mono">{stat.hits}</td>
+                      <td className="hidden px-4 py-2.5 text-right font-mono sm:table-cell">
+                        {stat.scored}
+                      </td>
+                      <td className="hidden px-4 py-2.5 text-right font-mono sm:table-cell">
+                        {stat.hits}
+                      </td>
                       <td className="px-4 py-2.5 text-right font-mono">
                         {formatAccuracy(accuracy(stat), locale)}
                       </td>

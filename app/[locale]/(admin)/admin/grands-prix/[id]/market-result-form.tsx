@@ -68,7 +68,10 @@ export async function MarketResultForm({
       {isVoid ? (
         <p className="mt-3 text-sm text-muted-foreground">{t("markets.voidedBody")}</p>
       ) : (
-        <form action={saveMarketResult} className="mt-3 flex flex-wrap items-end gap-2">
+        <form
+          action={saveMarketResult}
+          className="mt-3 grid gap-2 sm:flex sm:flex-wrap sm:items-end"
+        >
           <input type="hidden" name="locale" value={locale} />
           <input type="hidden" name="grand_prix_id" value={grandPrixId} />
           <input type="hidden" name="market_id" value={market.id} />
@@ -80,6 +83,7 @@ export async function MarketResultForm({
                 id={`value-${market.id}`}
                 name="value"
                 defaultValue={current.value ?? ""}
+                className="h-10 w-full sm:h-8 sm:w-auto"
               >
                 <option value="">{t("markets.choose")}</option>
                 <option value="yes">{tm("yes")}</option>
@@ -115,7 +119,9 @@ export async function MarketResultForm({
               ))
             : null}
 
-          <SubmitButton size="sm">{t("markets.saveResult")}</SubmitButton>
+          <SubmitButton size="sm" className="h-10 sm:h-7">
+            {t("markets.saveResult")}
+          </SubmitButton>
           {hasSuggestion ? (
             <span className="pb-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-signal">
               {t("markets.prefilledFromSuggestion")}
@@ -160,7 +166,12 @@ function DriverSelect({
 }) {
   const options = drivers.filter((d) => d.active || d.id === defaultValue);
   return (
-    <NativeSelect id={id} name={name} defaultValue={defaultValue}>
+    <NativeSelect
+      id={id}
+      name={name}
+      defaultValue={defaultValue}
+      className="h-10 w-full sm:h-8 sm:w-auto"
+    >
       <option value="">{placeholder}</option>
       {noneLabel ? <option value={NO_RETIREMENT}>{noneLabel}</option> : null}
       {options.map((driver) => (

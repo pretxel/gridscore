@@ -18,14 +18,14 @@ export function FormSection({
 }) {
   return (
     <section className={cn("space-y-4", className)}>
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
           <h2 className="font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
             {title}
           </h2>
           {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}
         </div>
-        {action ? <div className="shrink-0">{action}</div> : null}
+        {action ? <div className="sm:shrink-0">{action}</div> : null}
       </div>
       {children}
     </section>

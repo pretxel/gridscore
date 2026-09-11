@@ -56,19 +56,27 @@ export default async function AdminOperationsPage({
                 cron: OPERATION_SCHEDULES[kind].cron,
               })}
               action={
-                <div className="flex items-center gap-2">
-                  <form action={runNow}>
+                <div className="flex w-full items-center gap-2 sm:w-auto">
+                  <form action={runNow} className="flex-1 sm:flex-none">
                     <input type="hidden" name="locale" value={locale} />
                     <input type="hidden" name="kind" value={kind} />
-                    <SubmitButton size="sm" pendingLabel={t("operations.running")}>
+                    <SubmitButton
+                      size="sm"
+                      pendingLabel={t("operations.running")}
+                      className="h-10 w-full sm:h-7 sm:w-auto"
+                    >
                       {t("operations.runNow")}
                     </SubmitButton>
                   </form>
-                  <form action={toggleOperation}>
+                  <form action={toggleOperation} className="flex-1 sm:flex-none">
                     <input type="hidden" name="locale" value={locale} />
                     <input type="hidden" name="kind" value={kind} />
                     <input type="hidden" name="enabled" value={enabled ? "false" : "true"} />
-                    <SubmitButton size="sm" variant="outline">
+                    <SubmitButton
+                      size="sm"
+                      variant="outline"
+                      className="h-10 w-full sm:h-7 sm:w-auto"
+                    >
                       {enabled ? t("operations.pause") : t("operations.resume")}
                     </SubmitButton>
                   </form>

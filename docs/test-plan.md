@@ -6,7 +6,7 @@ cannot cover is a real browser against a real deployment — sign-in, cookies,
 Realtime, crons, timezones.
 
 Walk this list once before announcing a release, and once after any change to
-auth, the lock path or the scoring path. It takes about 30 minutes.
+auth, the lock path or the scoring path. It takes about 40 minutes.
 
 **Setup:** the deployed URL, two email addresses you can read (one becomes an
 admin, one stays a plain player), and a weekend whose sessions are close
@@ -102,16 +102,33 @@ move its `locks_at` backwards by hand to simulate one.
 | 8.3 | Check session times against the real session | Rendered in your own timezone |
 | 8.4 | View the page source of a public page | `<html lang>` matches, canonical points at that locale, hreflang lists both |
 
-## 9. Operations and safety
+## 9. Small screens
+
+Run this section at 375px wide (an iPhone SE or mini), signed in as an admin so
+the panel is reachable. On every page, the body must not scroll sideways: only
+a table inside its own scroll container may.
 
 | # | Step | Expected |
 |---|---|---|
-| 9.1 | Pause the results sync in Operations | Marked paused |
-| 9.2 | `curl` the cron route with the bearer secret | `204` with `x-skipped: disabled` |
-| 9.3 | Resume it and call again | Runs, and the ledger records it |
-| 9.4 | Call a cron route with no bearer token | `401` |
-| 9.5 | Open `/sitemap.xml` and `/robots.txt` | Both locales listed; no signed-in route in the sitemap |
-| 9.6 | Open an unknown URL, e.g. `/en/gp/not-a-race` | The 404 page, translated |
+| 9.1 | Open the landing page, the calendar and a weekend | No horizontal page scroll; the nav collapses into the menu button |
+| 9.2 | Submit a podium pick | The three driver selects stack, each full width |
+| 9.3 | Open the leaderboard | Rank, player and points visible; the rest waits for a wider screen |
+| 9.4 | Open `/stats` as Pro | Four metric tiles in two columns; the market table shows accuracy and points only |
+| 9.5 | Open a league page | The invite code and its buttons wrap without clipping |
+| 9.6 | Admin → Grands Prix | The multiplier, its reason and Save each take the full width |
+| 9.7 | Admin → Drivers | Each driver's code, number and team stack; buttons are comfortable to tap |
+| 9.8 | Admin → Operations | Run now and Pause sit side by side, full width |
+
+## 10. Operations and safety
+
+| # | Step | Expected |
+|---|---|---|
+| 10.1 | Pause the results sync in Operations | Marked paused |
+| 10.2 | `curl` the cron route with the bearer secret | `204` with `x-skipped: disabled` |
+| 10.3 | Resume it and call again | Runs, and the ledger records it |
+| 10.4 | Call a cron route with no bearer token | `401` |
+| 10.5 | Open `/sitemap.xml` and `/robots.txt` | Both locales listed; no signed-in route in the sitemap |
+| 10.6 | Open an unknown URL, e.g. `/en/gp/not-a-race` | The 404 page, translated |
 
 ---
 

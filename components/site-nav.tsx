@@ -37,7 +37,7 @@ export async function SiteNav() {
           <Logotype size="xs" className="text-foreground" />
         </Link>
 
-        <NavLinks links={links} className="hidden md:flex" />
+        <NavLinks links={links} className="hidden lg:flex" />
 
         <div className="flex items-center gap-1.5">
           <SponsorSlot placement="header" plan={viewer.plan} className="mr-1" />
@@ -61,7 +61,7 @@ export async function SiteNav() {
             links={links}
             signedIn={signedIn}
             signInHref={lp("/sign-in")}
-            className="md:hidden"
+            className="lg:hidden"
           />
         </div>
       </nav>
