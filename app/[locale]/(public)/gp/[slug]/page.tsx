@@ -158,7 +158,7 @@ export default async function GrandPrixPage({
         </div>
       </header>
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
+      <div className="grid gap-8 [&>*]:min-w-0 lg:grid-cols-[1fr_280px]">
         <section>
           <h2 className="font-heading text-xl font-semibold tracking-tight">{t("markets")}</h2>
           <p className="mt-1 mb-4 text-sm text-muted-foreground">{t("marketsLede")}</p>

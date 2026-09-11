@@ -113,7 +113,7 @@ export default async function CalendarPage({ params }: { params: Promise<{ local
         </section>
       ) : null}
 
-      <ol className="grid gap-3">
+      <ol className="grid gap-3 [&>li]:min-w-0">
         {calendar.grandsPrix.map((gp) => (
           <li key={gp.id}>
             <GrandPrixCard

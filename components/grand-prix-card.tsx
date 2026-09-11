@@ -50,7 +50,7 @@ export function GrandPrixCard({
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0">
           <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
             {labels.round}
@@ -58,15 +58,17 @@ export function GrandPrixCard({
           <h3 className="mt-0.5 truncate font-heading text-lg font-semibold tracking-tight sm:text-xl">
             {grandPrix.name}
           </h3>
-          <p className="mt-1 flex items-center gap-1.5 truncate text-sm text-muted-foreground">
+          <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
             <MapPinIcon className="size-3.5 shrink-0" aria-hidden />
-            <span className="truncate">
+            <span className="min-w-0 truncate">
               {grandPrix.circuit_name}
               {place ? ` · ${place}` : ""}
             </span>
           </p>
         </div>
-        <div className="flex shrink-0 flex-col items-end gap-1.5">
+        {/* Beside the title from sm; under it on a phone, where competing for
+            the same line truncated most Grand Prix names. */}
+        <div className="flex shrink-0 flex-row items-center gap-2 sm:flex-col sm:items-end sm:gap-1.5">
           <span
             className={cn(
               "inline-flex items-center rounded-md px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em]",

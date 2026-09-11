@@ -29,20 +29,20 @@ export async function SponsorSlot({
   const href = safeSponsorHref(creative?.href);
 
   const label = (
-    <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+    <span className="shrink-0 font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
       {creative ? t("label") : t("available")}
     </span>
   );
 
   const body = creative ? (
-    <span className="min-w-0">
+    <span className="min-w-0 flex-1">
       <span className="block truncate text-sm font-medium">{creative.name}</span>
       {creative.tagline ? (
         <span className="block truncate text-xs text-muted-foreground">{creative.tagline}</span>
       ) : null}
     </span>
   ) : (
-    <span className="truncate text-xs text-muted-foreground">{t("placeholder")}</span>
+    <span className="min-w-0 truncate text-xs text-muted-foreground">{t("placeholder")}</span>
   );
 
   const shell = cn(
