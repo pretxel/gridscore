@@ -1,5 +1,6 @@
 import { ChevronRightIcon, MapPinIcon, ZapIcon } from "lucide-react";
 import Link from "next/link";
+import { CircuitTrace } from "@/components/circuit-trace";
 import { LocalTime } from "@/components/local-time";
 import type { GrandPrixRow } from "@/lib/db";
 import type { GrandPrixPhase } from "@/lib/market-utils";
@@ -44,17 +45,29 @@ export function GrandPrixCard({
     <Link
       href={href}
       className={cn(
-        "group/gp block rounded-xl border bg-card p-4 outline-none transition-colors hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50",
+        "group/gp relative block overflow-hidden rounded-xl border bg-card p-4 outline-none transition-colors hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50",
         highlight ? "border-signal/60 shadow-[0_0_0_1px_var(--signal)]" : "border-border",
         phase === "completed" && "opacity-80",
         className,
       )}
     >
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <div className="relative flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div className="min-w-0">
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-            {labels.round}
-          </p>
+          <div className="flex items-center gap-2">
+            {/* A generated loop, not this circuit's real layout: published maps
+                are copyrighted artwork. Small and inline, so it never sits
+                behind text on these compact rows. */}
+            <CircuitTrace
+              seed={grandPrix.circuit_key || grandPrix.slug}
+              className={cn(
+                "relative size-9 shrink-0 transition-colors sm:size-10",
+                highlight ? "text-signal" : "text-muted-foreground/70",
+              )}
+            />
+            <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+              {labels.round}
+            </p>
+          </div>
           <h3 className="mt-0.5 truncate font-heading text-lg font-semibold tracking-tight sm:text-xl">
             {grandPrix.name}
           </h3>
@@ -83,7 +96,7 @@ export function GrandPrixCard({
         </div>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+      <div className="relative mt-3 flex flex-wrap items-center gap-2 text-xs">
         <span
           title={labels.multiplierReason}
           className={cn(
