@@ -57,7 +57,34 @@
     "nextUp": "Siguiente",
     "nextLockLabel": "La próxima predicción se cierra en",
     "openWeekend": "Haz tus predicciones",
-    "noSeason": "El calendario de la temporada llega pronto."
+    "noSeason": "El calendario de la temporada llega pronto.",
+    "lightsLabel": "Semáforo de salida",
+    "statRounds": "fines de semana",
+    "statRoundsLabel": "Fines de semana de la temporada",
+    "statMarkets": "predicciones cada uno",
+    "statMarketsLabel": "Predicciones por fin de semana",
+    "marketsTitle": "Seis predicciones por fin de semana.",
+    "marketsLede": "Cada una es su propio mercado, con su cierre y sus puntos. Si fallas una, las demás siguen contando.",
+    "stepsTitle": "Cómo va un fin de semana.",
+    "step": {
+      "call": {
+        "title": "Predice",
+        "body": "Elige la pole, el podio en orden, la vuelta rápida y el resto. Cambia de idea tantas veces como quieras."
+      },
+      "lock": {
+        "title": "Se cierra",
+        "body": "Cada mercado cierra cuando empieza su sesión. La base de datos rechaza las tardías, así que nadie cuela ninguna."
+      },
+      "score": {
+        "title": "Puntúas",
+        "body": "Los puntos llegan en cuanto se confirma un resultado, multiplicados por el fin de semana, y la tabla se mueve mientras miras."
+      }
+    },
+    "boardTitle": "Al frente de la temporada.",
+    "boardLede": "La cabeza de la tabla ahora mismo. Las ligas privadas te miden contra tus amigos.",
+    "boardCta": "Clasificación completa",
+    "finalTitle": "La próxima sesión no va a esperarte.",
+    "finalLede": "Entra con un email, haz tus predicciones y mira dónde acabas."
   },
   "signIn": {
     "title": "Iniciar sesión",

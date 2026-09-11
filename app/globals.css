@@ -240,6 +240,97 @@
   .admin-reveal > *:nth-child(n + 5) {
     animation-delay: 0.22s;
   }
+  /* Starting lights: five lamps fill left to right, hold, then go out —
+     the moment a race begins, and the moment a market locks. Pure CSS so the
+     landing hero needs no JavaScript. */
+  .lights {
+    --lights-cycle: 6s;
+  }
+  .lights__lamp {
+    background: color-mix(in oklab, var(--foreground) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 14%, transparent);
+    animation: lamp var(--lights-cycle) steps(1, end) infinite;
+  }
+  .lights__lamp:nth-child(1) {
+    animation-delay: 0s;
+  }
+  .lights__lamp:nth-child(2) {
+    animation-delay: 0.45s;
+  }
+  .lights__lamp:nth-child(3) {
+    animation-delay: 0.9s;
+  }
+  .lights__lamp:nth-child(4) {
+    animation-delay: 1.35s;
+  }
+  .lights__lamp:nth-child(5) {
+    animation-delay: 1.8s;
+  }
+  @keyframes lamp {
+    /* Lit from its own delay until the whole row goes dark at 60% of the
+       cycle, which is the "go" the countdown pays off. */
+    0%,
+    59.9% {
+      background: var(--live);
+      box-shadow:
+        inset 0 0 0 1px color-mix(in oklab, var(--live) 60%, transparent),
+        0 0 12px color-mix(in oklab, var(--live) 45%, transparent);
+    }
+    60%,
+    100% {
+      background: color-mix(in oklab, var(--foreground) 12%, transparent);
+      box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 14%, transparent);
+    }
+  }
+
+  /* Sections fade up as they enter the viewport. The class is only added by
+     components/reveal.tsx once it has observed the element, so content is
+     visible when JavaScript never runs. */
+  .reveal-ready {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  .reveal-in {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 0.6s cubic-bezier(0.2, 0.7, 0.1, 1),
+      transform 0.6s cubic-bezier(0.2, 0.7, 0.1, 1);
+  }
+
+  /* Faint timing-screen grid behind the hero. */
+  .bg-grid {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklab, var(--foreground) 7%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--foreground) 7%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 64px 64px;
+  }
+
+  /* A single kerb band that slides, used as a section divider. */
+  .kerb-scroll {
+    background-image: repeating-linear-gradient(
+      135deg,
+      var(--signal) 0,
+      var(--signal) 10px,
+      transparent 10px,
+      transparent 20px
+    );
+    animation: kerb-slide 2.4s linear infinite;
+  }
+  @keyframes kerb-slide {
+    to {
+      background-position: 28.28px 0;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .rise,
     .admin-reveal > * {
@@ -247,8 +338,20 @@
       opacity: 1;
       transform: none;
     }
-    .live-pulse::before {
+    .live-pulse::before,
+    .kerb-scroll {
       animation: none;
+    }
+    /* The lights stay lit rather than flashing. */
+    .lights__lamp {
+      animation: none;
+      background: var(--live);
+    }
+    .reveal-ready,
+    .reveal-in {
+      opacity: 1;
+      transform: none;
+      transition: none;
     }
   }
 }

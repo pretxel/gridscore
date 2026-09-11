@@ -57,7 +57,34 @@
     "nextUp": "Next up",
     "nextLockLabel": "Next call locks in",
     "openWeekend": "Make your calls",
-    "noSeason": "The season calendar arrives soon."
+    "noSeason": "The season calendar arrives soon.",
+    "lightsLabel": "Starting lights",
+    "statRounds": "weekends",
+    "statRoundsLabel": "Weekends this season",
+    "statMarkets": "calls each",
+    "statMarketsLabel": "Calls per weekend",
+    "marketsTitle": "Six calls a weekend.",
+    "marketsLede": "Each one is its own market, with its own lock and its own points. Miss one and the rest still count.",
+    "stepsTitle": "How a weekend goes.",
+    "step": {
+      "call": {
+        "title": "Call it",
+        "body": "Pick pole, the podium in order, the fastest lap and the rest. Change your mind as often as you like."
+      },
+      "lock": {
+        "title": "It locks",
+        "body": "Every market closes when its own session starts. The database refuses late calls, so nobody sneaks one in."
+      },
+      "score": {
+        "title": "You score",
+        "body": "Points land the moment a result is confirmed, multiplied by the weekend, and the board moves while you watch."
+      }
+    },
+    "boardTitle": "Leading the season.",
+    "boardLede": "The top of the board right now. Private leagues rank you against your friends instead.",
+    "boardCta": "Full leaderboard",
+    "finalTitle": "The next session will not wait for you.",
+    "finalLede": "Sign in with an email, make your calls, and see where you land."
   },
   "signIn": {
     "title": "Sign in",
