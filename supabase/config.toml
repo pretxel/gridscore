@@ -237,16 +237,35 @@ otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
 
-# The only email the app sends, styled in supabase/templates/magic-link.html.
-# It applies locally (Mailpit) but NOT on the hosted free tier: pushing it
-# returns "Email template modification is not available for free tier projects
-# using the default email provider". Configure a custom SMTP provider (or move
-# off the free plan), then uncomment this block and run `supabase config push`
-# — a custom SMTP sender is what a real deployment needs anyway, since the
-# built-in one is rate-limited to a handful of emails per hour.
+# Email templates live in supabase/templates/ and share one design. They apply
+# locally (Mailpit) but NOT on the hosted free tier: pushing them returns
+# "Email template modification is not available for free tier projects using
+# the default email provider". Configure a custom SMTP provider (or move off
+# the free plan), then uncomment these blocks and run `supabase config push` —
+# a custom sender is what a real deployment needs anyway, since the built-in
+# one is rate-limited to a handful of emails per hour.
+#
+# Magic link is the only one the app sends today. The rest are ready so a
+# future flow never falls back to Supabase's unstyled default.
 # [auth.email.template.magic_link]
 # subject = "Your gridscore sign-in link"
 # content_path = "./supabase/templates/magic-link.html"
+#
+# [auth.email.template.confirmation]
+# subject = "Confirm your gridscore email"
+# content_path = "./supabase/templates/confirm-signup.html"
+#
+# [auth.email.template.invite]
+# subject = "You have been invited to gridscore"
+# content_path = "./supabase/templates/invite.html"
+#
+# [auth.email.template.email_change]
+# subject = "Confirm your new gridscore email"
+# content_path = "./supabase/templates/email-change.html"
+#
+# [auth.email.template.reauthentication]
+# subject = "Your gridscore confirmation code"
+# content_path = "./supabase/templates/reauthentication.html"
 
 # Uncomment to customize email template
 # [auth.email.template.invite]

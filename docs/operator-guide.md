@@ -58,9 +58,11 @@ the connection string from the dashboard).
 6. **Set up a custom SMTP sender.** Supabase's built-in email service is
    rate-limited to a handful of messages per hour and is not meant for
    production. It also refuses custom templates on the free tier, which is why
-   the branded magic-link email in `supabase/templates/magic-link.html` is
-   wired up in `config.toml` but commented out. Once SMTP is configured,
-   uncomment that block and push the config again.
+   the branded emails in `supabase/templates/` are wired up in `config.toml`
+   but commented out. Once SMTP is configured, uncomment those blocks and push
+   the config again. The set covers the magic link the app sends today plus
+   sign-up confirmation, invite, email change and reauthentication, so no flow
+   falls back to Supabase's unstyled default.
 7. **Deploy**, then **sign in once** with the email that will own the site.
    That creates the `auth.users` row.
 8. **Promote yourself.** Edit `supabase/seed/admin.sql` with that email and run
