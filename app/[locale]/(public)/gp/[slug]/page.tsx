@@ -216,7 +216,12 @@ export default async function GrandPrixPage({
           <h2 className="mb-3 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
             {t("sessions")}
           </h2>
-          <SessionSchedule grandPrix={grandPrix} labels={sessionLabels} now={now} />
+          <SessionSchedule
+            grandPrix={grandPrix}
+            labels={sessionLabels}
+            liveLabel={t("liveNow")}
+            now={now}
+          />
         </aside>
       </div>
     </main>

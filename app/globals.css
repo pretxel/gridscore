@@ -191,7 +191,6 @@
     display: inline-block;
     width: 0.5rem;
     height: 0.5rem;
-    margin-right: 0.4rem;
     border-radius: 9999px;
     background: var(--live);
     box-shadow: 0 0 0 0 color-mix(in oklab, var(--live) 60%, transparent);
