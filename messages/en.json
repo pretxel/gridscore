@@ -449,6 +449,9 @@
   },
   "pickForm": {
     "selectDriver": "Select a driver",
+    "emptySlot": "Empty",
+    "clearSlot": "Clear",
+    "podiumOrderHint": "Tap drivers in finishing order.",
     "save": "Save call",
     "update": "Update call",
     "saved": "Saved",

@@ -4,12 +4,12 @@ import { CheckIcon, Loader2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { toast } from "sonner";
+import { DriverPicker } from "@/components/driver-picker";
 import { MarketLockCountdown } from "@/components/market-lock-countdown";
 import { MarketStatusBadge } from "@/components/market-status-badge";
 import { Button } from "@/components/ui/button";
-import { NativeSelect } from "@/components/ui/native-select";
 import type { HitType } from "@/lib/db";
-import { type DriverOption, driverLabel } from "@/lib/driver-format";
+import type { DriverOption } from "@/lib/driver-format";
 import { lockReason } from "@/lib/market-utils";
 import {
   MARKET_LOCK_SESSION,
@@ -207,6 +207,9 @@ export function MarketForm({
             allDrivers={driverMap}
             labels={{
               select: t("selectDriver"),
+              emptySlot: t("emptySlot"),
+              clearSlot: t("clearSlot"),
+              podiumOrderHint: t("podiumOrderHint"),
               none: tm("none"),
               yes: tm("yes"),
               no: tm("no"),
@@ -263,6 +266,9 @@ function PickControl({
   allDrivers: Map<string, DriverOption>;
   labels: {
     select: string;
+    emptySlot: string;
+    clearSlot: string;
+    podiumOrderHint: string;
     none: string;
     yes: string;
     no: string;
@@ -272,41 +278,37 @@ function PickControl({
   };
   disabled: boolean;
 }) {
-  // Keep an inactive driver selectable if it is the current saved value.
-  const withCurrent = (current: string) => {
-    const cur = current && allDrivers.get(current);
-    return cur && !drivers.some((d) => d.id === cur.id) ? [...drivers, cur] : drivers;
+  // A driver who has left the grid mid-season stays pickable while they are the
+  // current saved call, so opening the form never silently drops it.
+  const withCurrent = (...current: string[]) => {
+    const extra = current
+      .map((id) => (id ? allDrivers.get(id) : undefined))
+      .filter((d): d is DriverOption => d !== undefined && !drivers.some((x) => x.id === d.id));
+    return extra.length ? [...drivers, ...extra] : drivers;
   };
-  const options = (list: DriverOption[]) =>
-    list.map((d) => (
-      <option key={d.id} value={d.id}>
-        {driverLabel(d)}
-        {d.teamName ? ` — ${d.teamName}` : ""}
-      </option>
-    ));
 
   if (type === "podium") {
     const s = state as PodiumState;
+    // The three positions are one ordered list: tapping calls P1, then P2, then
+    // P3, so the same driver cannot land in two places.
+    const order = [s.p1, s.p2, s.p3].filter(Boolean);
     return (
-      // One row per position: three selects side by side inside a half-width
-      // card cut every driver down to "ANT · An".
       <div className="grid gap-2">
-        {(["p1", "p2", "p3"] as const).map((pos) => (
-          <label key={pos} className="flex items-center gap-2">
-            <span className="w-7 shrink-0 rounded-md bg-muted py-1 text-center font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-              {labels[pos]}
-            </span>
-            <NativeSelect
-              value={s[pos]}
-              disabled={disabled}
-              onChange={(e) => onChange({ ...s, [pos]: e.target.value })}
-              className="h-10 min-w-0 flex-1"
-            >
-              <option value="">{labels.select}</option>
-              {options(withCurrent(s[pos]))}
-            </NativeSelect>
-          </label>
-        ))}
+        <p className="text-xs text-muted-foreground">{labels.podiumOrderHint}</p>
+        <DriverPicker
+          mode="ordered"
+          slots={3}
+          drivers={withCurrent(s.p1, s.p2, s.p3)}
+          selected={order}
+          onChange={(next) => onChange({ p1: next[0] ?? "", p2: next[1] ?? "", p3: next[2] ?? "" })}
+          disabled={disabled}
+          labels={{
+            slots: [labels.p1, labels.p2, labels.p3],
+            slotEmpty: labels.emptySlot,
+            clearSlot: labels.clearSlot,
+            fieldLabel: labels.select,
+          }}
+        />
       </div>
     );
   }
@@ -345,16 +347,20 @@ function PickControl({
 
   const s = state as DriverState | RetireState;
   return (
-    <NativeSelect
-      value={s.driver_id}
+    <DriverPicker
+      drivers={withCurrent(s.driver_id === "none" ? "" : s.driver_id)}
+      selected={s.driver_id ? [s.driver_id] : []}
+      onChange={(next) => onChange({ driver_id: next[0] ?? "" })}
       disabled={disabled}
-      onChange={(e) => onChange({ driver_id: e.target.value })}
-      className="h-10"
-    >
-      <option value="">{labels.select}</option>
-      {type === "first_retirement" ? <option value="none">{labels.none}</option> : null}
-      {options(withCurrent(s.driver_id === "none" ? "" : s.driver_id))}
-    </NativeSelect>
+      allowNone={type === "first_retirement"}
+      labels={{
+        slots: [],
+        slotEmpty: labels.emptySlot,
+        clearSlot: labels.clearSlot,
+        fieldLabel: labels.select,
+        none: labels.none,
+      }}
+    />
   );
 }
 

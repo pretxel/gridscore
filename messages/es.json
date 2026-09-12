@@ -449,6 +449,9 @@
   },
   "pickForm": {
     "selectDriver": "Elige un piloto",
+    "emptySlot": "Vacío",
+    "clearSlot": "Quitar",
+    "podiumOrderHint": "Toca los pilotos en orden de llegada.",
     "save": "Guardar predicción",
     "update": "Actualizar predicción",
     "saved": "Guardada",
