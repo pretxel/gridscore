@@ -398,7 +398,8 @@
     "backToCalendar": "Volver al calendario",
     "loadFailedTitle": "No se pudo cargar el calendario",
     "loadFailedBody": "Inténtalo de nuevo en un momento.",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "signInToPickLede": "Inicia sesión para predecir este fin de semana. Solo hace falta un email."
   },
   "markets": {
     "type": {
@@ -455,7 +456,6 @@
     "savedToast": "Predicción guardada",
     "closesIn": "se cierra en {time}",
     "lockedLabel": "Cerrado",
-    "lastSaveWins": "Puedes editar hasta que se cierre. Cuenta la última guardada.",
     "errorInvalid": "Esa predicción no es válida.",
     "errorNotSignedIn": "Inicia sesión para predecir.",
     "errorAdmin": "Los admins no pueden predecir.",

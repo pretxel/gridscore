@@ -398,7 +398,8 @@
     "backToCalendar": "Back to calendar",
     "loadFailedTitle": "The calendar could not be loaded",
     "loadFailedBody": "Try again in a moment.",
-    "retry": "Retry"
+    "retry": "Retry",
+    "signInToPickLede": "Sign in to call this weekend. It takes an email and nothing else."
   },
   "markets": {
     "type": {
@@ -455,7 +456,6 @@
     "savedToast": "Call saved",
     "closesIn": "closes in {time}",
     "lockedLabel": "Locked",
-    "lastSaveWins": "You can edit until it locks. The last save counts.",
     "errorInvalid": "That call is not valid.",
     "errorNotSignedIn": "Sign in to make a call.",
     "errorAdmin": "Admins cannot make calls.",

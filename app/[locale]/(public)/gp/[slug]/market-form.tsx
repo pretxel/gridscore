@@ -195,14 +195,7 @@ export function MarketForm({
             pick: pickLabels,
           }}
         />
-      ) : !signedIn ? (
-        <a
-          href={signInHref}
-          className="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground"
-        >
-          {tg("signInToPick")}
-        </a>
-      ) : isAdmin ? (
+      ) : !signedIn ? null : isAdmin ? (
         <p className="text-sm text-muted-foreground">{tg("adminCannotPick")}</p>
       ) : (
         <>
@@ -226,9 +219,13 @@ export function MarketForm({
           {podiumDuplicate ? (
             <p className="text-xs text-destructive">{t("errorDuplicateDrivers")}</p>
           ) : null}
-          <div className="flex items-center justify-between gap-3 border-t border-border pt-3">
-            <span className="text-xs text-muted-foreground">{t("lastSaveWins")}</span>
-            <Button type="submit" size="sm" disabled={!canSubmit || isPending}>
+          <div className="flex items-center justify-end gap-3 border-t border-border pt-3">
+            <Button
+              type="submit"
+              size="sm"
+              variant={saved && !dirty ? "outline" : "default"}
+              disabled={!canSubmit || isPending}
+            >
               {isPending ? (
                 <>
                   <Loader2Icon className="animate-spin" /> {t("saving")}
@@ -291,17 +288,19 @@ function PickControl({
   if (type === "podium") {
     const s = state as PodiumState;
     return (
-      <div className="grid gap-2 sm:grid-cols-3">
+      // One row per position: three selects side by side inside a half-width
+      // card cut every driver down to "ANT · An".
+      <div className="grid gap-2">
         {(["p1", "p2", "p3"] as const).map((pos) => (
-          <label key={pos} className="flex flex-col gap-1">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+          <label key={pos} className="flex items-center gap-2">
+            <span className="w-7 shrink-0 rounded-md bg-muted py-1 text-center font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
               {labels[pos]}
             </span>
             <NativeSelect
               value={s[pos]}
               disabled={disabled}
               onChange={(e) => onChange({ ...s, [pos]: e.target.value })}
-              className="h-10"
+              className="h-10 min-w-0 flex-1"
             >
               <option value="">{labels.select}</option>
               {options(withCurrent(s[pos]))}

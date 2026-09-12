@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { CircuitTrace } from "@/components/circuit-trace";
 import { MarketLockCountdown } from "@/components/market-lock-countdown";
 import { SessionSchedule } from "@/components/session-schedule";
 import { SponsorSlot } from "@/components/sponsor-slot";
@@ -109,7 +110,12 @@ export default async function GrandPrixPage({
         {t("backToCalendar")}
       </Link>
 
-      <header className="mb-8 flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
+      <header className="relative isolate mb-8 flex flex-col gap-4 overflow-hidden border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
+        {/* The weekend's own circuit, large and faint behind the title. */}
+        <CircuitTrace
+          seed={grandPrix.circuit_key || grandPrix.slug}
+          className="absolute -top-10 right-0 -z-10 hidden h-64 w-64 text-signal opacity-[0.13] sm:block lg:h-72 lg:w-72"
+        />
         <div className="min-w-0">
           <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
             {season.name} · {t("roundLabel", { round: grandPrix.round })}
@@ -162,6 +168,18 @@ export default async function GrandPrixPage({
         <section>
           <h2 className="font-heading text-xl font-semibold tracking-tight">{t("markets")}</h2>
           <p className="mt-1 mb-4 text-sm text-muted-foreground">{t("marketsLede")}</p>
+
+          {!user ? (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-signal/40 bg-signal/10 px-4 py-3">
+              <p className="text-sm">{t("signInToPickLede")}</p>
+              <a
+                href={signInHref}
+                className="inline-flex h-10 shrink-0 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
+              >
+                {t("signInToPick")}
+              </a>
+            </div>
+          ) : null}
 
           <SponsorSlot placement="gp-detail" plan={viewer.plan} className="mb-4" />
           <div className="grid gap-4 md:grid-cols-2">
