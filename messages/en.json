@@ -111,7 +111,7 @@
     "send": "Send magic link",
     "sending": "Sending",
     "checkInbox": "Check your inbox.",
-    "checkInboxBody": "We sent a sign-in link to {email}. It works once and expires soon.",
+    "checkInboxBody": "We sent a sign-in link to <email>{address}</email>. It works once and expires soon.",
     "invalidEmail": "Enter a valid email address"
   },
   "onboarding": {

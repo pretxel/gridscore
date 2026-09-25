@@ -47,7 +47,8 @@ export function SignInForm({ next }: { next?: string }) {
           <p className="font-medium">{t("checkInbox")}</p>
           <p className="mt-1 text-muted-foreground">
             {t.rich("checkInboxBody", {
-              email: () => <span className="font-mono text-foreground">{email}</span>,
+              address: email,
+              email: (chunks) => <span className="font-mono text-foreground">{chunks}</span>,
             })}
           </p>
         </div>

@@ -111,7 +111,7 @@
     "send": "Enviar enlace mágico",
     "sending": "Enviando",
     "checkInbox": "Revisa tu bandeja de entrada.",
-    "checkInboxBody": "Te enviamos un enlace de acceso a {email}. Se usa una vez y caduca pronto.",
+    "checkInboxBody": "Te enviamos un enlace de acceso a <email>{address}</email>. Se usa una vez y caduca pronto.",
     "invalidEmail": "Introduce una dirección de email válida"
   },
   "onboarding": {
