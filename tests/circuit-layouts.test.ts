@@ -1,8 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { CIRCUIT_LAYOUT_VIEWBOX, CIRCUIT_LAYOUTS, circuitLayout } from "@/lib/circuits/layouts";
+import circuits from "@/data/circuits.json";
+import {
+  CIRCUIT_LAYOUT_SOURCES,
+  CIRCUIT_LAYOUT_VIEWBOX,
+  CIRCUIT_LAYOUTS,
+  circuitLayout,
+} from "@/lib/circuits/layouts";
 
 describe("circuitLayout", () => {
-  it("returns null for a circuit OpenStreetMap has not mapped as a lap", () => {
+  it("returns null for a circuit with no traced layout", () => {
     expect(circuitLayout("not-a-circuit")).toBeNull();
     expect(circuitLayout(null)).toBeNull();
     expect(circuitLayout(undefined)).toBeNull();
@@ -18,11 +24,17 @@ describe("circuitLayout", () => {
 describe("the traced layouts", () => {
   const entries = Object.entries(CIRCUIT_LAYOUTS);
 
-  it("ships the circuits that traced cleanly", () => {
-    // Ten of the season's twenty-three. The rest are not mapped in
-    // OpenStreetMap as a closed racing lap, or traced badly enough to reject;
-    // both fall back to the generated loop.
-    expect(entries.length).toBeGreaterThanOrEqual(10);
+  it("ships a real layout for every circuit on the calendar", () => {
+    for (const { key } of circuits) {
+      expect(CIRCUIT_LAYOUTS[key], key).toBeDefined();
+    }
+  });
+
+  it("names the source of every layout, so the footer can credit it", () => {
+    expect(Object.keys(CIRCUIT_LAYOUT_SOURCES).sort()).toEqual(Object.keys(CIRCUIT_LAYOUTS).sort());
+    for (const source of Object.values(CIRCUIT_LAYOUT_SOURCES)) {
+      expect(["osm", "geojson"]).toContain(source);
+    }
   });
 
   it("are closed paths of plain move and line commands", () => {

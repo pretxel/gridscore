@@ -1,11 +1,13 @@
 // Builds `lib/circuits/layouts.ts` — one SVG path per circuit, traced from
-// OpenStreetMap.
+// bacinger/f1-circuits, or from OpenStreetMap for a circuit it does not cover.
 //
 //   pnpm gen:circuit-layouts          refresh circuits that have no layout yet
 //   pnpm gen:circuit-layouts --all    re-fetch every circuit
 //
 // The data is © OpenStreetMap contributors, licensed ODbL. The rendered
 // outline is a Produced Work, so the app credits OSM wherever it is shown.
+// The fallback is © Tomislav Bacinger, MIT; the notice travels with the file
+// and the footer credits it too.
 //
 // Run by hand, not in CI: Overpass is a shared community service and the
 // layouts change about as often as a circuit gets rebuilt. Results are
@@ -36,12 +38,18 @@ const PAUSE_MS = 4000;
 // budget. Both clear up on their own, so back off and ask again.
 const RETRIES = 4;
 const SEARCH_RADIUS_M = 2600;
+// Hand-traced GeoJSON of every Grand Prix circuit, one closed LineString each
+// (MIT). Coarser than OSM but it is the racing lap and nothing else, and it
+// covers the street circuits OSM maps as ordinary roads.
+const GEOJSON_URL =
+  "https://raw.githubusercontent.com/bacinger/f1-circuits/master/f1-circuits.geojson";
+const GEOJSON_CACHE = path.join(CACHE, "..", "f1-circuits.geojson");
 export const VIEWBOX = 100;
 
-// Traces that came back wrong and were rejected by eye against the real
+// OSM traces that came back wrong and were rejected by eye against the real
 // layout. OSM coverage is the limit, not the tracing: these circuits are
-// mapped in pieces, or as ordinary streets, or not yet at all. They fall back
-// to the generated loop, and a re-run will not quietly reintroduce them.
+// mapped in pieces, or as ordinary streets, or not yet at all. Only consulted
+// when the GeoJSON lacks a circuit; a re-run will not reintroduce these.
 const EXCLUDED: Record<string, string> = {
   baku: "street circuit mapped as ordinary roads; the trace is one open line",
   madring: "new circuit, only partly mapped",
@@ -53,7 +61,8 @@ const EXCLUDED: Record<string, string> = {
   yas_marina: "marina section is mapped in pieces; the lap comes back broken",
 };
 
-type Circuit = { key: string; name: string; lat: number; lon: number };
+type Circuit = { key: string; name: string; geojsonId: string; lat: number; lon: number };
+type Source = "osm" | "geojson";
 type LatLon = { lat: number; lon: number };
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -115,6 +124,35 @@ async function fetchOnce(circuit: Circuit, attempt: number): Promise<LatLon[][]>
     }
   }
   return lines;
+}
+
+async function fetchGeojson(): Promise<Map<string, LatLon[]>> {
+  if (!fs.existsSync(GEOJSON_CACHE)) {
+    const res = await fetch(GEOJSON_URL);
+    if (!res.ok) throw new Error(`f1-circuits ${res.status}`);
+    fs.mkdirSync(path.dirname(GEOJSON_CACHE), { recursive: true });
+    fs.writeFileSync(GEOJSON_CACHE, await res.text());
+  }
+  const body = JSON.parse(fs.readFileSync(GEOJSON_CACHE, "utf8")) as {
+    features: { properties: { id: string }; geometry: { coordinates: [number, number][] } }[];
+  };
+  return new Map(
+    body.features.map((f) => [
+      f.properties.id,
+      f.geometry.coordinates.map(([lon, lat]) => ({ lat, lon })),
+    ]),
+  );
+}
+
+// The GeoJSON lap as a chain, held to the same gate as an OSM one so a bad
+// entry cannot ship either.
+function geojsonChain(line: LatLon[] | undefined): LatLon[] {
+  if (!line || line.length < 20) return [];
+  // Closed rings repeat the first point last; the path closes with Z instead.
+  const ring = distance(line[0], line[line.length - 1]) < 1 ? line.slice(0, -1) : line;
+  const metres = length(ring);
+  if (metres < MIN_LAP_M || metres > MAX_LAP_M) return [];
+  return ring;
 }
 
 // Metres between two points, good enough at circuit scale.
@@ -271,36 +309,61 @@ async function main(): Promise<void> {
   const limitArg = process.argv.find((a) => a.startsWith("--limit="));
   const limit = limitArg ? Number(limitArg.split("=")[1]) : Number.POSITIVE_INFINITY;
   const circuits: Circuit[] = JSON.parse(fs.readFileSync(INPUT, "utf8"));
-  const existing: Record<string, string> = fs.existsSync(OUTPUT)
-    ? ((await import(`file://${OUTPUT}`)) as { CIRCUIT_LAYOUTS: Record<string, string> })
-        .CIRCUIT_LAYOUTS
-    : {};
+  const existing = fs.existsSync(OUTPUT)
+    ? ((await import(`file://${OUTPUT}`)) as {
+        CIRCUIT_LAYOUTS: Record<string, string>;
+        CIRCUIT_LAYOUT_SOURCES?: Record<string, Source>;
+      })
+    : { CIRCUIT_LAYOUTS: {}, CIRCUIT_LAYOUT_SOURCES: {} };
 
-  const layouts: Record<string, string> = refreshAll ? {} : { ...existing };
+  const layouts: Record<string, string> = refreshAll ? {} : { ...existing.CIRCUIT_LAYOUTS };
+  // Layouts written before the GeoJSON fallback existed all came from OSM.
+  const sources: Record<string, Source> = {};
+  for (const key of Object.keys(layouts)) {
+    sources[key] = existing.CIRCUIT_LAYOUT_SOURCES?.[key] ?? "osm";
+  }
   let fetched = 0;
 
   for (const key of Object.keys(layouts)) {
-    if (EXCLUDED[key]) delete layouts[key];
+    if (EXCLUDED[key] && sources[key] === "osm") delete layouts[key];
   }
 
+  const geojson = await fetchGeojson();
+
   for (const circuit of circuits) {
-    if (EXCLUDED[circuit.key]) continue;
     if (!refreshAll && layouts[circuit.key]) continue;
-    if (fetched >= limit) break;
     process.stdout.write(`${circuit.key.padEnd(18)} `);
+    // The GeoJSON first: it is traced as the Grand Prix lap itself, where an
+    // OSM chain can pick up a pit lane or an old layout (Monza's came back as
+    // the banked oval).
+    let chain = geojsonChain(geojson.get(circuit.geojsonId));
+    if (chain.length > 0) {
+      layouts[circuit.key] = toPath(simplify(chain, 12));
+      sources[circuit.key] = "geojson";
+      console.log(`geojson (${Math.round(length(chain))}m)`);
+      continue;
+    }
+    if (EXCLUDED[circuit.key]) {
+      console.log(`skipped (no GeoJSON lap; osm excluded: ${EXCLUDED[circuit.key]})`);
+      continue;
+    }
+    if (fetched >= limit) {
+      console.log("skipped (no GeoJSON lap; osm fetch limit reached)");
+      continue;
+    }
     try {
       const cached = fs.existsSync(path.join(CACHE, `${circuit.key}.json`));
       if (fetched > 0 && !cached) await sleep(PAUSE_MS);
       const lines = await fetchRaceways(circuit);
       if (!cached) fetched++;
-      const chain = bestChain(lines);
-      const metres = length(chain);
+      chain = bestChain(lines);
       if (chain.length === 0) {
-        console.log(`skipped (${lines.length} ways, no chain looked like a lap)`);
+        console.log(`skipped (no GeoJSON lap; ${lines.length} osm ways, none a lap)`);
         continue;
       }
       layouts[circuit.key] = toPath(simplify(chain, 12));
-      console.log(`ok (${Math.round(metres)}m, ${layouts[circuit.key].length} chars)`);
+      sources[circuit.key] = "osm";
+      console.log(`osm (${Math.round(length(chain))}m, ${layouts[circuit.key].length} chars)`);
     } catch (error) {
       console.log(`failed: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -314,18 +377,33 @@ async function main(): Promise<void> {
 
   const keys = Object.keys(layouts).sort();
   const body = keys.map((key) => `  ${JSON.stringify(key)}: ${JSON.stringify(layouts[key])},`);
+  const sourceBody = keys.map(
+    (key) => `  ${JSON.stringify(key)}: ${JSON.stringify(sources[key])},`,
+  );
   const file = `// Generated by scripts/gen-circuit-layouts.mts — do not edit by hand.
 //
-// Circuit outlines traced from OpenStreetMap.
-// Map data © OpenStreetMap contributors, licensed ODbL (opendatacommons.org/licenses/odbl).
-// The app credits OSM wherever these are drawn.
+// Circuit outlines traced from real track geometry, from one of two sources
+// (CIRCUIT_LAYOUT_SOURCES says which):
+//
+//   osm      Map data © OpenStreetMap contributors, licensed ODbL
+//            (opendatacommons.org/licenses/odbl).
+//   geojson  github.com/bacinger/f1-circuits — Copyright (c) 2019-2025
+//            Tomislav Bacinger, MIT License: permission is granted, free of
+//            charge, to deal in the data without restriction, provided this
+//            notice is included. It is provided "as is", without warranty of
+//            any kind.
+//
+// The app credits both wherever these are drawn.
 //
 // Keyed by \`grands_prix.circuit_key\`. A circuit with no entry falls back to
-// the generated loop in lib/circuit-trace.ts — either OSM has not mapped it as
-// a closed racing lap, or its trace was rejected (see EXCLUDED in the script).
+// the generated loop in lib/circuit-trace.ts.
 
 export const CIRCUIT_LAYOUTS: Record<string, string> = {
 ${body.join("\n")}
+};
+
+export const CIRCUIT_LAYOUT_SOURCES: Record<string, "osm" | "geojson"> = {
+${sourceBody.join("\n")}
 };
 
 export const CIRCUIT_LAYOUT_VIEWBOX = ${VIEWBOX};

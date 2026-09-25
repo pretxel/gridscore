@@ -2,139 +2,162 @@
   {
     "key": "albert_park",
     "name": "Albert Park Grand Prix Circuit",
-    "lat": -37.8497,
-    "lon": 144.968
+    "geojsonId": "au-1953",
+    "lat": -37.84597,
+    "lon": 144.97036
   },
   {
     "key": "americas",
     "name": "Circuit of the Americas",
-    "lat": 30.1328,
-    "lon": -97.6411
+    "geojsonId": "us-2012",
+    "lat": 30.13474,
+    "lon": -97.63396
   },
   {
     "key": "baku",
     "name": "Baku City Circuit",
-    "lat": 40.3725,
-    "lon": 49.8533
+    "geojsonId": "az-2016",
+    "lat": 40.36939,
+    "lon": 49.84306
   },
   {
     "key": "catalunya",
     "name": "Circuit de Barcelona-Catalunya",
-    "lat": 41.57,
-    "lon": 2.26111
+    "geojsonId": "es-1991",
+    "lat": 41.56947,
+    "lon": 2.2579
   },
   {
     "key": "hungaroring",
     "name": "Hungaroring",
-    "lat": 47.5789,
-    "lon": 19.2486
+    "geojsonId": "hu-1986",
+    "lat": 47.58302,
+    "lon": 19.24947
   },
   {
     "key": "interlagos",
     "name": "Autódromo José Carlos Pace",
-    "lat": -23.7036,
-    "lon": -46.6997
+    "geojsonId": "br-1940",
+    "lat": -23.70169,
+    "lon": -46.69728
   },
   {
     "key": "losail",
     "name": "Losail International Circuit",
-    "lat": 25.49,
-    "lon": 51.4542
+    "geojsonId": "qa-2004",
+    "lat": 25.49048,
+    "lon": 51.45373
   },
   {
     "key": "madring",
     "name": "Madring",
-    "lat": 40.46528,
-    "lon": -3.61528
+    "geojsonId": "es-2026",
+    "lat": 40.47246,
+    "lon": -3.61866
   },
   {
     "key": "marina_bay",
     "name": "Marina Bay Street Circuit",
-    "lat": 1.2914,
-    "lon": 103.864
+    "geojsonId": "sg-2008",
+    "lat": 1.29073,
+    "lon": 103.85799
   },
   {
     "key": "miami",
     "name": "Miami International Autodrome",
-    "lat": 25.9581,
-    "lon": -80.2389
+    "geojsonId": "us-2022",
+    "lat": 25.95791,
+    "lon": -80.23727
   },
   {
     "key": "monaco",
     "name": "Circuit de Monaco",
-    "lat": 43.7347,
-    "lon": 7.42056
+    "geojsonId": "mc-1929",
+    "lat": 43.73674,
+    "lon": 7.42579
   },
   {
     "key": "monza",
     "name": "Autodromo Nazionale di Monza",
-    "lat": 45.6156,
-    "lon": 9.28111
+    "geojsonId": "it-1922",
+    "lat": 45.62161,
+    "lon": 9.28878
   },
   {
     "key": "red_bull_ring",
     "name": "Red Bull Ring",
-    "lat": 47.2197,
-    "lon": 14.7647
+    "geojsonId": "at-1969",
+    "lat": 47.22284,
+    "lon": 14.76236
   },
   {
     "key": "rodriguez",
     "name": "Autódromo Hermanos Rodríguez",
-    "lat": 19.4042,
-    "lon": -99.0907
+    "geojsonId": "mx-1962",
+    "lat": 19.40173,
+    "lon": -99.08997
   },
   {
     "key": "sepang",
     "name": "Sepang International Circuit",
-    "lat": 2.76083,
-    "lon": 101.738
+    "geojsonId": "my-1999",
+    "lat": 2.76088,
+    "lon": 101.73781
   },
   {
     "key": "shanghai",
     "name": "Shanghai International Circuit",
-    "lat": 31.3389,
-    "lon": 121.22
+    "geojsonId": "cn-2004",
+    "lat": 31.34066,
+    "lon": 121.22141
   },
   {
     "key": "silverstone",
     "name": "Silverstone Circuit",
-    "lat": 52.0786,
-    "lon": -1.01694
+    "geojsonId": "gb-1948",
+    "lat": 52.07122,
+    "lon": -1.01677
   },
   {
     "key": "spa",
     "name": "Circuit de Spa-Francorchamps",
-    "lat": 50.4372,
-    "lon": 5.97139
+    "geojsonId": "be-1925",
+    "lat": 50.43695,
+    "lon": 5.96858
   },
   {
     "key": "suzuka",
     "name": "Suzuka Circuit",
-    "lat": 34.8431,
-    "lon": 136.541
+    "geojsonId": "jp-1962",
+    "lat": 34.84367,
+    "lon": 136.53267
   },
   {
     "key": "vegas",
     "name": "Las Vegas Strip Street Circuit",
-    "lat": 36.1147,
-    "lon": -115.173
+    "geojsonId": "us-2023",
+    "lat": 36.11673,
+    "lon": -115.16664
   },
   {
     "key": "villeneuve",
     "name": "Circuit Gilles Villeneuve",
-    "lat": 45.5,
-    "lon": -73.5228
+    "geojsonId": "ca-1978",
+    "lat": 45.50568,
+    "lon": -73.52594
   },
   {
     "key": "yas_marina",
     "name": "Yas Marina Circuit",
-    "lat": 24.4672,
-    "lon": 54.6031
+    "geojsonId": "ae-2009",
+    "lat": 24.4709,
+    "lon": 54.60556
   },
   {
     "key": "zandvoort",
     "name": "Circuit Park Zandvoort",
-    "lat": 52.3888,
-    "lon": 4.54092
+    "geojsonId": "nl-1948",
+    "lat": 52.38809,
+    "lon": 4.5459
   }
 ]

@@ -7,6 +7,7 @@ import { SponsorSlot } from "@/components/sponsor-slot";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { buttonVariants } from "@/components/ui/button";
 import { UserMenu } from "@/components/user-menu";
+import { CIRCUIT_LAYOUT_SOURCES } from "@/lib/circuits/layouts";
 import { DEFAULT_LOCALE, isLocale, localePath } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { getViewer } from "@/lib/viewer";
@@ -69,6 +70,8 @@ export async function SiteNav() {
   );
 }
 
+const LAYOUTS_USE_OSM = Object.values(CIRCUIT_LAYOUT_SOURCES).includes("osm");
+
 export async function SiteFooter() {
   const t = await getTranslations("footer");
   const rawLocale = await getLocale();
@@ -81,23 +84,14 @@ export async function SiteFooter() {
           <span className="font-mono uppercase tracking-[0.2em]">{t("tagline")}</span>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
-          {/* ODbL asks that a work made from the data credit OpenStreetMap.
-              The circuit outlines on the calendar are traced from it. */}
+          {/* The circuit outlines on the calendar are traced from
+              bacinger/f1-circuits, whose MIT licence asks for the notice to
+              travel with the data. */}
           <span>
             {t.rich("mapCredit", {
-              osm: (chunks) => (
+              source: (chunks) => (
                 <a
-                  href="https://www.openstreetmap.org/copyright"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  className="hover:text-foreground hover:underline"
-                >
-                  {chunks}
-                </a>
-              ),
-              odbl: (chunks) => (
-                <a
-                  href="https://opendatacommons.org/licenses/odbl/"
+                  href="https://github.com/bacinger/f1-circuits"
                   rel="noopener noreferrer"
                   target="_blank"
                   className="hover:text-foreground hover:underline"
@@ -107,6 +101,34 @@ export async function SiteFooter() {
               ),
             })}
           </span>
+          {/* ODbL asks that a work made from OpenStreetMap credit it; only
+              said while a layout actually comes from there. */}
+          {LAYOUTS_USE_OSM && (
+            <span>
+              {t.rich("osmCredit", {
+                osm: (chunks) => (
+                  <a
+                    href="https://www.openstreetmap.org/copyright"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    className="hover:text-foreground hover:underline"
+                  >
+                    {chunks}
+                  </a>
+                ),
+                odbl: (chunks) => (
+                  <a
+                    href="https://opendatacommons.org/licenses/odbl/"
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    className="hover:text-foreground hover:underline"
+                  >
+                    {chunks}
+                  </a>
+                ),
+              })}
+            </span>
+          )}
           <Link
             href={localePath(locale, "/how-it-works")}
             className="hover:text-foreground hover:underline"
