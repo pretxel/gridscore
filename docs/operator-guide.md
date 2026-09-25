@@ -38,6 +38,9 @@ the connection string from the dashboard).
    | `NEXT_PUBLIC_SITE_URL` | your production origin, e.g. `https://gridscore.example` |
    | `CRON_SECRET` | any long random string; Vercel sends it on every cron call |
    | `JOLPICA_BASE_URL` | optional override of the race data endpoint |
+   | `RESEND_API_KEY` | Resend → API Keys (sending access is enough) |
+   | `REMINDER_FROM_EMAIL` | the reminder sender on your verified domain, e.g. `gridscore <reminders@YOUR-DOMAIN>` |
+   | `REMINDER_SIGNING_SECRET` | any long random string; signs the opt-out links in reminder emails. Changing it breaks the links in emails already sent |
 
 5. **Point Supabase Auth at the deployment.** A fresh project allows only
    `http://localhost:3000`, so a magic link sends production readers to
@@ -63,11 +66,31 @@ the connection string from the dashboard).
    the config again. The set covers the magic link the app sends today plus
    sign-up confirmation, invite, email change and reauthentication, so no flow
    falls back to Supabase's unstyled default.
-7. **Deploy**, then **sign in once** with the email that will own the site.
+7. **Set up lock reminders** (optional; the job stays off until you do).
+   Reminder emails go through Resend, not Supabase SMTP, which is kept for
+   sign-in links.
+   - In Resend, add your sending domain and create the SPF, DKIM and DMARC
+     records it lists. Mail from an unverified domain is refused.
+   - Set the three reminder variables above in Vercel.
+   - The job runs **hourly**, which the Vercel Hobby plan cannot do, so
+     Supabase triggers it: the `lock_reminders` migration schedules
+     `pg_cron` to call `/api/cron/send-reminders` through `pg_net`. Give it
+     the URL and the bearer in the SQL editor:
+
+     ```sql
+     select vault.create_secret('https://YOUR-DOMAIN/api/cron/send-reminders', 'reminders_cron_url');
+     select vault.create_secret('<the same value as CRON_SECRET>', 'cron_secret');
+     ```
+
+     Until both exist the hourly call does nothing.
+   - After deploying, send yourself one: Admin → Operations → Lock reminders
+     → **Run now** (with a market of yours due inside 24 hours), then
+     **Resume** to switch the schedule on. It ships paused.
+8. **Deploy**, then **sign in once** with the email that will own the site.
    That creates the `auth.users` row.
-8. **Promote yourself.** Edit `supabase/seed/admin.sql` with that email and run
+9. **Promote yourself.** Edit `supabase/seed/admin.sql` with that email and run
    it. The "Admin" link then appears in the nav.
-9. **Import the season.** Admin → Operations → Calendar sync → **Run now**.
+10. **Import the season.** Admin → Operations → Calendar sync → **Run now**.
    Teams, drivers and the calendar land, and the database trigger creates the
    markets for every weekend.
 
@@ -75,12 +98,18 @@ the connection string from the dashboard).
 
 ## 2. The weekly rhythm
 
-Most weekends need nothing from you. The two crons carry the load:
+Most weekends need nothing from you. Three jobs carry the load:
 
 | job | when | what it does |
 |---|---|---|
 | Calendar sync | daily 06:00 UTC | refreshes teams, drivers, sessions, multipliers |
 | Results sync | daily 03:00 UTC | locks due markets, resolves what the timing data can settle |
+| Lock reminders | hourly, via Supabase `pg_cron` | emails each player the markets they have not called that lock within their lead time (24 h by default, 2 h, or off) |
+
+A player is reminded about a market once at most; `reminder_sends` records it
+after Resend accepts the email, so a failed send is retried the next hour.
+Players change the lead time in Settings, or turn reminders off from the link
+in every email.
 
 On the Vercel Hobby plan each cron may run once a day. On a paid plan, set
 results sync back to hourly in `vercel.json` **and** in
@@ -193,8 +222,16 @@ job from Operations.
 
 **A cron returns 204.** That is a deliberate skip, and the `x-skipped` header
 says which: `disabled` (paused in Operations), `nothing-due` (results sync on a
-quiet week), `no-active-season`, or `missing-env` (`CRON_SECRET` or the
-provider is not configured).
+quiet week), `no-active-season`, or `missing-env` (`CRON_SECRET`, the
+provider, or for reminders `RESEND_API_KEY` / `REMINDER_FROM_EMAIL` /
+`REMINDER_SIGNING_SECRET` is not configured).
+
+**Reminders stopped.** Operations shows the last `Lock reminders` run. No new
+runs means `pg_cron` is not reaching the app: check the Vault secrets and
+`select * from cron.job_run_details order by start_time desc limit 5;`. Runs
+reported `partial` mean Resend refused some sends; the run's summary counts
+them and the Vercel log has the reason (usually the sending domain). To stop
+all reminder mail at once, **Pause** the job in Operations.
 
 **A player says their pick vanished.** Picks are refused after `locks_at` by
 both an RLS policy and a database trigger, so a late save never lands. Confirm

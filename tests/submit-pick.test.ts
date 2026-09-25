@@ -119,13 +119,13 @@ describe("submitPick", () => {
 
   it("refuses a locked or missing market before touching the database", async () => {
     state.market = { ...state.market, locks_at: new Date(Date.now() - 1000).toISOString() };
-    expect(await submitPick(valid)).toEqual({ ok: false, error: "errorLocked" });
+    expect(await submitPick(valid)).toEqual({ ok: false, error: "errorLocked", locked: true });
     state.market = {
       ...state.market,
       locks_at: new Date(Date.now() + 1000).toISOString(),
       status: "locked",
     };
-    expect(await submitPick(valid)).toEqual({ ok: false, error: "errorLocked" });
+    expect(await submitPick(valid)).toEqual({ ok: false, error: "errorLocked", locked: true });
     state.market = null;
     expect(await submitPick(valid)).toEqual({ ok: false, error: "errorMarketNotFound" });
     expect(state.upserts).toEqual([]);
@@ -138,9 +138,9 @@ describe("submitPick", () => {
 
   it("maps database lock refusals to the locked message", async () => {
     state.upsertError = { code: "42501", message: "new row violates row-level security policy" };
-    expect(await submitPick(valid)).toEqual({ ok: false, error: "errorLocked" });
+    expect(await submitPick(valid)).toEqual({ ok: false, error: "errorLocked", locked: true });
     state.upsertError = { code: "P0001", message: "prediction locked" };
-    expect(await submitPick(valid)).toEqual({ ok: false, error: "errorLocked" });
+    expect(await submitPick(valid)).toEqual({ ok: false, error: "errorLocked", locked: true });
     state.upsertError = { code: "XX000", message: "disk on fire" };
     expect(await submitPick(valid)).toEqual({ ok: false, error: "errorGeneric" });
   });

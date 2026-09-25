@@ -5,7 +5,11 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 
 export type { OperationKind, OperationStatus, OperationTrigger } from "@/lib/db";
 
-export const OPERATION_KINDS: readonly OperationKind[] = ["sync_calendar", "sync_results"] as const;
+export const OPERATION_KINDS: readonly OperationKind[] = [
+  "sync_calendar",
+  "sync_results",
+  "send_reminders",
+] as const;
 
 // A job summary is a bag of counts; the conventional failure keys decide
 // between "completed cleanly" and "completed with some failures".

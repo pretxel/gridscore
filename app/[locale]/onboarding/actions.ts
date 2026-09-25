@@ -35,6 +35,13 @@ export async function setDisplayName(formData: FormData) {
     throw new Error(error.message);
   }
 
+  // Remember the language they signed up in: reminder emails are written in
+  // it. Only the locale is set; the lead time keeps its default. Best effort.
+  const { error: prefError } = await supabase
+    .from("reminder_preferences")
+    .upsert({ user_id: user.id, locale }, { onConflict: "user_id" });
+  if (prefError) console.error("[onboarding] locale not saved:", prefError.message);
+
   revalidatePath("/", "layout");
   const rawNext = formData.get("next");
   redirect(safeNextPath(typeof rawNext === "string" ? rawNext : null) ?? localePath(locale, "/"));

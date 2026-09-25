@@ -34,6 +34,11 @@ export const env = {
   cronSecret: process.env.CRON_SECRET ?? null,
   // Race data provider endpoint; defaults to the public Jolpica API.
   jolpicaBaseUrl: process.env.JOLPICA_BASE_URL ?? "https://api.jolpi.ca/ergast/f1",
+  // Lock reminders. Nullable like the cron secret: without them the reminder
+  // job skips with `missing-env` instead of failing.
+  resendApiKey: process.env.RESEND_API_KEY ?? null,
+  reminderFromEmail: process.env.REMINDER_FROM_EMAIL ?? null,
+  reminderSigningSecret: process.env.REMINDER_SIGNING_SECRET ?? null,
 };
 
 export function requireServiceRoleKey(): string {

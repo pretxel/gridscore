@@ -4,9 +4,16 @@ import { GrandPrixCard, type GrandPrixCardLabels } from "@/components/grand-prix
 import { formatMultiplier } from "@/lib/format";
 import { getMarketsForGrandsPrix, listSeasonGrandsPrix } from "@/lib/grands-prix";
 import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates, localePath } from "@/lib/i18n";
-import { grandPrixPhase, marketsNeedingPick, nextGrandPrix } from "@/lib/market-utils";
+import {
+  grandPrixPhase,
+  marketsNeedingPick,
+  nextGrandPrix,
+  type PickProgress,
+  pickProgress,
+} from "@/lib/market-utils";
 import { getMyPickStates } from "@/lib/predictions";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getViewer } from "@/lib/viewer";
 
 export async function generateMetadata({
   params,
@@ -28,6 +35,7 @@ export default async function CalendarPage({ params }: { params: Promise<{ local
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   setRequestLocale(locale);
   const t = await getTranslations("gp");
+  const tp = await getTranslations("pickForm");
 
   const supabase = await createServerSupabaseClient();
   const calendar = await listSeasonGrandsPrix(supabase);
@@ -50,7 +58,18 @@ export default async function CalendarPage({ params }: { params: Promise<{ local
   );
   const allMarketIds = [...markets.values()].flat().map((m) => m.id);
   const picks = user ? await getMyPickStates(allMarketIds, supabase) : new Map();
-  const pickedIds = new Set(picks.keys());
+  const pickedIds = new Set(
+    [...picks.entries()].filter(([, state]) => state.prediction).map(([id]) => id),
+  );
+  // Admins cannot make calls, so they get no meter.
+  const isPlayer = user ? !(await getViewer()).isAdmin : false;
+
+  // A player's calls-made meter, for weekends still to run.
+  const progressFor = (gp: (typeof calendar.grandsPrix)[number]): PickProgress | null => {
+    const phase = grandPrixPhase(gp, now);
+    if (!isPlayer || phase === "completed" || phase === "cancelled") return null;
+    return pickProgress(markets.get(gp.id) ?? [], pickedIds, now);
+  };
 
   const next = nextGrandPrix(calendar.grandsPrix, now);
 
@@ -72,7 +91,12 @@ export default async function CalendarPage({ params }: { params: Promise<{ local
         calls = t("callsOpen", { count: open.length });
       }
     }
+    const progress = progressFor(gp);
     return {
+      progress: progress
+        ? tp("progressLabel", { called: progress.called, callable: progress.callable })
+        : undefined,
+      urgent: tp("urgent"),
       round: t("roundLabel", { round: gp.round }),
       sprint: t("sprintBadge"),
       multiplier: t("multiplierBadge", { value: formatMultiplier(locale, Number(gp.multiplier)) }),
@@ -108,6 +132,7 @@ export default async function CalendarPage({ params }: { params: Promise<{ local
             href={localePath(locale, `/gp/${next.slug}`)}
             phase={grandPrixPhase(next, now)}
             labels={labelsFor(next)}
+            progress={progressFor(next)}
             highlight
           />
         </section>
@@ -121,6 +146,7 @@ export default async function CalendarPage({ params }: { params: Promise<{ local
               href={localePath(locale, `/gp/${gp.slug}`)}
               phase={grandPrixPhase(gp, now)}
               labels={labelsFor(gp)}
+              progress={progressFor(gp)}
             />
           </li>
         ))}

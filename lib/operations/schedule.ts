@@ -21,6 +21,9 @@ export const OPERATION_SCHEDULES: Record<OperationKind, OperationSchedule> = {
   // The job itself skips when no market locked recently, so a daily run costs
   // nothing on a quiet week; "Run now" covers same-day corrections.
   sync_results: { cron: "0 3 * * *", everyMinutes: DAILY, hourUtc: 3 },
+  // Hourly, fired by pg_cron in Supabase rather than Vercel (see the
+  // 20260925000000_lock_reminders migration): a 2-hour lead needs hourly runs.
+  send_reminders: { cron: "0 * * * *", everyMinutes: 60 },
 };
 
 // Next UTC instant the job fires: the next top-of-hour for sub-daily jobs, the

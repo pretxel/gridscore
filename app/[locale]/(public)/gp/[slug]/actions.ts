@@ -16,7 +16,9 @@ const envelope = z.object({
   pick: z.unknown(),
 });
 
-export type SubmitPickResult = { ok: true } | { ok: false; error: string };
+// `locked` marks a refusal because the market has locked, so the card can
+// fall back to its locked view without matching on the translated message.
+export type SubmitPickResult = { ok: true } | { ok: false; error: string; locked?: boolean };
 
 // Saves (or updates) the caller's pick for one market. The database enforces
 // the lock twice (RLS + trigger); this action just turns refusals into
@@ -50,7 +52,7 @@ export async function submitPick(input: unknown): Promise<SubmitPickResult> {
   }
   if (!market) return { ok: false, error: t("errorMarketNotFound") };
   if (market.type !== type) return { ok: false, error: t("errorInvalid") };
-  if (lockReason(market)) return { ok: false, error: t("errorLocked") };
+  if (lockReason(market)) return { ok: false, error: t("errorLocked"), locked: true };
 
   const { error } = await supabase
     .from("predictions")
@@ -60,7 +62,7 @@ export async function submitPick(input: unknown): Promise<SubmitPickResult> {
     );
   if (error) {
     if (error.code === "42501" || /row-level security|prediction locked/i.test(error.message)) {
-      return { ok: false, error: t("errorLocked") };
+      return { ok: false, error: t("errorLocked"), locked: true };
     }
     console.error("[submitPick] upsert failed:", error.message);
     return { ok: false, error: t("errorGeneric") };

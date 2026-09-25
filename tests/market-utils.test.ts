@@ -3,10 +3,12 @@ import {
   grandPrixPhase,
   isClosingSoon,
   isMarketLocked,
+  isMarketUrgent,
   lockReason,
   marketsNeedingPick,
   nextGrandPrix,
   nextLockingMarket,
+  pickProgress,
   sortMarkets,
   weekendStart,
 } from "@/lib/market-utils";
@@ -135,5 +137,60 @@ describe("formatPick", () => {
       "VER · Norris · ?",
     );
     expect(formatPick("pole", null, drivers, labels)).toBe("");
+  });
+});
+
+describe("pickProgress", () => {
+  const now = Date.parse("2026-09-25T12:00:00Z");
+  const at = (hours: number) => new Date(now + hours * 3_600_000).toISOString();
+  const market = (id: string, hours: number, status = "open") => ({
+    id,
+    locks_at: at(hours),
+    status,
+  });
+
+  it("counts calls made out of the weekend's markets", () => {
+    const markets = [market("a", 48), market("b", 48), market("c", 72)];
+    expect(pickProgress(markets, new Set(["a"]), now)).toEqual({
+      called: 1,
+      callable: 3,
+      urgent: false,
+    });
+  });
+
+  it("leaves void markets out of the count", () => {
+    const markets = [market("a", 48), market("b", 48, "void")];
+    expect(pickProgress(markets, new Set(["a"]), now)).toMatchObject({ called: 1, callable: 1 });
+  });
+
+  it("keeps a market that locked uncalled in the total", () => {
+    const markets = [market("a", -1, "locked"), market("b", 48)];
+    expect(pickProgress(markets, new Set(["b"]), now)).toMatchObject({ called: 1, callable: 2 });
+  });
+
+  it("is urgent when an uncalled open market locks within a day", () => {
+    expect(pickProgress([market("a", 20)], new Set(), now).urgent).toBe(true);
+    expect(pickProgress([market("a", 24)], new Set(), now).urgent).toBe(true);
+    expect(pickProgress([market("a", 25)], new Set(), now).urgent).toBe(false);
+  });
+
+  it("is never urgent for a called or locked market", () => {
+    expect(pickProgress([market("a", 1)], new Set(["a"]), now).urgent).toBe(false);
+    expect(pickProgress([market("a", -1)], new Set(), now).urgent).toBe(false);
+    expect(pickProgress([market("a", 5, "locked")], new Set(), now).urgent).toBe(false);
+  });
+});
+
+describe("isMarketUrgent", () => {
+  const now = Date.parse("2026-09-25T12:00:00Z");
+  const locks = (hours: number) => ({
+    locks_at: new Date(now + hours * 3_600_000).toISOString(),
+    status: "open",
+  });
+
+  it("marks an uncalled market inside the window", () => {
+    expect(isMarketUrgent(locks(3), false, now)).toBe(true);
+    expect(isMarketUrgent(locks(3), true, now)).toBe(false);
+    expect(isMarketUrgent(locks(30), false, now)).toBe(false);
   });
 });

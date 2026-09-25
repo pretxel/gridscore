@@ -208,8 +208,37 @@ app (`lib/plans.ts`) decides what a plan unlocks.
 
 ### `operation_runs`, `operation_settings` (§10)
 
-Cron ledger and per-job kill switch for `sync_calendar` and `sync_results`.
-Admin read; service-role write.
+Cron ledger and per-job kill switch for `sync_calendar`, `sync_results` and
+`send_reminders` (seeded paused). Admin read; service-role write.
+
+### Lock reminders (migration `20260925000000`)
+
+`reminder_preferences` — one optional row per player; no row means the
+default.
+
+| column | type | notes |
+|---|---|---|
+| `user_id` | uuid PK | FK `profiles` cascade |
+| `lead_time` | text | `24h \| 2h \| off`, default `24h` |
+| `locale` | text | `en \| es`, the email language; null falls back to `en` |
+
+RLS: a player selects, inserts and updates their own row only. It is a table
+of its own, not `profiles` columns, because every signed-in user can read
+every profile.
+
+`reminder_sends (user_id, market_id, sent_at)`, PK `(user_id, market_id)` —
+markets already reminded, per player, written after Resend accepts the email.
+RLS on with no policies: service role only.
+
+`reminder_candidates(p_now)` returns every (player, market) the hourly job
+should mail: an `open` market of the `active` season locking in
+`(p_now, p_now + lead]`, not predicted, not already in `reminder_sends`, for a
+non-admin player whose lead is not `off`. Security definer (it reads
+`auth.users` for the address); service role only.
+
+`call_send_reminders()` is what `pg_cron` runs at minute 0 each hour: it reads
+`reminders_cron_url` and `cron_secret` from Vault and calls the route through
+`pg_net`, or does nothing while either is missing.
 
 ## Grants summary
 
@@ -219,3 +248,4 @@ Admin read; service-role write.
 | `lock_due_markets`, `score_market_pick`, `scoring_rule_points`, `validate_market_pick`, `market_locks_at`, `league_member_cap`, `active_season_id` | anon, authenticated |
 | league RPCs, `leaderboard_for_league`, `is_league_*` | authenticated |
 | `compute_market_scores`, `compute_grand_prix_scores`, `ensure_markets_for_grand_prix`, `generate_join_code` | service role only |
+| `reminder_candidates`, `call_send_reminders` | service role only |

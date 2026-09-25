@@ -122,3 +122,35 @@ export function nextLockingMarket<T extends MarketLockShape>(
   if (open.length === 0) return null;
   return open.reduce((a, b) => (Date.parse(a.locks_at) <= Date.parse(b.locks_at) ? a : b));
 }
+
+// How far ahead an uncalled market counts as urgent on the weekend page and
+// the calendar. Wider than LOCK_LEAD_WINDOW_MS: that one drives the countdown
+// tone in the last half hour, this one nags a day out.
+export const URGENT_PICK_WINDOW_MS = 24 * 60 * 60_000;
+
+// An open market the player has not called and that locks within a day.
+export function isMarketUrgent(
+  market: MarketLockShape,
+  called: boolean,
+  now: number = Date.now(),
+): boolean {
+  if (called || isMarketLocked(market, now)) return false;
+  return Date.parse(market.locks_at) - now <= URGENT_PICK_WINDOW_MS;
+}
+
+export type PickProgress = { called: number; callable: number; urgent: boolean };
+
+// Calls made out of the weekend's markets. Void markets are out of the count;
+// a market that locked without a call still counts, as a call missed.
+export function pickProgress<T extends { id: string } & MarketLockShape>(
+  markets: T[],
+  pickedIds: ReadonlySet<string>,
+  now: number = Date.now(),
+): PickProgress {
+  const counted = markets.filter((m) => m.status !== "void");
+  return {
+    called: counted.filter((m) => pickedIds.has(m.id)).length,
+    callable: counted.length,
+    urgent: counted.some((m) => isMarketUrgent(m, pickedIds.has(m.id), now)),
+  };
+}

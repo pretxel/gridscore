@@ -2,8 +2,9 @@ import { ChevronRightIcon, MapPinIcon, ZapIcon } from "lucide-react";
 import Link from "next/link";
 import { CircuitTrace } from "@/components/circuit-trace";
 import { LocalTime } from "@/components/local-time";
+import { ProgressBar } from "@/components/pending-picks";
 import type { GrandPrixRow } from "@/lib/db";
-import type { GrandPrixPhase } from "@/lib/market-utils";
+import type { GrandPrixPhase, PickProgress } from "@/lib/market-utils";
 import { cn } from "@/lib/utils";
 
 export type GrandPrixCardLabels = {
@@ -14,6 +15,10 @@ export type GrandPrixCardLabels = {
   phase: string;
   calls: string | null;
   open: string;
+  // Accessible text for the calls-made meter, e.g. "2 of 6 calls made".
+  progress?: string;
+  // Shown when an uncalled market locks within a day.
+  urgent?: string;
 };
 
 const PHASE_CLASS: Record<GrandPrixPhase, string> = {
@@ -24,13 +29,16 @@ const PHASE_CLASS: Record<GrandPrixPhase, string> = {
 };
 
 // One calendar row. `highlight` marks the weekend the visitor should open
-// first. Presentational; the page computes phase and call counts.
+// first. Presentational; the page computes phase and call counts. With
+// `progress` (a signed-in player's weekend still to run) the row shows a
+// calls-made meter instead of the calls text, flagged when a call is due.
 export function GrandPrixCard({
   grandPrix,
   href,
   phase,
   labels,
   highlight = false,
+  progress,
   className,
 }: {
   grandPrix: GrandPrixRow;
@@ -38,6 +46,7 @@ export function GrandPrixCard({
   phase: GrandPrixPhase;
   labels: GrandPrixCardLabels;
   highlight?: boolean;
+  progress?: PickProgress | null;
   className?: string;
 }) {
   const place = [grandPrix.locality, grandPrix.country].filter(Boolean).join(", ");
@@ -47,6 +56,7 @@ export function GrandPrixCard({
       className={cn(
         "group/gp relative block overflow-hidden rounded-xl border bg-card p-4 outline-none transition-colors hover:bg-muted/40 focus-visible:ring-3 focus-visible:ring-ring/50",
         highlight ? "border-signal/60 shadow-[0_0_0_1px_var(--signal)]" : "border-border",
+        progress?.urgent && !highlight && "border-flag/70",
         phase === "completed" && "opacity-80",
         className,
       )}
@@ -114,7 +124,22 @@ export function GrandPrixCard({
             {labels.sprint}
           </span>
         ) : null}
-        {labels.calls ? (
+        {progress && progress.callable > 0 ? (
+          <span className="ml-auto inline-flex items-center gap-2">
+            {progress.urgent && labels.urgent ? (
+              <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-flag">
+                {labels.urgent}
+              </span>
+            ) : null}
+            <ProgressBar
+              called={progress.called}
+              callable={progress.callable}
+              text={labels.progress ?? `${progress.called}/${progress.callable}`}
+              urgent={progress.urgent}
+              compact
+            />
+          </span>
+        ) : labels.calls ? (
           <span className="ml-auto text-muted-foreground">{labels.calls}</span>
         ) : null}
         <span className="inline-flex items-center gap-0.5 font-medium text-foreground transition-transform group-hover/gp:translate-x-0.5">

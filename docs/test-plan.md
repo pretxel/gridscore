@@ -41,8 +41,11 @@ written down as a known issue in the release notes.
 
 | # | Step | Expected |
 |---|---|---|
-| 3.1 | As the player, submit a pick on every open market of the next weekend | Each saves, with a confirmation |
-| 3.2 | Change one pick and save again | The new value sticks; the last save is what counts |
+| 3.1 | As the player, tap a driver on every open market of the next weekend | Each saves on its own, no button; the card says "Saved" and the header count climbs (e.g. 3/6) |
+| 3.2 | Tap a different driver on one market | The new value sticks; the last tap is what counts |
+| 3.2a | On the podium, fill P1 and P2 only | Nothing saves; the card asks for the third place |
+| 3.2b | With a saved podium, clear P2 and click a nav link | The browser asks before leaving; cancel keeps you on the page and the saved podium unchanged |
+| 3.2c | Leave a market uncalled that locks within 24 h | Its card and the weekend's calendar row are flagged "Closes within a day"; calling it clears the flag |
 | 3.3 | Reload the page | Picks are still there, pre-selected |
 | 3.4 | Open My picks | Every pick listed under its weekend |
 | 3.5 | As the admin, try to submit a pick | Refused: admins do not compete |
@@ -129,6 +132,10 @@ a table inside its own scroll container may.
 | 10.4 | Call a cron route with no bearer token | `401` |
 | 10.5 | Open `/sitemap.xml` and `/robots.txt` | Both locales listed; no signed-in route in the sitemap |
 | 10.6 | Open an unknown URL, e.g. `/en/gp/not-a-race` | The 404 page, translated |
+| 10.7 | As the player, set reminders to "About 2 hours before" in Settings and reload | The choice is kept |
+| 10.8 | Leave a market due inside the lead uncalled; Operations → Lock reminders → Run now | One email arrives listing it, in the player's language, lock time in their zone |
+| 10.9 | Run it again | No second email for the same market |
+| 10.10 | Open the email's "Turn off reminders" link signed out | A confirmation page; nothing changes until you press the button, then Settings shows Off |
 
 ---
 

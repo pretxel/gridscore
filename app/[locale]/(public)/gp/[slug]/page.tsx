@@ -6,6 +6,7 @@ import { after } from "next/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CircuitTrace } from "@/components/circuit-trace";
 import { MarketLockCountdown } from "@/components/market-lock-countdown";
+import { PendingPicksProvider, PickProgressMeter } from "@/components/pending-picks";
 import { SessionSchedule } from "@/components/session-schedule";
 import { SponsorSlot } from "@/components/sponsor-slot";
 import type { HitType } from "@/lib/db";
@@ -13,7 +14,7 @@ import { listSeasonDrivers } from "@/lib/drivers";
 import { formatMultiplier } from "@/lib/format";
 import { getGrandPrixBySlug, getMarketsForGrandPrix } from "@/lib/grands-prix";
 import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates, localePath } from "@/lib/i18n";
-import { grandPrixPhase, nextLockingMarket } from "@/lib/market-utils";
+import { grandPrixPhase, nextLockingMarket, pickProgress } from "@/lib/market-utils";
 import type { MarketPick } from "@/lib/markets";
 import { getMyPickStates } from "@/lib/predictions";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -81,6 +82,9 @@ export default async function GrandPrixPage({
   }
 
   const phase = grandPrixPhase(grandPrix, now);
+  const pickedIds = new Set(markets.filter((m) => picks.get(m.id)?.prediction).map((m) => m.id));
+  // Only a player can make calls; a visitor or an admin has no count to show.
+  const progress = user && !isAdmin ? pickProgress(markets, pickedIds, now) : null;
   const next = nextLockingMarket(markets, now);
   const place = [grandPrix.locality, grandPrix.country].filter(Boolean).join(", ");
   const units = {
@@ -101,129 +105,134 @@ export default async function GrandPrixPage({
   const signInHref = `${localePath(locale, "/sign-in")}?next=${encodeURIComponent(localePath(locale, `/gp/${slug}`))}`;
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10">
-      <Link
-        href={localePath(locale, "/gp")}
-        className="mb-4 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeftIcon className="size-3.5" aria-hidden />
-        {t("backToCalendar")}
-      </Link>
+    <PendingPicksProvider confirmLeave={tp("confirmLeave")}>
+      <main className="mx-auto max-w-5xl px-4 py-10">
+        <Link
+          href={localePath(locale, "/gp")}
+          className="mb-4 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeftIcon className="size-3.5" aria-hidden />
+          {t("backToCalendar")}
+        </Link>
 
-      <header className="relative isolate mb-8 flex flex-col gap-4 overflow-hidden border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
-        {/* The weekend's own circuit, large and faint behind the title. */}
-        <CircuitTrace
-          seed={grandPrix.circuit_key || grandPrix.slug}
-          className="absolute -top-10 right-0 -z-10 hidden h-64 w-64 text-signal opacity-[0.13] sm:block lg:h-72 lg:w-72"
-        />
-        <div className="min-w-0">
-          <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
-            {season.name} · {t("roundLabel", { round: grandPrix.round })}
-          </p>
-          <h1
-            className="mt-1 font-heading text-4xl font-semibold tracking-tight sm:text-5xl"
-            style={{ fontStretch: "condensed" }}
-          >
-            {grandPrix.name}
-          </h1>
-          <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
-            <MapPinIcon className="size-3.5 shrink-0" aria-hidden />
-            {grandPrix.circuit_name}
-            {place ? ` · ${place}` : ""}
-          </p>
-        </div>
-        <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
-          <span
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-sm font-semibold tracking-[0.1em]",
-              Number(grandPrix.multiplier) > 1
-                ? "bg-flag text-flag-foreground"
-                : "bg-muted text-muted-foreground ring-1 ring-inset ring-border",
-            )}
-          >
-            <ZapIcon className="size-4" aria-hidden />
-            {t("multiplierBadge", {
-              value: formatMultiplier(locale, Number(grandPrix.multiplier)),
-            })}
-            <span className="font-sans text-xs font-normal tracking-normal opacity-80">
-              {t(`multiplierReason.${grandPrix.multiplier_reason}`)}
-            </span>
-          </span>
-          {next ? (
-            <MarketLockCountdown
-              locksAt={next.locks_at}
-              units={units}
-              closesInTemplate={tp.raw("closesIn")}
-              lockedLabel={tp("lockedLabel")}
-            />
-          ) : (
-            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-              {t(`phase.${phase}`)}
-            </span>
-          )}
-        </div>
-      </header>
-
-      <div className="grid gap-8 [&>*]:min-w-0 lg:grid-cols-[1fr_280px]">
-        <section>
-          <h2 className="font-heading text-xl font-semibold tracking-tight">{t("markets")}</h2>
-          <p className="mt-1 mb-4 text-sm text-muted-foreground">{t("marketsLede")}</p>
-
-          {!user ? (
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-signal/40 bg-signal/10 px-4 py-3">
-              <p className="text-sm">{t("signInToPickLede")}</p>
-              <a
-                href={signInHref}
-                className="inline-flex h-10 shrink-0 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
-              >
-                {t("signInToPick")}
-              </a>
-            </div>
-          ) : null}
-
-          <SponsorSlot placement="gp-detail" plan={viewer.plan} className="mb-4" />
-          <div className="grid gap-4 md:grid-cols-2">
-            {markets.map((m) => {
-              const state = picks.get(m.id);
-              return (
-                <MarketForm
-                  key={m.id}
-                  market={{
-                    id: m.id,
-                    type: m.type,
-                    locksAt: m.locks_at,
-                    status: m.status,
-                    result: (m.result as MarketPick | null) ?? null,
-                  }}
-                  slug={slug}
-                  drivers={drivers}
-                  initial={(state?.prediction?.pick as MarketPick | null) ?? null}
-                  score={
-                    state?.score
-                      ? { points: state.score.points, hitType: state.score.hit_type as HitType }
-                      : null
-                  }
-                  signedIn={!!user}
-                  isAdmin={isAdmin}
-                  signInHref={signInHref}
-                />
-              );
-            })}
-          </div>
-        </section>
-
-        <aside>
-          <h2 className="mb-3 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            {t("sessions")}
-          </h2>
-          <SessionSchedule
-            grandPrix={grandPrix}
-            labels={sessionLabels}
-            liveLabel={t("liveNow")}
-            now={now}
+        <header className="relative isolate mb-8 flex flex-col gap-4 overflow-hidden border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
+          {/* The weekend's own circuit, large and faint behind the title. */}
+          <CircuitTrace
+            seed={grandPrix.circuit_key || grandPrix.slug}
+            className="absolute -top-10 right-0 -z-10 hidden h-64 w-64 text-signal opacity-[0.13] sm:block lg:h-72 lg:w-72"
           />
-        </aside>
-      </div>
-    </main>
+          <div className="min-w-0">
+            <p className="font-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground">
+              {season.name} · {t("roundLabel", { round: grandPrix.round })}
+            </p>
+            <h1
+              className="mt-1 font-heading text-4xl font-semibold tracking-tight sm:text-5xl"
+              style={{ fontStretch: "condensed" }}
+            >
+              {grandPrix.name}
+            </h1>
+            <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
+              <MapPinIcon className="size-3.5 shrink-0" aria-hidden />
+              {grandPrix.circuit_name}
+              {place ? ` · ${place}` : ""}
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
+            <span
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-mono text-sm font-semibold tracking-[0.1em]",
+                Number(grandPrix.multiplier) > 1
+                  ? "bg-flag text-flag-foreground"
+                  : "bg-muted text-muted-foreground ring-1 ring-inset ring-border",
+              )}
+            >
+              <ZapIcon className="size-4" aria-hidden />
+              {t("multiplierBadge", {
+                value: formatMultiplier(locale, Number(grandPrix.multiplier)),
+              })}
+              <span className="font-sans text-xs font-normal tracking-normal opacity-80">
+                {t(`multiplierReason.${grandPrix.multiplier_reason}`)}
+              </span>
+            </span>
+            {progress ? (
+              <PickProgressMeter initial={progress} labelTemplate={tp.raw("progressLabel")} />
+            ) : null}
+            {next ? (
+              <MarketLockCountdown
+                locksAt={next.locks_at}
+                units={units}
+                closesInTemplate={tp.raw("closesIn")}
+                lockedLabel={tp("lockedLabel")}
+              />
+            ) : (
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                {t(`phase.${phase}`)}
+              </span>
+            )}
+          </div>
+        </header>
+
+        <div className="grid gap-8 [&>*]:min-w-0 lg:grid-cols-[1fr_280px]">
+          <section>
+            <h2 className="font-heading text-xl font-semibold tracking-tight">{t("markets")}</h2>
+            <p className="mt-1 mb-4 text-sm text-muted-foreground">{t("marketsLede")}</p>
+
+            {!user ? (
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-signal/40 bg-signal/10 px-4 py-3">
+                <p className="text-sm">{t("signInToPickLede")}</p>
+                <a
+                  href={signInHref}
+                  className="inline-flex h-10 shrink-0 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
+                >
+                  {t("signInToPick")}
+                </a>
+              </div>
+            ) : null}
+
+            <SponsorSlot placement="gp-detail" plan={viewer.plan} className="mb-4" />
+            <div className="grid gap-4 md:grid-cols-2">
+              {markets.map((m) => {
+                const state = picks.get(m.id);
+                return (
+                  <MarketForm
+                    key={m.id}
+                    market={{
+                      id: m.id,
+                      type: m.type,
+                      locksAt: m.locks_at,
+                      status: m.status,
+                      result: (m.result as MarketPick | null) ?? null,
+                    }}
+                    slug={slug}
+                    drivers={drivers}
+                    initial={(state?.prediction?.pick as MarketPick | null) ?? null}
+                    score={
+                      state?.score
+                        ? { points: state.score.points, hitType: state.score.hit_type as HitType }
+                        : null
+                    }
+                    signedIn={!!user}
+                    isAdmin={isAdmin}
+                    signInHref={signInHref}
+                  />
+                );
+              })}
+            </div>
+          </section>
+
+          <aside>
+            <h2 className="mb-3 font-mono text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              {t("sessions")}
+            </h2>
+            <SessionSchedule
+              grandPrix={grandPrix}
+              labels={sessionLabels}
+              liveLabel={t("liveNow")}
+              now={now}
+            />
+          </aside>
+        </div>
+      </main>
+    </PendingPicksProvider>
   );
 }

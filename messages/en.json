@@ -39,7 +39,8 @@
     "save": "Save",
     "saved": "Display name updated",
     "invalid": "Name must be 2–32 characters.",
-    "error": "Couldn't update your name"
+    "error": "Couldn't update your name",
+    "settings": "Settings & reminders"
   },
   "footer": {
     "tagline": "Grand Prix predictions · Season leaderboard",
@@ -314,7 +315,8 @@
       "description": "Scheduled syncs, their history and the kill switch.",
       "kind": {
         "sync_calendar": "Calendar sync",
-        "sync_results": "Results sync"
+        "sync_results": "Results sync",
+        "send_reminders": "Lock reminders"
       },
       "cadence": "Schedule: {cron} (UTC).",
       "runNow": "Run now",
@@ -454,11 +456,8 @@
     "emptySlot": "Empty",
     "clearSlot": "Clear",
     "podiumOrderHint": "Tap drivers in finishing order.",
-    "save": "Save call",
-    "update": "Update call",
     "saved": "Saved",
     "saving": "Saving",
-    "savedToast": "Call saved",
     "closesIn": "closes in {time}",
     "lockedLabel": "Locked",
     "errorInvalid": "That call is not valid.",
@@ -467,7 +466,15 @@
     "errorLocked": "This market is locked. The session has started.",
     "errorMarketNotFound": "Market not found.",
     "errorDuplicateDrivers": "Pick three different drivers.",
-    "errorGeneric": "Could not save your call. Try again."
+    "errorGeneric": "Could not save your call. Try again.",
+    "notCalled": "Not called yet",
+    "retry": "Retry",
+    "urgent": "Closes within a day",
+    "podiumIncomplete": "Fill all three places to save your podium.",
+    "clearedCall": "Pick a driver to change it. Your saved call stays {call} until you do.",
+    "confirmLeave": "A call on this page is not saved yet. Leave anyway?",
+    "progressLabel": "{called} of {callable} calls made",
+    "podiumCleared": "Fill all three places to change it. Your saved podium stays {call} until you do."
   },
   "myPicks": {
     "title": "My calls",
@@ -666,5 +673,40 @@
     "bestWeekend": "Best weekend",
     "strongestMarket": "Strongest market",
     "notEnoughData": "Not enough calls yet"
+  },
+  "reminderEmail": {
+    "subject": "{count, plural, one {# call} other {# calls}} still open before the lock",
+    "heading": "Your calls are waiting",
+    "intro": "{count, plural, one {This call is still empty and locks soon:} other {These calls are still empty and lock soon:}}",
+    "marketLine": "{market}, locks {time}",
+    "cta": "Make your calls",
+    "why": "You get this because lock reminders are on for your gridscore account.",
+    "optOut": "Turn off reminders",
+    "settings": "Reminder settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Your name and lock reminders.",
+    "eyebrow": "Account",
+    "headline": "Settings",
+    "remindersTitle": "Lock reminders",
+    "remindersLede": "An email listing the calls you have not made, before their session locks.",
+    "lead24h": "A day before",
+    "lead2h": "About 2 hours before",
+    "leadOff": "Off",
+    "save": "Save settings",
+    "saved": "Settings saved",
+    "error": "Couldn't save your settings"
+  },
+  "remindersOff": {
+    "title": "Reminders off",
+    "headline": "Reminders are off",
+    "body": "You won't get lock reminder emails any more. You can turn them back on in settings at any time.",
+    "toSettings": "Open settings",
+    "invalidTitle": "Link not valid",
+    "invalidBody": "This link is broken or has been changed, so nothing was updated. Change reminders from settings instead.",
+    "confirmHeadline": "Turn off lock reminders?",
+    "confirmBody": "You'll stop getting emails about calls you haven't made before a session locks.",
+    "confirm": "Turn off reminders"
   }
 }

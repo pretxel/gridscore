@@ -49,6 +49,7 @@ export async function SiteNav() {
               displayName={viewer.displayName}
               email={viewer.email ?? ""}
               signOutPath={lp("/sign-out")}
+              settingsPath={lp("/settings")}
             />
           ) : (
             <Link

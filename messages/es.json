@@ -39,7 +39,8 @@
     "save": "Guardar",
     "saved": "Nombre actualizado",
     "invalid": "El nombre debe tener entre 2 y 32 caracteres.",
-    "error": "No se pudo actualizar el nombre"
+    "error": "No se pudo actualizar el nombre",
+    "settings": "Ajustes y recordatorios"
   },
   "footer": {
     "tagline": "Predicciones de Grandes Premios · Clasificación de temporada",
@@ -314,7 +315,8 @@
       "description": "Sincronizaciones programadas, su historial y el interruptor de parada.",
       "kind": {
         "sync_calendar": "Sincronización de calendario",
-        "sync_results": "Sincronización de resultados"
+        "sync_results": "Sincronización de resultados",
+        "send_reminders": "Recordatorios de cierre"
       },
       "cadence": "Programación: {cron} (UTC).",
       "runNow": "Ejecutar ahora",
@@ -454,11 +456,8 @@
     "emptySlot": "Vacío",
     "clearSlot": "Quitar",
     "podiumOrderHint": "Toca los pilotos en orden de llegada.",
-    "save": "Guardar predicción",
-    "update": "Actualizar predicción",
     "saved": "Guardada",
     "saving": "Guardando",
-    "savedToast": "Predicción guardada",
     "closesIn": "se cierra en {time}",
     "lockedLabel": "Cerrado",
     "errorInvalid": "Esa predicción no es válida.",
@@ -467,7 +466,15 @@
     "errorLocked": "Este mercado está cerrado. La sesión ya ha empezado.",
     "errorMarketNotFound": "Mercado no encontrado.",
     "errorDuplicateDrivers": "Elige tres pilotos distintos.",
-    "errorGeneric": "No se pudo guardar tu predicción. Inténtalo de nuevo."
+    "errorGeneric": "No se pudo guardar tu predicción. Inténtalo de nuevo.",
+    "notCalled": "Sin predicción todavía",
+    "retry": "Reintentar",
+    "urgent": "Cierra en menos de un día",
+    "podiumIncomplete": "Completa los tres puestos para guardar tu podio.",
+    "clearedCall": "Elige un piloto para cambiarla. Tu predicción guardada sigue siendo {call} hasta entonces.",
+    "confirmLeave": "Hay una predicción sin guardar en esta página. ¿Salir de todos modos?",
+    "progressLabel": "{called} de {callable} predicciones hechas",
+    "podiumCleared": "Completa los tres puestos para cambiarlo. Tu podio guardado sigue siendo {call} hasta entonces."
   },
   "myPicks": {
     "title": "Mis predicciones",
@@ -666,5 +673,40 @@
     "bestWeekend": "Mejor fin de semana",
     "strongestMarket": "Mercado más fuerte",
     "notEnoughData": "Aún faltan predicciones"
+  },
+  "reminderEmail": {
+    "subject": "{count, plural, one {# predicción pendiente} other {# predicciones pendientes}} antes del cierre",
+    "heading": "Tus predicciones te esperan",
+    "intro": "{count, plural, one {Esta predicción sigue vacía y cierra pronto:} other {Estas predicciones siguen vacías y cierran pronto:}}",
+    "marketLine": "{market}, cierra {time}",
+    "cta": "Hacer mis predicciones",
+    "why": "Recibes esto porque tienes activados los recordatorios de cierre en tu cuenta de gridscore.",
+    "optOut": "Desactivar recordatorios",
+    "settings": "Ajustes de recordatorios"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "description": "Tu nombre y los recordatorios de cierre.",
+    "eyebrow": "Cuenta",
+    "headline": "Ajustes",
+    "remindersTitle": "Recordatorios de cierre",
+    "remindersLede": "Un email con las predicciones que te faltan, antes de que cierre su sesión.",
+    "lead24h": "Un día antes",
+    "lead2h": "Unas 2 horas antes",
+    "leadOff": "Desactivados",
+    "save": "Guardar ajustes",
+    "saved": "Ajustes guardados",
+    "error": "No se pudieron guardar tus ajustes"
+  },
+  "remindersOff": {
+    "title": "Recordatorios desactivados",
+    "headline": "Recordatorios desactivados",
+    "body": "Ya no recibirás emails de recordatorio de cierre. Puedes volver a activarlos en ajustes cuando quieras.",
+    "toSettings": "Abrir ajustes",
+    "invalidTitle": "Enlace no válido",
+    "invalidBody": "Este enlace está roto o ha sido modificado, así que no se ha cambiado nada. Cambia los recordatorios desde ajustes.",
+    "confirmHeadline": "¿Desactivar los recordatorios de cierre?",
+    "confirmBody": "Dejarás de recibir emails sobre las predicciones que te faltan antes de que cierre una sesión.",
+    "confirm": "Desactivar recordatorios"
   }
 }

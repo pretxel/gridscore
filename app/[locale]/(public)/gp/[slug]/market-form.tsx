@@ -1,22 +1,29 @@
 "use client";
 
-import { CheckIcon, Loader2Icon } from "lucide-react";
+import { CheckIcon, Loader2Icon, RotateCwIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import * as React from "react";
-import { toast } from "sonner";
 import { DriverPicker } from "@/components/driver-picker";
 import { MarketLockCountdown } from "@/components/market-lock-countdown";
 import { MarketStatusBadge } from "@/components/market-status-badge";
+import { useReportCard } from "@/components/pending-picks";
 import { Button } from "@/components/ui/button";
 import type { HitType } from "@/lib/db";
 import type { DriverOption } from "@/lib/driver-format";
-import { lockReason } from "@/lib/market-utils";
+import { isMarketUrgent, lockReason } from "@/lib/market-utils";
 import {
   MARKET_LOCK_SESSION,
   type MarketPick,
   type MarketStatus,
   type MarketType,
 } from "@/lib/markets";
+import {
+  type AutosaveEvent,
+  type AutosaveState,
+  hasPendingWork,
+  initialAutosave,
+  stepAutosave,
+} from "@/lib/pick-autosave";
 import { formatPick } from "@/lib/pick-format";
 import { cn } from "@/lib/utils";
 import { submitPick } from "./actions";
@@ -75,6 +82,12 @@ function toPick(type: MarketType, state: unknown): MarketPick | null {
 
 // One market's card: hint, status, countdown, the pick control for its type,
 // and, once locked, the saved call next to the result and points.
+//
+// A call saves itself as soon as the controls form a complete pick; there is
+// no Save button to forget. The save rules (latest wins, stale responses
+// ignored, lock refusal falls back to the saved call) live in
+// lib/pick-autosave.ts; this component wires them to the controls and to
+// submitPick, and reports to the page what it holds.
 export function MarketForm({
   market,
   slug,
@@ -99,41 +112,55 @@ export function MarketForm({
   const tc = useTranslations("common");
   const tg = useTranslations("gp");
   const [state, setState] = React.useState<unknown>(() => initialState(market.type, initial));
-  const [saved, setSaved] = React.useState<MarketPick | null>(initial);
+  const [auto, setAuto] = React.useState<AutosaveState>(() => initialAutosave(initial));
+  const autoRef = React.useRef(auto);
   const lockShape = { locks_at: market.locksAt, status: market.status };
   const [lockedNow, setLockedNow] = React.useState<boolean>(() => lockReason(lockShape) !== null);
-  const [isPending, startTransition] = React.useTransition();
 
   const reason = lockReason(lockShape);
-  const locked = lockedNow || reason !== null;
-  const pick = toPick(market.type, state);
-  const podiumDuplicate =
-    market.type === "podium" &&
-    (() => {
-      const s = state as PodiumState;
-      const ids = [s.p1, s.p2, s.p3].filter(Boolean);
-      return new Set(ids).size !== ids.length;
-    })();
-  const dirty = JSON.stringify(pick) !== JSON.stringify(saved);
-  const canSubmit = signedIn && !isAdmin && !locked && pick !== null && !podiumDuplicate && dirty;
+  const locked = lockedNow || reason !== null || auto.locked;
+  const saved = auto.confirmed;
 
-  const driverMap = React.useMemo(() => new Map(drivers.map((d) => [d.id, d])), [drivers]);
-  const pickLabels = { none: tm("none"), yes: tm("yes"), no: tm("no"), unknown: "?" };
-  const selectable = drivers.filter((d) => d.active);
+  const dispatch = React.useCallback(
+    (event: AutosaveEvent) => {
+      const [next, send] = stepAutosave(autoRef.current, event);
+      autoRef.current = next;
+      setAuto(next);
+      if (!send) return;
+      submitPick({ marketId: market.id, slug, type: market.type, pick: send.pick }).then(
+        (res) =>
+          dispatch(
+            res.ok
+              ? { type: "settled", seq: send.seq, ok: true }
+              : {
+                  type: "settled",
+                  seq: send.seq,
+                  ok: false,
+                  error: res.error,
+                  locked: res.locked === true,
+                },
+          ),
+        () =>
+          dispatch({
+            type: "settled",
+            seq: send.seq,
+            ok: false,
+            error: t("errorGeneric"),
+            locked: false,
+          }),
+      );
+    },
+    [market.id, market.type, slug, t],
+  );
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!canSubmit || !pick) return;
-    startTransition(async () => {
-      const res = await submitPick({ marketId: market.id, slug, type: market.type, pick });
-      if (!res.ok) {
-        toast.error(res.error);
-        return;
-      }
-      setSaved(pick);
-      toast.success(t("savedToast"));
-    });
+  function onControlChange(next: unknown) {
+    setState(next);
+    const pick = toPick(market.type, next);
+    dispatch({ type: "select", pick: pick && !isDuplicatePodium(market.type, next) ? pick : null });
   }
+
+  const podiumDuplicate = isDuplicatePodium(market.type, state);
+  const canPick = signedIn && !isAdmin && !locked;
 
   const statusKey: "open" | "locked" | "resolved" | "void" =
     market.status === "resolved" || market.status === "void"
@@ -142,11 +169,24 @@ export function MarketForm({
         ? "locked"
         : "open";
 
+  const urgent = canPick && statusKey === "open" && isMarketUrgent(lockShape, saved !== null);
+
+  useReportCard(market.id, {
+    called: saved !== null,
+    counted: market.status !== "void",
+    pending: canPick && hasPendingWork(auto),
+  });
+
+  const driverMap = React.useMemo(() => new Map(drivers.map((d) => [d.id, d])), [drivers]);
+  const pickLabels = { none: tm("none"), yes: tm("yes"), no: tm("no"), unknown: "?" };
+  const selectable = drivers.filter((d) => d.active);
+
   return (
-    <form
-      onSubmit={onSubmit}
+    <section
+      aria-label={tm(`type.${market.type}`)}
       className={cn(
-        "flex flex-col gap-4 rounded-xl border border-border bg-card p-4 shadow-sm",
+        "flex flex-col gap-4 rounded-xl border bg-card p-4 shadow-sm transition-colors",
+        urgent ? "border-flag/70 ring-1 ring-flag/40" : "border-border",
         statusKey === "void" && "opacity-70",
       )}
     >
@@ -157,7 +197,14 @@ export function MarketForm({
           </h3>
           <p className="mt-0.5 text-xs text-muted-foreground">{tm(`hint.${market.type}`)}</p>
         </div>
-        <MarketStatusBadge status={statusKey} label={tm(`status.${statusKey}`)} size="sm" />
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <MarketStatusBadge status={statusKey} label={tm(`status.${statusKey}`)} size="sm" />
+          {urgent ? (
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-flag">
+              {t("urgent")}
+            </span>
+          ) : null}
+        </div>
       </div>
 
       {statusKey === "open" ? (
@@ -202,7 +249,7 @@ export function MarketForm({
           <PickControl
             type={market.type}
             state={state}
-            onChange={setState}
+            onChange={onControlChange}
             drivers={selectable}
             allDrivers={driverMap}
             labels={{
@@ -217,36 +264,104 @@ export function MarketForm({
               p2: tm("position.p2"),
               p3: tm("position.p3"),
             }}
-            disabled={isPending}
+            disabled={false}
           />
-          {podiumDuplicate ? (
-            <p className="text-xs text-destructive">{t("errorDuplicateDrivers")}</p>
-          ) : null}
-          <div className="flex items-center justify-end gap-3 border-t border-border pt-3">
-            <Button
-              type="submit"
-              size="sm"
-              variant={saved && !dirty ? "outline" : "default"}
-              disabled={!canSubmit || isPending}
-            >
-              {isPending ? (
-                <>
-                  <Loader2Icon className="animate-spin" /> {t("saving")}
-                </>
-              ) : saved && !dirty ? (
-                <>
-                  <CheckIcon /> {t("saved")}
-                </>
-              ) : saved ? (
-                t("update")
-              ) : (
-                t("save")
-              )}
-            </Button>
-          </div>
+          <SaveStatus
+            auto={auto}
+            hint={
+              podiumDuplicate
+                ? t("errorDuplicateDrivers")
+                : auto.draft === null && hasStarted(market.type, state)
+                  ? saved
+                    ? t(market.type === "podium" ? "podiumCleared" : "clearedCall", {
+                        call: formatPick(market.type, saved, driverMap, pickLabels),
+                      })
+                    : market.type === "podium"
+                      ? t("podiumIncomplete")
+                      : null
+                  : null
+            }
+            // The hint already names the saved call; a "Saved" tick under it
+            // would read as if the half-filled controls had been saved.
+            hideSaved={auto.draft === null && saved !== null}
+            onRetry={() => dispatch({ type: "retry" })}
+            labels={{
+              notCalled: t("notCalled"),
+              saving: t("saving"),
+              saved: t("saved"),
+              retry: t("retry"),
+            }}
+          />
         </>
       )}
-    </form>
+    </section>
+  );
+}
+
+function isDuplicatePodium(type: MarketType, state: unknown): boolean {
+  if (type !== "podium") return false;
+  const s = state as PodiumState;
+  const ids = [s.p1, s.p2, s.p3].filter(Boolean);
+  return new Set(ids).size !== ids.length;
+}
+
+// Whether the controls hold anything at all: an untouched card has nothing
+// to explain, a half-filled podium does.
+function hasStarted(type: MarketType, state: unknown): boolean {
+  if (type === "podium") {
+    const s = state as PodiumState;
+    return Boolean(s.p1 || s.p2 || s.p3);
+  }
+  return true;
+}
+
+// The line under the controls that says what the database holds.
+function SaveStatus({
+  auto,
+  hint,
+  hideSaved = false,
+  onRetry,
+  labels,
+}: {
+  auto: AutosaveState;
+  hint: string | null;
+  hideSaved?: boolean;
+  onRetry: () => void;
+  labels: { notCalled: string; saving: string; saved: string; retry: string };
+}) {
+  let body: React.ReactNode;
+  if (auto.status === "saving") {
+    body = (
+      <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+        <Loader2Icon className="size-3.5 animate-spin" aria-hidden /> {labels.saving}
+      </span>
+    );
+  } else if (auto.status === "error") {
+    body = (
+      <span className="flex flex-wrap items-center justify-between gap-2 text-destructive">
+        <span>{auto.error}</span>
+        <Button type="button" size="sm" variant="outline" onClick={onRetry}>
+          <RotateCwIcon aria-hidden /> {labels.retry}
+        </Button>
+      </span>
+    );
+  } else if (auto.confirmed && hideSaved) {
+    body = null;
+  } else if (auto.confirmed) {
+    body = (
+      <span className="inline-flex items-center gap-1.5 text-signal">
+        <CheckIcon className="size-3.5" aria-hidden /> {labels.saved}
+      </span>
+    );
+  } else {
+    body = <span className="text-muted-foreground">{labels.notCalled}</span>;
+  }
+
+  return (
+    <div className="grid gap-1 border-t border-border pt-3 text-xs" aria-live="polite">
+      {hint ? <p className="text-muted-foreground">{hint}</p> : null}
+      {body}
+    </div>
   );
 }
 

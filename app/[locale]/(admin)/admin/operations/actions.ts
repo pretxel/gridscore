@@ -3,6 +3,8 @@
 import { field, localeFromForm, trimmed } from "@/lib/admin/parse";
 import { runAdminAction } from "@/lib/admin/run-action";
 import type { OperationKind } from "@/lib/db";
+import { resendMailer } from "@/lib/email/resend";
+import { env } from "@/lib/env";
 import { localePath } from "@/lib/i18n";
 import { OPERATION_KINDS, recordRun } from "@/lib/operations/record-run";
 import { setOperationEnabled } from "@/lib/operations/settings";
@@ -10,6 +12,8 @@ import { runCalendarSync } from "@/lib/race-sync/calendar";
 import { defaultProvider } from "@/lib/race-sync/providers";
 import { runResultsSync } from "@/lib/race-sync/results";
 import { createSupabaseCalendarStore, createSupabaseResultsStore } from "@/lib/race-sync/store";
+import { runReminders } from "@/lib/reminders/run";
+import { createSupabaseReminderStore } from "@/lib/reminders/store";
 import { getActiveSeason } from "@/lib/seasons";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 
@@ -31,6 +35,25 @@ export async function runNow(form: FormData): Promise<never> {
   return runAdminAction(localePath(locale, "/admin/operations"), REVALIDATE, async () => {
     const kind = kindOf(form);
     const admin = createAdminSupabaseClient();
+
+    // Reminders need Resend, not the race data provider.
+    if (kind === "send_reminders") {
+      const mailer = resendMailer();
+      const signingSecret = env.reminderSigningSecret;
+      if (!mailer.available() || !signingSecret) {
+        throw new Error("reminder email is not configured");
+      }
+      await recordRun("send_reminders", "manual", () =>
+        runReminders({
+          store: createSupabaseReminderStore(admin),
+          mailer,
+          siteUrl: env.siteUrl,
+          signingSecret,
+        }),
+      );
+      return "ranNow";
+    }
+
     const season = await getActiveSeason(admin);
     if (!season) throw new Error("no active season");
 

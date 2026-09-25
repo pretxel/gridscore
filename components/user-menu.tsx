@@ -1,7 +1,8 @@
 "use client";
 
 import { Popover } from "@base-ui/react/popover";
-import { CheckIcon, LogOutIcon } from "lucide-react";
+import { BellIcon, CheckIcon, LogOutIcon } from "lucide-react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import * as React from "react";
 import { toast } from "sonner";
@@ -17,15 +18,18 @@ function initialOf(name: string | null, email: string): string {
 }
 
 // Top-right account menu for signed-in users: identity, inline display-name
-// edit (saved without leaving the page), and sign out.
+// edit (saved without leaving the page), a link to settings (reminders), and
+// sign out.
 export function UserMenu({
   displayName,
   email,
   signOutPath,
+  settingsPath,
 }: {
   displayName: string | null;
   email: string;
   signOutPath: string;
+  settingsPath: string;
 }) {
   const t = useTranslations("profileMenu");
   const tCommon = useTranslations("common");
@@ -114,6 +118,14 @@ export function UserMenu({
                 </Button>
               </div>
             </form>
+
+            <Link
+              href={settingsPath}
+              className="mt-3 flex items-center gap-2 border-t border-border pt-3 text-sm text-muted-foreground hover:text-foreground"
+            >
+              <BellIcon className="size-4" aria-hidden />
+              {t("settings")}
+            </Link>
 
             <form action={signOutPath} method="post" className="mt-3 border-t border-border pt-3">
               <Button type="submit" variant="outline" size="sm" className="w-full">

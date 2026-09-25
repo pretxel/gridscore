@@ -447,6 +447,68 @@ export type Database = {
         };
         Relationships: [];
       };
+      reminder_preferences: {
+        Row: {
+          lead_time: string;
+          locale: string | null;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          lead_time?: string;
+          locale?: string | null;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          lead_time?: string;
+          locale?: string | null;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reminder_preferences_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      reminder_sends: {
+        Row: {
+          market_id: string;
+          sent_at: string;
+          user_id: string;
+        };
+        Insert: {
+          market_id: string;
+          sent_at?: string;
+          user_id: string;
+        };
+        Update: {
+          market_id?: string;
+          sent_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reminder_sends_market_id_fkey";
+            columns: ["market_id"];
+            isOneToOne: false;
+            referencedRelation: "markets";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reminder_sends_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       scores: {
         Row: {
           computed_at: string;
@@ -624,6 +686,7 @@ export type Database = {
     };
     Functions: {
       active_season_id: { Args: never; Returns: string };
+      call_send_reminders: { Args: never; Returns: undefined };
       can_read_user_stats: { Args: { p_user_id: string }; Returns: boolean };
       compute_grand_prix_scores: { Args: { p_gp_id: string }; Returns: number };
       compute_market_scores: {
@@ -687,6 +750,20 @@ export type Database = {
           p_type: string;
         };
         Returns: string;
+      };
+      reminder_candidates: {
+        Args: { p_now?: string };
+        Returns: {
+          email: string;
+          grand_prix_name: string;
+          grand_prix_slug: string;
+          locale: string;
+          locks_at: string;
+          market_id: string;
+          market_type: string;
+          timezone: string;
+          user_id: string;
+        }[];
       };
       remove_league_member: {
         Args: { p_league_id: string; p_user_id: string };
