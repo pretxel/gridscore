@@ -16,6 +16,7 @@
       "!**/.claude",
       "!**/.codex",
       "!**/openspec",
+      "!**/videos",
       "!**/docs",
       "!**/.husky",
       "!**/public"
