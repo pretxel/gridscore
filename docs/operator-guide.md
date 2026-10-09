@@ -58,14 +58,42 @@ the connection string from the dashboard).
 
    Re-run it to verify: a clean push prints "Remote Auth config is up to date".
 
-6. **Set up a custom SMTP sender.** Supabase's built-in email service is
-   rate-limited to a handful of messages per hour and is not meant for
-   production. It also refuses custom templates on the free tier, which is why
-   the branded emails in `supabase/templates/` are wired up in `config.toml`
-   but commented out. Once SMTP is configured, uncomment those blocks and push
-   the config again. The set covers the magic link the app sends today plus
-   sign-up confirmation, invite, email change and reauthentication, so no flow
-   falls back to Supabase's unstyled default.
+6. **Send auth mail through Resend.** Supabase's built-in sender is
+   rate-limited to a handful of messages per hour and refuses custom templates
+   on the free tier, so sign-in links would arrive unstyled. `config.toml`
+   points the linked project at Resend SMTP in its `[remotes.production]`
+   block and turns on the five branded templates (magic link, sign-up
+   confirmation, invite, email change, reauthentication). Local development is
+   unaffected: `supabase start` keeps sending to Mailpit.
+   - In Resend, create an API key with sending access and verify your sending
+     domain (SPF, DKIM and DMARC records). Step 7 needs the same domain.
+   - Pick the sign-in sender, a bare address on that domain such as
+     `signin@YOUR-DOMAIN`. The display name `gridscore` comes from
+     `config.toml`.
+   - Put both in `.env`, which `supabase config push` reads:
+
+     ```bash
+     RESEND_API_KEY=re_...
+     SUPABASE_AUTH_SENDER_EMAIL=signin@YOUR-DOMAIN
+     ```
+
+   - Run `supabase config push`. Before confirming, read the diff: it must
+     list the SMTP host `smtp.resend.com`, a non-empty password and sender, and
+     the five templates. An empty value means the variable was missing from
+     `.env`; answer no and fix it.
+   - Verify: request a magic link on the deployed site. It arrives branded,
+     from `gridscore <signin@YOUR-DOMAIN>`, and shows in the Resend dashboard.
+   - Auth mail is capped at 30 messages per hour (`email_sent` under
+     `[auth.rate_limit]`), and your Resend plan has its own limit. Raise both
+     together if sign-ins start failing at busy times.
+   - When the Resend key rotates, update `.env` and push again: the project
+     keeps the old password until you do.
+   - To roll back, comment out the `[remotes.production.auth.email.smtp]`
+     block and the five template blocks, then push. Supabase returns to its
+     built-in sender and default templates.
+
+   The templates are generated: edit `lib/email/templates.ts`, run
+   `pnpm gen:email-templates`, and push again.
 7. **Set up lock reminders** (optional; the job stays off until you do).
    Reminder emails go through Resend, not Supabase SMTP, which is kept for
    sign-in links.
@@ -225,6 +253,12 @@ says which: `disabled` (paused in Operations), `nothing-due` (results sync on a
 quiet week), `no-active-season`, or `missing-env` (`CRON_SECRET`, the
 provider, or for reminders `RESEND_API_KEY` / `REMINDER_FROM_EMAIL` /
 `REMINDER_SIGNING_SECRET` is not configured).
+
+**Sign-in emails arrive unstyled or not at all.** Unstyled means the project
+still uses Supabase's built-in sender: step 6 was not pushed, or was rolled
+back. Run `supabase config push` and check the diff. Nothing arriving means
+Resend refused the send: its dashboard logs show why (usually an unverified
+domain or a rotated key that was never pushed). Check the hourly cap too.
 
 **Reminders stopped.** Operations shows the last `Lock reminders` run. No new
 runs means `pg_cron` is not reaching the app: check the Vault secrets and

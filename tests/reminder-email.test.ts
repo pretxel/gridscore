@@ -63,6 +63,38 @@ describe("renderReminderEmail", () => {
   });
 });
 
+describe("reminder email on the shared shell", () => {
+  it("uses the shell's motifs and one button per weekend", () => {
+    const email = renderReminderEmail({
+      ...base,
+      locale: "en",
+      timezone: null,
+      markets: [
+        ...base.markets,
+        {
+          type: "pole" as const,
+          locksAt: "2026-10-03T14:00:00Z",
+          grandPrixSlug: "baku",
+          grandPrixName: "Baku Grand Prix",
+        },
+      ],
+    });
+    expect(email.html).toContain('width="10%" height="8"'); // chequered edge
+    expect(email.html).toContain(">gridscore</td>");
+    expect(email.html).toContain("Lock reminder");
+    expect(email.html.match(/display:block;padding:15px 24px/g)).toHaveLength(2);
+    expect(email.html).not.toMatch(/<img|<link|@import|url\(/i);
+  });
+
+  it("renders only the player's language", () => {
+    const email = renderReminderEmail({ ...base, locale: "es", timezone: null });
+    expect(email.html).toContain('<html lang="es">');
+    expect(email.html).toContain("Recordatorio de cierre");
+    expect(email.html).not.toContain("Lock reminder");
+    expect(email.html).not.toContain("Grand Prix predictions");
+  });
+});
+
 describe("time zones", () => {
   it("falls back to UTC for an unknown zone", () => {
     expect(resolveTimeZone("Mars/Olympus")).toBe("UTC");

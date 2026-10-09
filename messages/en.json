@@ -675,6 +675,7 @@
     "notEnoughData": "Not enough calls yet"
   },
   "reminderEmail": {
+    "kicker": "Lock reminder",
     "subject": "{count, plural, one {# call} other {# calls}} still open before the lock",
     "heading": "Your calls are waiting",
     "intro": "{count, plural, one {This call is still empty and locks soon:} other {These calls are still empty and lock soon:}}",

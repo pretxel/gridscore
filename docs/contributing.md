@@ -39,6 +39,7 @@ local development and the deployed project.
 | `pnpm test:db`      | SQL invariant tests against the local Supabase stack.      |
 | `pnpm db:types`     | Regenerate `lib/database.types.ts` from the local database.|
 | `pnpm gen:scoring-parity` | Render the shared scoring cases into the SQL parity suite. |
+| `pnpm gen:email-templates` | Render the Supabase Auth emails from `lib/email/templates.ts` into `supabase/templates/`. |
 
 Run `pnpm typecheck && pnpm lint && pnpm test` before opening a PR. Husky runs
 `pnpm test` before every commit and `biome check` + `pnpm build` before every push.

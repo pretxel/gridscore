@@ -187,3 +187,18 @@ supabase/migrations       schema
 supabase/tests            SQL invariants (pnpm test:db)
 tests/                    Vitest suites, recorded provider fixtures
 ```
+
+## Email
+
+Two senders, one look. Supabase Auth sends auth mail (magic links and the other
+account flows) through Resend SMTP, configured for the linked project in
+`supabase/config.toml`. The app sends its own mail, today the lock reminders,
+through Resend's API behind the `Mailer` interface in `lib/email/mailer.ts`.
+
+Both render through `lib/email/layout.ts`, the one email shell: tables, inline
+styles, no images, the chequered edge and kerb stripe drawn with cell colours.
+App mail renders in the player's locale. The Supabase templates are bilingual,
+because Supabase serves one template per project, and are generated into
+`supabase/templates/` by `pnpm gen:email-templates` from
+`lib/email/templates.ts`. `tests/email-templates.test.ts` fails when a
+committed template is stale.

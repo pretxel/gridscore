@@ -675,6 +675,7 @@
     "notEnoughData": "Aún faltan predicciones"
   },
   "reminderEmail": {
+    "kicker": "Recordatorio de cierre",
     "subject": "{count, plural, one {# predicción pendiente} other {# predicciones pendientes}} antes del cierre",
     "heading": "Tus predicciones te esperan",
     "intro": "{count, plural, one {Esta predicción sigue vacía y cierra pronto:} other {Estas predicciones siguen vacías y cierran pronto:}}",

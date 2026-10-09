@@ -1,12 +1,15 @@
 import { createTranslator } from "next-intl";
+import { EMAIL_COLORS, escapeHtml, raw, renderButton, renderEmailShell } from "@/lib/email/layout";
 import type { EmailMessage } from "@/lib/email/mailer";
 import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
 import type { MarketType } from "@/lib/markets";
 import en from "@/messages/en.json";
 import es from "@/messages/es.json";
 
-// The reminder email: plain HTML and text built from the app's own message
+// The reminder email: HTML and text built from the app's own message
 // catalogues, so it is translated and brand-checked like every other string.
+// The HTML goes through the shared shell in lib/email/layout.ts, the same one
+// the Supabase Auth templates are generated from.
 
 const MESSAGES = { en, es } as const;
 
@@ -54,15 +57,6 @@ export function formatLockTime(iso: string, locale: Locale, timeZone: string): s
     timeZone,
     timeZoneName: "short",
   }).format(new Date(iso));
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
 }
 
 export function renderReminderEmail(input: ReminderInput): EmailMessage {
@@ -115,35 +109,36 @@ export function renderReminderEmail(input: ReminderInput): EmailMessage {
     `${settings}: ${settingsUrl}`,
   ].join("\n");
 
-  const blocks = [...weekends.values()]
-    .map(
-      (w) => `
-      <tr><td style="padding:16px 0 4px;font-size:16px;font-weight:600;color:#111">${escapeHtml(w.name)}</td></tr>
-      <tr><td style="padding:0 0 8px"><ul style="margin:0;padding-left:18px;color:#333;font-size:14px;line-height:1.6">
-        ${w.lines.map((l) => `<li>${escapeHtml(l)}</li>`).join("")}
-      </ul></td></tr>
-      <tr><td style="padding:4px 0 8px"><a href="${escapeHtml(w.url)}" style="display:inline-block;background:#e4572e;color:#fff;text-decoration:none;font-weight:600;font-size:14px;padding:10px 16px;border-radius:8px">${escapeHtml(cta)}</a></td></tr>`,
-    )
-    .join("");
+  // One row per weekend: its name, the open markets, and its own button.
+  const sections = [...weekends.values()].map((w) =>
+    raw(`<tr>
+  <td style="padding:22px 32px 0 32px;">
+    <p style="margin:0;font-size:16px;font-weight:700;color:${EMAIL_COLORS.ink};">${escapeHtml(w.name)}</p>
+    <ul style="margin:8px 0 12px 0;padding-left:18px;color:${EMAIL_COLORS.body};font-size:14px;line-height:1.6;">
+      ${w.lines.map((l) => `<li>${escapeHtml(l)}</li>`).join("\n      ")}
+    </ul>
+${renderButton(cta, w.url, { stripe: false })
+  .split("\n")
+  .map((line) => `    ${line}`)
+  .join("\n")}
+  </td>
+</tr>`),
+  );
 
-  const html = `<!doctype html>
-<html lang="${locale}"><body style="margin:0;background:#f4f4f5;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:24px 12px">
-    <tr><td align="center">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fff;border-radius:12px;padding:24px">
-        <tr><td style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#888">gridscore</td></tr>
-        <tr><td style="padding-top:8px;font-size:22px;font-weight:700;color:#111">${escapeHtml(heading)}</td></tr>
-        <tr><td style="padding-top:8px;font-size:14px;color:#444">${escapeHtml(intro)}</td></tr>
-        ${blocks}
-        <tr><td style="padding-top:20px;border-top:1px solid #eee;font-size:12px;color:#888;line-height:1.6">
-          ${escapeHtml(why)}<br>
-          <a href="${escapeHtml(input.optOutUrl)}" style="color:#888">${escapeHtml(optOut)}</a> ·
-          <a href="${escapeHtml(settingsUrl)}" style="color:#888">${escapeHtml(settings)}</a>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body></html>`;
+  // Single-locale: the slot for the other language is never rendered.
+  const copy = (value: string) => ({ en: value, es: value });
+  const html = renderEmailShell({
+    locale,
+    kicker: copy(t("reminderEmail.kicker")),
+    heading: copy(heading),
+    paragraphs: [copy(intro)],
+    sections,
+    footer: [copy(why)],
+    footerLinks: [
+      { label: copy(optOut), href: input.optOutUrl },
+      { label: copy(settings), href: settingsUrl },
+    ],
+  });
 
   return {
     to: input.to,

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { findBrandLiterals } from "@/lib/brand-guard";
 
 const ROOT = join(__dirname, "..");
-const SCAN_DIRS = ["app", "components", "lib", "messages", "public", "hooks"];
+const SCAN_DIRS = ["app", "components", "lib", "messages", "public", "hooks", "supabase/templates"];
 const SCAN_FILES = ["README.md"];
 const TEXT_EXT = /\.(tsx?|jsx?|mjs|json|md|css|svg|txt|webmanifest|html)$/;
 
