@@ -433,6 +433,18 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 [remotes.production]
 project_id = "dfllsojtcwryhkvoetfh"
 
+# Pinned so a push from a developer's .env (localhost values) can never
+# overwrite production redirects or the magic-link floor.
+[remotes.production.auth]
+site_url = "https://gridscore.edselserrano.com"
+additional_redirect_urls = [
+  "https://gridscore.edselserrano.com/auth/callback",
+  "https://gridscore-chi.vercel.app/auth/callback",
+]
+
+[remotes.production.auth.email]
+max_frequency = "1m"
+
 [remotes.production.auth.email.smtp]
 enabled = true
 host = "smtp.resend.com"
