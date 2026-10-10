@@ -330,6 +330,38 @@
     }
   }
 
+  /* The hero circuit: the outline draws itself in once, then one car laps
+     it. The car waits for the line so the two read as a single moment. */
+  .circuit-live__line {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: circuit-draw 1.8s cubic-bezier(0.6, 0, 0.2, 1) 0.35s forwards;
+  }
+  @keyframes circuit-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  .circuit-live__car {
+    offset-distance: 0%;
+    offset-rotate: 0deg;
+    opacity: 0;
+    filter: drop-shadow(0 0 3px var(--signal));
+    animation:
+      circuit-car-in 0.3s ease-out 2.1s forwards,
+      circuit-lap 9s linear 2.1s infinite;
+  }
+  @keyframes circuit-car-in {
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes circuit-lap {
+    to {
+      offset-distance: 100%;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .rise,
     .admin-reveal > * {
@@ -345,6 +377,14 @@
     .lights__lamp {
       animation: none;
       background: var(--live);
+    }
+    .circuit-live__line {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+    .circuit-live__car {
+      animation: none;
+      opacity: 1;
     }
     .reveal-ready,
     .reveal-in {
