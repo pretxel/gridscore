@@ -38,5 +38,5 @@
 ## 6. Verification
 
 - [x] 6.1 `pnpm test`, `pnpm typecheck`, and `node_modules/.bin/biome check` pass
-- [ ] 6.2 Production check after the push: request a magic link on the deployed site; it arrives branded, from `gridscore <SUPABASE_AUTH_SENDER_EMAIL>`, and the send shows in the Resend dashboard
-  - Pending as of 2026-10-10: production config verified through the Management API; no gridscore send in Resend yet. Request a magic link to close this.
+- [x] 6.2 Production check after the push: request a magic link on the deployed site; it arrives branded, from `gridscore <SUPABASE_AUTH_SENDER_EMAIL>`, and the send shows in the Resend dashboard
+  - Done 2026-10-10: "Your gridscore sign-in link" from `"gridscore" <no-reply@edselserrano.com>` delivered at 10:38 UTC, shown in Resend.
