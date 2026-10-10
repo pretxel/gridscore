@@ -9,14 +9,13 @@ type StaticRoute = {
   priority: number;
 };
 
-// Only public routes: everything behind the sign-in or admin gate is marked
-// noindex by its own metadata and has nothing to offer a crawler.
+// Only public, indexable routes: everything behind the sign-in or admin gate,
+// and the sign-in page itself, is marked noindex by its own metadata.
 const STATIC_ROUTES: StaticRoute[] = [
   { path: "/", changeFrequency: "daily", priority: 1 },
   { path: "/gp", changeFrequency: "daily", priority: 0.9 },
   { path: "/leaderboard", changeFrequency: "daily", priority: 0.8 },
   { path: "/how-it-works", changeFrequency: "monthly", priority: 0.5 },
-  { path: "/sign-in", changeFrequency: "weekly", priority: 0.3 },
 ];
 
 function urlFor(base: string, locale: Locale, path: string): string {

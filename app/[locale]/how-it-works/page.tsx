@@ -4,8 +4,9 @@ import { ScoringExplainer } from "@/components/scoring-explainer";
 import type { MultiplierReason } from "@/lib/db";
 import { formatMultiplier } from "@/lib/format";
 import { listSeasonGrandsPrix } from "@/lib/grands-prix";
-import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, type Locale } from "@/lib/i18n";
 import { getScoringRules } from "@/lib/scoring-rules";
+import { pageMetadata } from "@/lib/seo";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 
 export async function generateMetadata({
@@ -16,11 +17,10 @@ export async function generateMetadata({
   const { locale: rawLocale } = await params;
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   const t = await getTranslations({ locale, namespace: "howItWorks" });
-  return {
+  return pageMetadata(locale, "/how-it-works", {
     title: t("title"),
     description: t("description"),
-    alternates: localeAlternates(locale, "/how-it-works"),
-  };
+  });
 }
 
 export default async function HowItWorksPage({ params }: { params: Promise<{ locale: string }> }) {

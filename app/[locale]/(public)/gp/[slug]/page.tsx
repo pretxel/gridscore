@@ -5,18 +5,21 @@ import { notFound } from "next/navigation";
 import { after } from "next/server";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CircuitTrace } from "@/components/circuit-trace";
+import { JsonLd } from "@/components/json-ld";
 import { MarketLockCountdown } from "@/components/market-lock-countdown";
 import { PendingPicksProvider, PickProgressMeter } from "@/components/pending-picks";
 import { SessionSchedule } from "@/components/session-schedule";
 import { SponsorSlot } from "@/components/sponsor-slot";
 import type { HitType } from "@/lib/db";
 import { listSeasonDrivers } from "@/lib/drivers";
+import { env } from "@/lib/env";
 import { formatMultiplier } from "@/lib/format";
 import { getGrandPrixBySlug, getMarketsForGrandPrix } from "@/lib/grands-prix";
-import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates, localePath } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
 import { grandPrixPhase, nextLockingMarket, pickProgress } from "@/lib/market-utils";
 import type { MarketPick } from "@/lib/markets";
 import { getMyPickStates } from "@/lib/predictions";
+import { pageMetadata } from "@/lib/seo";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 import { getViewer } from "@/lib/viewer";
@@ -32,11 +35,15 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "gp" });
   const found = await getGrandPrixBySlug(slug);
   if (!found) return { title: t("title") };
-  return {
+  return pageMetadata(locale, `/gp/${slug}`, {
     title: found.grandPrix.name,
-    description: `${found.grandPrix.circuit_name} · ${t("roundLabel", { round: found.grandPrix.round })}`,
-    alternates: localeAlternates(locale, `/gp/${slug}`),
-  };
+    description: t("metaDescription", {
+      name: found.grandPrix.name,
+      circuit: found.grandPrix.circuit_name,
+      round: found.grandPrix.round,
+    }),
+    ownImage: true,
+  });
 }
 
 export default async function GrandPrixPage({
@@ -102,11 +109,42 @@ export default async function GrandPrixPage({
     qualifying: t("session.qualifying"),
     race: t("session.race"),
   };
+  // The race itself as a schema.org event, so search can show its date and
+  // venue. Nothing here names the championship: the venue and the weekend's
+  // own name are all it needs.
+  const eventJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    name: grandPrix.name,
+    sport: "Motorsport",
+    startDate: grandPrix.race_at,
+    eventStatus:
+      phase === "cancelled"
+        ? "https://schema.org/EventCancelled"
+        : "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    url: `${env.siteUrl.replace(/\/$/, "")}${localePath(locale, `/gp/${slug}`)}`,
+    inLanguage: locale,
+    location: {
+      "@type": "Place",
+      name: grandPrix.circuit_name,
+      ...(place
+        ? {
+            address: {
+              "@type": "PostalAddress",
+              ...(grandPrix.locality ? { addressLocality: grandPrix.locality } : {}),
+              ...(grandPrix.country ? { addressCountry: grandPrix.country } : {}),
+            },
+          }
+        : {}),
+    },
+  };
   const signInHref = `${localePath(locale, "/sign-in")}?next=${encodeURIComponent(localePath(locale, `/gp/${slug}`))}`;
 
   return (
     <PendingPicksProvider confirmLeave={tp("confirmLeave")}>
       <main className="mx-auto max-w-5xl px-4 py-10">
+        <JsonLd data={eventJsonLd} />
         <Link
           href={localePath(locale, "/gp")}
           className="mb-4 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"

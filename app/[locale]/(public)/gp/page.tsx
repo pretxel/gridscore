@@ -3,7 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { GrandPrixCard, type GrandPrixCardLabels } from "@/components/grand-prix-card";
 import { formatMultiplier } from "@/lib/format";
 import { getMarketsForGrandsPrix, listSeasonGrandsPrix } from "@/lib/grands-prix";
-import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates, localePath } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
 import {
   grandPrixPhase,
   marketsNeedingPick,
@@ -12,6 +12,7 @@ import {
   pickProgress,
 } from "@/lib/market-utils";
 import { getMyPickStates } from "@/lib/predictions";
+import { pageMetadata } from "@/lib/seo";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/viewer";
 
@@ -23,11 +24,7 @@ export async function generateMetadata({
   const { locale: rawLocale } = await params;
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   const t = await getTranslations({ locale, namespace: "gp" });
-  return {
-    title: t("title"),
-    description: t("description"),
-    alternates: localeAlternates(locale, "/gp"),
-  };
+  return pageMetadata(locale, "/gp", { title: t("title"), description: t("description") });
 }
 
 export default async function CalendarPage({ params }: { params: Promise<{ locale: string }> }) {

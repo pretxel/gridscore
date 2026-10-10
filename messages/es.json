@@ -408,7 +408,8 @@
     "loadFailedTitle": "No se pudo cargar el calendario",
     "loadFailedBody": "Inténtalo de nuevo en un momento.",
     "retry": "Reintentar",
-    "signInToPickLede": "Inicia sesión para predecir este fin de semana. Solo hace falta un email."
+    "signInToPickLede": "Inicia sesión para predecir este fin de semana. Solo hace falta un email.",
+    "metaDescription": "Haz tus predicciones del {name}: pole, podio, vuelta rápida y más en {circuit}. Ronda {round}, puntuada en directo en gridscore."
   },
   "markets": {
     "type": {

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates, localePath } from "@/lib/i18n";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { SignInForm } from "./sign-in-form";
 
@@ -12,12 +12,13 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale: raw } = await params;
+  const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const t = await getTranslations({ locale, namespace: "signIn" });
   return {
     title: t("title"),
     description: t("description"),
-    alternates: { canonical: "/sign-in" },
+    alternates: localeAlternates(locale, "/sign-in"),
     robots: { index: false, follow: true },
   };
 }
