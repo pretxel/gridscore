@@ -87,7 +87,12 @@
     "boardLede": "La cabeza de la tabla ahora mismo. Las ligas privadas te miden contra tus amigos.",
     "boardCta": "Clasificación completa",
     "finalTitle": "La próxima sesión no va a esperarte.",
-    "finalLede": "Entra con un email, haz tus predicciones y mira dónde acabas."
+    "finalLede": "Entra con un email, haz tus predicciones y mira dónde acabas.",
+    "sprintOnly": "Solo fines de semana con sprint",
+    "boardLeader": "Líder",
+    "boardGap": "a {points}",
+    "boardGapLabel": "Diferencia con el líder",
+    "weekendLabel": "Sesiones de este fin de semana"
   },
   "signIn": {
     "title": "Iniciar sesión",

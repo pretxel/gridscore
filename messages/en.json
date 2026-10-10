@@ -87,7 +87,12 @@
     "boardLede": "The top of the board right now. Private leagues rank you against your friends instead.",
     "boardCta": "Full leaderboard",
     "finalTitle": "The next session will not wait for you.",
-    "finalLede": "Sign in with an email, make your calls, and see where you land."
+    "finalLede": "Sign in with an email, make your calls, and see where you land.",
+    "sprintOnly": "Sprint weekends only",
+    "boardLeader": "Leader",
+    "boardGap": "{points} behind",
+    "boardGapLabel": "Gap to the leader",
+    "weekendLabel": "This weekend's sessions"
   },
   "signIn": {
     "title": "Sign in",
