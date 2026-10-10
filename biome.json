@@ -15,6 +15,7 @@
       "!**/*.generated.ts",
       "!**/.claude",
       "!**/.codex",
+      "!**/.agents",
       "!**/openspec",
       "!**/videos",
       "!**/docs",
