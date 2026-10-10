@@ -4,19 +4,11 @@ import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SiteFooter, SiteNav } from "@/components/site-nav";
 import { DEFAULT_LOCALE, isLocale, type Locale, SUPPORTED_LOCALES } from "@/lib/i18n";
+import { OG_LOCALE, ogAlternateLocales, SITE_NAME } from "@/lib/seo";
 
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({ locale }));
 }
-
-const OG_LOCALE: Record<Locale, string> = {
-  en: "en_US",
-  es: "es_ES",
-};
-const ALT_LOCALES: Record<Locale, string[]> = {
-  en: ["es_ES"],
-  es: ["en_US"],
-};
 
 // Localized site-wide title/description/og/twitter. Metadata is shallow-merged
 // and nested objects are overwritten by the deepest segment, so og/twitter are
@@ -37,13 +29,13 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       locale: OG_LOCALE[locale],
-      alternateLocale: ALT_LOCALES[locale],
-      siteName: "gridscore",
+      alternateLocale: ogAlternateLocales(locale),
+      siteName: SITE_NAME,
       title,
       description,
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title,
       description,
     },

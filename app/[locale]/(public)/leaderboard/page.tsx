@@ -5,10 +5,11 @@ import { LeaderboardSegmentSwitcher } from "@/components/leaderboard-segment-swi
 import type { LeaderboardTableRow } from "@/components/leaderboard-table";
 import { SponsorSlot } from "@/components/sponsor-slot";
 import { listSeasonGrandsPrix } from "@/lib/grands-prix";
-import { DEFAULT_LOCALE, isLocale, type Locale, localeAlternates, localePath } from "@/lib/i18n";
+import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
 import { getGrandPrixBoard, getOverallBoard } from "@/lib/leaderboard";
 import { findOwnRow, parseGrandPrixParam } from "@/lib/leaderboard-segment";
 import { grandPrixPhase } from "@/lib/market-utils";
+import { pageMetadata } from "@/lib/seo";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/viewer";
 
@@ -22,11 +23,7 @@ export async function generateMetadata({
   const { locale: rawLocale } = await params;
   const locale: Locale = isLocale(rawLocale) ? rawLocale : DEFAULT_LOCALE;
   const t = await getTranslations({ locale, namespace: "leaderboard" });
-  return {
-    title: t("title"),
-    description: t("description"),
-    alternates: localeAlternates(locale, "/leaderboard"),
-  };
+  return pageMetadata(locale, "/leaderboard", { title: t("title"), description: t("description") });
 }
 
 export default async function LeaderboardPage({

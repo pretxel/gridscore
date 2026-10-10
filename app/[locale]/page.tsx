@@ -3,17 +3,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { CircuitTrace } from "@/components/circuit-trace";
+import { JsonLd } from "@/components/json-ld";
 import { LocalTime } from "@/components/local-time";
 import { MarketLockCountdown } from "@/components/market-lock-countdown";
 import { Reveal } from "@/components/reveal";
 import { StartingLights } from "@/components/starting-lights";
 import { buttonVariants } from "@/components/ui/button";
+import { env } from "@/lib/env";
 import { formatPoints } from "@/lib/format";
 import { getMarketsForGrandPrix, listSeasonGrandsPrix } from "@/lib/grands-prix";
 import { DEFAULT_LOCALE, isLocale, type Locale, localePath } from "@/lib/i18n";
 import { getOverallBoard } from "@/lib/leaderboard";
 import { nextGrandPrix, nextLockingMarket } from "@/lib/market-utils";
 import { type LockSession, MARKET_LOCK_SESSION, MARKET_TYPES } from "@/lib/markets";
+import { pageMetadata } from "@/lib/seo";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +33,12 @@ export async function generateMetadata({
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const t = await getTranslations({ locale, namespace: "siteMeta" });
-  return { title: t("title"), description: t("description") };
+  return pageMetadata(locale, "/", {
+    title: t("title"),
+    description: t("description"),
+    absoluteTitle: true,
+    ownImage: true,
+  });
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -43,6 +51,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const tp = await getTranslations("pickForm");
   const tc = await getTranslations("common");
   const tl = await getTranslations("leaderboard");
+  const ts = await getTranslations("siteMeta");
 
   const supabase = await createServerSupabaseClient();
   const [{ data: auth }, calendar, board] = await Promise.all([
@@ -71,9 +80,33 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       ).filter((entry): entry is readonly [LockSession, string] => Boolean(entry[1]))
     : [];
   const startHref = localePath(locale, user ? "/gp" : "/sign-in");
+  const site = env.siteUrl.replace(/\/$/, "");
+  // Who publishes the site and what it is, for search engines.
+  const siteJsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${site}/#organization`,
+        name: "gridscore",
+        url: site,
+        logo: `${site}/icon-512.png`,
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${site}/#website`,
+        name: "gridscore",
+        url: `${site}${localePath(locale, "/")}`,
+        inLanguage: locale,
+        description: ts("description"),
+        publisher: { "@id": `${site}/#organization` },
+      },
+    ],
+  };
 
   return (
     <main className="relative isolate overflow-hidden">
+      <JsonLd data={siteJsonLd} />
       {/* Hero backdrop: a timing-screen grid fading out under film grain. */}
       <div
         aria-hidden

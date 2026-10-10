@@ -408,7 +408,8 @@
     "loadFailedTitle": "The calendar could not be loaded",
     "loadFailedBody": "Try again in a moment.",
     "retry": "Retry",
-    "signInToPickLede": "Sign in to call this weekend. It takes an email and nothing else."
+    "signInToPickLede": "Sign in to call this weekend. It takes an email and nothing else.",
+    "metaDescription": "Make your {name} calls: pole, podium, fastest lap and more at {circuit}. Round {round}, scored live on gridscore."
   },
   "markets": {
     "type": {
