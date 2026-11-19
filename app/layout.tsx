@@ -1,3 +1,4 @@
+import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata, Viewport } from "next";
 import { Archivo_Black, JetBrains_Mono, Manrope } from "next/font/google";
 import "./globals.css";
@@ -99,6 +100,9 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${manrope.variable} ${archivo.variable} ${jetbrains.variable} h-full antialiased`}
     >
+      {env.gtmId && process.env.NODE_ENV === "production" ? (
+        <GoogleTagManager gtmId={env.gtmId} />
+      ) : null}
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <ThemeProvider attribute="class" defaultTheme="dark" disableTransitionOnChange>
           {children}

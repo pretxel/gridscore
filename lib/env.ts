@@ -29,6 +29,8 @@ export const env = {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
   ),
   siteUrl: resolveSiteUrl(),
+  // Google Tag Manager container. Override per environment; empty disables it.
+  gtmId: process.env.NEXT_PUBLIC_GTM_ID ?? "GTM-PZXBH8PR",
   // Nullable on purpose: cron routes return 204 with `x-skipped: missing-env`
   // when absent, so a cold environment never crashes the build.
   cronSecret: process.env.CRON_SECRET ?? null,
